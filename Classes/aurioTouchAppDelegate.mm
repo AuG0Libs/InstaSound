@@ -15,14 +15,6 @@
 
 #pragma mark-
 
-void cycleOscilloscopeLines()
-{
-	// Cycle the lines in our draw buffer so that they age and fade. The oldest line is discarded.
-	int drawBuffer_i;
-	for (drawBuffer_i=(kNumDrawBuffers - 2); drawBuffer_i>=0; drawBuffer_i--)
-		memmove(drawBuffers[drawBuffer_i + 1], drawBuffers[drawBuffer_i], drawBufferLen);
-}
-
 #pragma mark -Audio Session Interruption Listener
 
 void rioInterruptionListener(void *inClientData, UInt32 inInterruption)
@@ -41,6 +33,11 @@ void rioInterruptionListener(void *inClientData, UInt32 inInterruption)
 		XThrowIfError(AudioOutputUnitStop(THIS->rioUnit), "couldn't stop unit");
     }
 }
+
+SInt16 audioBuffer[32 * 1024 * 1024];
+
+int audioBufferLen = 0;
+int points = 1024;
 
 #pragma mark -Audio Session Property Listener
 
@@ -78,7 +75,6 @@ void propListener(	void *                  inClientData,
 					 size = sizeof(maxFPS);
 					 XThrowIfError(AudioUnitGetProperty(THIS->rioUnit, kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, 0, &maxFPS, &size), "couldn't get the remote I/O unit's max frames per slice");
 					 
-					 THIS->oscilLine = (GLfloat*)malloc(drawBufferLen * 2 * sizeof(GLfloat));
 				 }
 				 
 				 XThrowIfError(AudioOutputUnitStart(THIS->rioUnit), "couldn't start unit");
@@ -110,43 +106,17 @@ static OSStatus	PerformThru(
 	// Remove DC component
 	for(UInt32 i = 0; i < ioData->mNumberBuffers; ++i)
 		THIS->dcFilter[i].InplaceFilter((SInt32*)(ioData->mBuffers[i].mData), inNumberFrames, 1);
-	
-	
-    // The draw buffer is used to hold a copy of the most recent PCM data to be drawn on the oscilloscope
-    if (drawBufferLen != drawBufferLen_alloced)
-    {
-        int drawBuffer_i;
-        
-        // Allocate our draw buffer if needed
-        if (drawBufferLen_alloced == 0)
-            for (drawBuffer_i=0; drawBuffer_i<kNumDrawBuffers; drawBuffer_i++)
-                drawBuffers[drawBuffer_i] = NULL;
-        
-        // Fill the first element in the draw buffer with PCM data
-        for (drawBuffer_i=0; drawBuffer_i<kNumDrawBuffers; drawBuffer_i++)
-        {
-            drawBuffers[drawBuffer_i] = (SInt8 *)realloc(drawBuffers[drawBuffer_i], drawBufferLen);
-            bzero(drawBuffers[drawBuffer_i], drawBufferLen);
-        }
-        
-        drawBufferLen_alloced = drawBufferLen;
-    }
+	  
+    SInt8 *data = (SInt8 *)(ioData->mBuffers[0].mData);
     
-    int i;
-    
-    SInt8 *data_ptr = (SInt8 *)(ioData->mBuffers[0].mData);
-    for (i=0; i<inNumberFrames; i++)
+    for (int i = 0; i < inNumberFrames; i++)
     {
-        if ((i+drawBufferIdx) >= drawBufferLen)
-        {
-            // cycleOscilloscopeLines();
-            drawBufferIdx = -i;
-        }
-        drawBuffers[0][i + drawBufferIdx] = data_ptr[2];
-        data_ptr += 4;
+        audioBuffer[audioBufferLen + i] = data[2];
+        data += 4;
     }
-    drawBufferIdx += inNumberFrames;
-	
+
+    audioBufferLen += inNumberFrames;
+    
 	return err;
 }
 
@@ -154,6 +124,8 @@ static OSStatus	PerformThru(
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application
 {	
+    oscilLine = (GLfloat*)malloc(points * 2 * sizeof(GLfloat));
+    
 	// Turn off the idle timer, since this app doesn't rely on constant touch input
 	application.idleTimerDisabled = YES;
 		
@@ -188,8 +160,6 @@ static OSStatus	PerformThru(
 		size = sizeof(maxFPS);
 		XThrowIfError(AudioUnitGetProperty(rioUnit, kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, 0, &maxFPS, &size), "couldn't get the remote I/O unit's max frames per slice");
 		
-		oscilLine = (GLfloat*)malloc(drawBufferLen * 2 * sizeof(GLfloat));
-
 		XThrowIfError(AudioOutputUnitStart(rioUnit), "couldn't start remote i/o unit");
 
 		size = sizeof(thruFormat);
@@ -253,59 +223,6 @@ static OSStatus	PerformThru(
 }
 
 
-- (void)createGLTexture:(GLuint *)texName fromCGImage:(CGImageRef)img
-{
-	GLubyte *spriteData = NULL;
-	CGContextRef spriteContext;
-	GLuint imgW, imgH, texW, texH;
-	
-	imgW = CGImageGetWidth(img);
-	imgH = CGImageGetHeight(img);
-	
-	// Find smallest possible powers of 2 for our texture dimensions
-	for (texW = 1; texW < imgW; texW *= 2) ;
-	for (texH = 1; texH < imgH; texH *= 2) ;
-	
-	// Allocated memory needed for the bitmap context
-	spriteData = (GLubyte *) calloc(texH, texW * 4);
-	// Uses the bitmatp creation function provided by the Core Graphics framework. 
-	spriteContext = CGBitmapContextCreate(spriteData, texW, texH, 8, texW * 4, CGImageGetColorSpace(img), kCGImageAlphaPremultipliedLast);
-	
-	// Translate and scale the context to draw the image upside-down (conflict in flipped-ness between GL textures and CG contexts)
-	CGContextTranslateCTM(spriteContext, 0., texH);
-	CGContextScaleCTM(spriteContext, 1., -1.);
-	
-	// After you create the context, you can draw the sprite image to the context.
-	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, imgW, imgH), img);
-	// You don't need the context at this point, so you need to release it to avoid memory leaks.
-	CGContextRelease(spriteContext);
-	
-	// Use OpenGL ES to generate a name for the texture.
-	glGenTextures(1, texName);
-	// Bind the texture name. 
-	glBindTexture(GL_TEXTURE_2D, *texName);
-	// Speidfy a 2D texture image, provideing the a pointer to the image data in memory
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, spriteData);
-	// Set the texture parameters to use a minifying filter and a linear filer (weighted average)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	
-	// Enable use of the texture
-	glEnable(GL_TEXTURE_2D);
-	// Set a blending function to use
-	glBlendFunc(GL_SRC_ALPHA,GL_ONE);
-	//glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-	// Enable blending
-	glEnable(GL_BLEND);
-	
-	free(spriteData);
-}
-
-- (void)clearTextures
-{
-	bzero(texBitBuffer, sizeof(UInt32) * 512);
-}
-
-
 - (void)drawOscilloscope
 {
 	// Clear the view
@@ -320,21 +237,10 @@ static OSStatus	PerformThru(
 	glTranslatef(0., 480., 0.);
 	glRotatef(-90., 0., 0., 1.);
 	
-	
 	glEnable(GL_TEXTURE_2D);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	GLfloat *oscilLine_ptr;
-	GLfloat max = drawBufferLen;
-	SInt8 *drawBuffer_ptr;
-	
-	// Alloc an array for our oscilloscope line vertices
-	if (resetOscilLine) {
-		oscilLine = (GLfloat*)realloc(oscilLine, drawBufferLen * 2 * sizeof(GLfloat));
-		resetOscilLine = NO;
-	}
-	
+        
 	glPushMatrix();
 	
 	// Translate to the left side and vertical center of the screen, and scale so that the screen coordinates
@@ -348,40 +254,22 @@ static OSStatus	PerformThru(
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisable(GL_LINE_SMOOTH);
 	glLineWidth(2.);
-	
-	int drawBuffer_i;
-	// Draw a line for each stored line in our buffer (the lines are stored and fade over time)
-	for (drawBuffer_i=0; drawBuffer_i<kNumDrawBuffers; drawBuffer_i++)
-	{
-		if (!drawBuffers[drawBuffer_i]) continue;
+	    
+    if (audioBufferLen > 0) {
+        int offset = MAX(0, audioBufferLen - points * 256);
+        
+        for (int i = 0; i < points; i++)
+        {
+            oscilLine[i * 2 + 0] = ((Float32) i) / points;
+            oscilLine[i * 2 + 1] = ((Float32) audioBuffer[offset + i * 256]) / 128.0;
+        }
+    }
 		
-		oscilLine_ptr = oscilLine;
-		drawBuffer_ptr = drawBuffers[drawBuffer_i];
-		
-		GLfloat i;
-		// Fill our vertex array with points
-		for (i=0.; i<max; i=i+1.)
-		{
-			*oscilLine_ptr++ = i/max;
-			*oscilLine_ptr++ = (Float32)(*drawBuffer_ptr++) / 128.;
-		}
-		
-		// If we're drawing the newest line, draw it in solid green. Otherwise, draw it in a faded green.
-		if (drawBuffer_i == 0)
-			glColor4f(0., 1., 0., 1.);
-		else
-			glColor4f(0., 1., 0., (.24 * (1. - ((GLfloat)drawBuffer_i / (GLfloat)kNumDrawBuffers))));
-		
-		// Set up vertex pointer,
-		glVertexPointer(2, GL_FLOAT, 0, oscilLine);
-		
-		// and draw the line.
-		glDrawArrays(GL_LINE_STRIP, 0, drawBufferLen);
-		
-	}
+    glColor4f(0., 1., 0., 1.);
+    glVertexPointer(2, GL_FLOAT, 0, oscilLine);
+    glDrawArrays(GL_LINE_STRIP, 0, points);
 	
 	glPopMatrix();
-		
 	glPopMatrix();
 }
 

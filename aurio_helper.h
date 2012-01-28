@@ -53,16 +53,6 @@ Copyright (C) 2010 Apple Inc. All Rights Reserved.
 #include "CAStreamBasicDescription.h"
 #include "AudioUnit/AudioUnit.h"
 
-#define kNumDrawBuffers 12
-#define kDefaultDrawSamples 1024
-#define kMinDrawSamples 64
-#define kMaxDrawSamples 4096
-
-extern int drawBufferIdx;
-extern int drawBufferLen;
-extern int drawBufferLen_alloced;
-extern SInt8 *drawBuffers[];
-
 int SetupRemoteIO (AudioUnit& inRemoteIOUnit, AURenderCallbackStruct inRenderProcm, CAStreamBasicDescription& outFormat);
 void SilenceData(AudioBufferList *inData);
 

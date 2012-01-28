@@ -49,7 +49,6 @@ inline double linearInterp(double valA, double valB, double fract)
 @property (nonatomic, assign)	AudioUnit				rioUnit;
 @property (nonatomic, assign)	BOOL						unitIsRunning;
 @property (nonatomic, assign)	BOOL						unitHasBeenCreated;
-@property (nonatomic, assign)	BOOL					mute;
 @property (nonatomic, assign)	AURenderCallbackStruct	inputProc;
 
 @end

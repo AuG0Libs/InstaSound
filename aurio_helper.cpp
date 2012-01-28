@@ -55,14 +55,6 @@ Copyright (C) 2010 Apple Inc. All Rights Reserved.
 #include "CAStreamBasicDescription.h"
 #include "aurio_helper.h"
 
-// This determines how slowly the oscilloscope lines fade away from the display. 
-// Larger numbers = slower fade (and more strain on the graphics processing)
-SInt8 *drawBuffers[kNumDrawBuffers];
-
-int drawBufferIdx = 0;
-int drawBufferLen = kDefaultDrawSamples;
-int drawBufferLen_alloced = 0;
-
 int SetupRemoteIO (AudioUnit& inRemoteIOUnit, AURenderCallbackStruct inRenderProc, CAStreamBasicDescription& outFormat)
 {	
 	try {		
