@@ -69,8 +69,6 @@ void propListener(	void *                  inClientData,
 					 XThrowIfError(SetupRemoteIO(THIS->rioUnit, THIS->inputProc, THIS->thruFormat), "couldn't setup remote i/o unit");
 					 THIS->unitHasBeenCreated = true;
 					 
-					 THIS->dcFilter = new DCRejectionFilter[THIS->thruFormat.NumberChannels()];
-					 
 					 UInt32 maxFPS;
 					 size = sizeof(maxFPS);
 					 XThrowIfError(AudioUnitGetProperty(THIS->rioUnit, kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, 0, &maxFPS, &size), "couldn't get the remote I/O unit's max frames per slice");
@@ -100,19 +98,16 @@ static OSStatus	PerformThru(
 							AudioBufferList 			*ioData)
 {
 	aurioTouchAppDelegate *THIS = (aurioTouchAppDelegate *)inRefCon;
-	OSStatus err = AudioUnitRender(THIS->rioUnit, ioActionFlags, inTimeStamp, 1, inNumberFrames, ioData);
-	if (err) { printf("PerformThru: error %d\n", (int)err); return err; }
 	
-	// Remove DC component
-	for(UInt32 i = 0; i < ioData->mNumberBuffers; ++i)
-		THIS->dcFilter[i].InplaceFilter((SInt32*)(ioData->mBuffers[i].mData), inNumberFrames, 1);
+    OSStatus err = AudioUnitRender(THIS->rioUnit, ioActionFlags, inTimeStamp, 1, inNumberFrames, ioData);
+	
+    if (err) { printf("PerformThru: error %d\n", (int)err); return err; }
 	  
     SInt8 *data = (SInt8 *)(ioData->mBuffers[0].mData);
     
     for (int i = 0; i < inNumberFrames; i++)
     {
-        audioBuffer[audioBufferLen + i] = data[2];
-        data += 4;
+        audioBuffer[audioBufferLen + i] = data[i * 4 + 2] << 8 | (UInt8) data[i * 4 + 3];
     }
 
     audioBufferLen += inNumberFrames;
@@ -153,9 +148,7 @@ static OSStatus	PerformThru(
 
 		XThrowIfError(SetupRemoteIO(rioUnit, inputProc, thruFormat), "couldn't setup remote i/o unit");
 		unitHasBeenCreated = true;
-		
-		dcFilter = new DCRejectionFilter[thruFormat.NumberChannels()];
-
+	
 		UInt32 maxFPS;
 		size = sizeof(maxFPS);
 		XThrowIfError(AudioUnitGetProperty(rioUnit, kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, 0, &maxFPS, &size), "couldn't get the remote I/O unit's max frames per slice");
@@ -171,12 +164,10 @@ static OSStatus	PerformThru(
 		char buf[256];
 		fprintf(stderr, "Error: %s (%s)\n", e.mOperation, e.FormatError(buf));
 		unitIsRunning = 0;
-		if (dcFilter) delete[] dcFilter;
 	}
 	catch (...) {
 		fprintf(stderr, "An unknown error occurred\n");
 		unitIsRunning = 0;
-		if (dcFilter) delete[] dcFilter;
 	}
 	
 	// Set ourself as the delegate for the EAGLView so that we get drawing and touch events
@@ -212,8 +203,6 @@ static OSStatus	PerformThru(
 
 - (void)dealloc
 {	
-	delete[] dcFilter;
-	
 	[view release];
 	[window release];
 	
@@ -261,7 +250,7 @@ static OSStatus	PerformThru(
         for (int i = 0; i < points; i++)
         {
             oscilLine[i * 2 + 0] = ((Float32) i) / points;
-            oscilLine[i * 2 + 1] = ((Float32) audioBuffer[offset + i * 256]) / 128.0;
+            oscilLine[i * 2 + 1] = ((Float32) audioBuffer[offset + i * 256]) / 32768.0;
         }
     }
 		

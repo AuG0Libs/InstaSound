@@ -31,7 +31,6 @@ inline double linearInterp(double valA, double valB, double fract)
 	BOOL						unitHasBeenCreated;
 	UInt32*						texBitBuffer;
 	
-	DCRejectionFilter*			dcFilter;
 	CAStreamBasicDescription	thruFormat;
 	Float64						hwSampleRate;
 	
