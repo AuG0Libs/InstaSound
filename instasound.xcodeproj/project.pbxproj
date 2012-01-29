@@ -96,12 +96,12 @@
 		F784290714D5701D00F55C51 /* instasound */ = {
 			isa = PBXGroup;
 			children = (
+				F784291014D5701D00F55C51 /* AppDelegate.h */,
+				F784291114D5701D00F55C51 /* AppDelegate.m */,
 				F784295D14D574F600F55C51 /* ViewController.h */,
 				F784295E14D574F600F55C51 /* ViewController.m */,
 				F784292114D5708600F55C51 /* EAGLView.h */,
 				F784292214D5708600F55C51 /* EAGLView.m */,
-				F784291014D5701D00F55C51 /* AppDelegate.h */,
-				F784291114D5701D00F55C51 /* AppDelegate.m */,
 				F784290814D5701D00F55C51 /* Supporting Files */,
 			);
 			path = instasound;

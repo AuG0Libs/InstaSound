@@ -6,9 +6,9 @@
 
 @implementation AppDelegate
 
-@synthesize window;
-@synthesize view;
-@synthesize viewController;
+@synthesize window = _window;
+@synthesize eaglView = _eaglView;
+@synthesize viewController = _viewController;
 
 @synthesize unitIsRunning;
 @synthesize unitHasBeenCreated;
@@ -41,83 +41,97 @@ static OSStatus	renderCallback(void                         *inRefCon,
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [self initializeEAGLView];
+    [self.window addSubview:eaglView];
+
+    // self.viewController.view = view;
+    // self.window.rootViewController = self.viewController;
+
+
+    [self.window makeKeyAndVisible];
+
+    return YES;
+}
+
+- (void) initializeEAGLView
+{
     oscilLine = (GLfloat*)malloc(points * 2 * sizeof(GLfloat));
-
-
+    
+    
     AVAudioSession *mySession = [AVAudioSession sharedInstance];
-
+    
     // Specify that this object is the delegate of the audio session, so that
     //    this object's endInterruption method will be invoked when needed.
     // [mySession setDelegate: self];
-
-
+    
+    
     // Assign the Playback and Record category to the audio session.
     NSError *audioSessionError = nil;
     [mySession setCategory: AVAudioSessionCategoryPlayAndRecord
                      error: &audioSessionError];
-
+    
     if (audioSessionError != nil) {
         NSLog (@"Error setting audio session category.");
     }
-
+    
     if (![mySession inputIsAvailable]) {
         NSLog(@"input device is not available");
     }
-
+    
     [mySession setPreferredHardwareSampleRate: 44100.0
                                         error: &audioSessionError];
-
+    
     // refer to IOS developer library : Audio Session Programming Guide
     // set preferred buffer duration to 1024 using
     //  try ((buffer size + 1) / sample rate) - due to little arm6 floating point bug?
     // doesn't seem to help - the duration seems to get set to whatever the system wants...
-
+    
     Float32 currentBufferDuration =  (Float32) (1024.0 / 44100.0);
     UInt32 sss = sizeof(currentBufferDuration);
-
+    
     AudioSessionSetProperty(kAudioSessionProperty_CurrentHardwareIOBufferDuration, sizeof(currentBufferDuration), &currentBufferDuration);
     NSLog(@"setting buffer duration to: %f", currentBufferDuration);
-
+    
     // note: this is where ipod touch (w/o mic) erred out when mic (ie earbud thing) was not plugged - before we added
     // the code above to check for mic available
     // Activate the audio session
     [mySession setActive: YES
                    error: &audioSessionError];
-
+    
     if (audioSessionError != nil) {
         NSLog (@"Error activating audio session during initial setup.");
-
+        
     }
-
+    
     // find out the current buffer duration
     // to calculate duration use: buffersize / sample rate, eg., 512 / 44100 = .012
-
+    
     // Obtain the actual buffer duration - this may be necessary to get fft stuff working properly in passthru
     AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareIOBufferDuration, &sss, &currentBufferDuration);
     NSLog(@"Actual current hardware io buffer duration: %f ", currentBufferDuration );
-
+    
     // find out how many input channels are available
-
+    
     NSInteger numberOfChannels = [mySession currentHardwareInputNumberOfChannels];
     NSLog(@"number of channels: %d", numberOfChannels );
-
-
+    
+    
     AUNode ioNode;
     AUNode mixerNode;
     AUNode mixer2Node;
     AUNode distortionNode;
 
     OSStatus result = noErr;
-
+    
     result = NewAUGraph(&graph);
-
+    
     AudioComponentDescription io_desc;
     io_desc.componentType               = kAudioUnitType_Output;
     io_desc.componentSubType            = kAudioUnitSubType_RemoteIO;
     io_desc.componentFlags              = 0;
     io_desc.componentFlagsMask          = 0;
     io_desc.componentManufacturer       = kAudioUnitManufacturer_Apple;
-
+    
     AudioComponentDescription mixer_desc;
     mixer_desc.componentType            = kAudioUnitType_Mixer;
     mixer_desc.componentSubType         = kAudioUnitSubType_MultiChannelMixer;
@@ -168,7 +182,7 @@ static OSStatus	renderCallback(void                         *inRefCon,
 //    result = AUGraphSetNodeInputCallback(graph, mixerNode, 0, &renderCallbackStruct);
 
     size_t bytesPerSample = sizeof (AudioUnitSampleType);
-
+    
     ioFormat.mFormatID          = kAudioFormatLinearPCM;
     ioFormat.mFormatFlags       = kAudioFormatFlagsNativeFloatPacked;
     ioFormat.mBytesPerPacket    = bytesPerSample;
@@ -177,7 +191,7 @@ static OSStatus	renderCallback(void                         *inRefCon,
     ioFormat.mChannelsPerFrame  = 1;
     ioFormat.mBitsPerChannel    = 8 * bytesPerSample;
     ioFormat.mSampleRate        = 44100;
-
+    
     int busCount = 6;
 
     result = AudioUnitSetProperty(mixerUnit,
@@ -229,41 +243,31 @@ static OSStatus	renderCallback(void                         *inRefCon,
     }
     
     CAShow(graph);
-
+    
     AUGraphStart(graph);
-
+    
     unitHasBeenCreated = true;
     unitIsRunning = 1;
-
-
+    
+    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-
-    self.view = [[EAGLView alloc] initWithFrame: CGRectMake ( 0, 0, 480, 640)];
-
-    view.delegate = self;
-
-    [view setAnimationInterval:1./20.];
-	[view startAnimation];
-
-    [self.window addSubview:view];
-
-    // self.viewController.view = view;
-    // self.window.rootViewController = self.viewController;
-
-
-    [self.window makeKeyAndVisible];
-
-    return YES;
+    
+    self.eaglView = [[EAGLView alloc] initWithFrame: CGRectMake ( 0, 0, 480, 640)];
+    
+    eaglView.delegate = self;
+    
+    [eaglView setAnimationInterval:1./20.];
+	[eaglView startAnimation];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-    view.applicationResignedActive = NO;
-	[view startAnimation];
+    eaglView.applicationResignedActive = NO;
+	[eaglView startAnimation];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
-    view.applicationResignedActive = YES;
-    [view stopAnimation];
+    eaglView.applicationResignedActive = YES;
+    [eaglView stopAnimation];
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
