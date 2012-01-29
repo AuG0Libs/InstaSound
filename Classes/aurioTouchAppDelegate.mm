@@ -1,6 +1,7 @@
 
 #import "aurioTouchAppDelegate.h"
 #import "AudioToolbox/AudioToolbox.h"
+#import "AVFoundation/AVFoundation.h"
 #import "CAXException.h"
 
 @implementation aurioTouchAppDelegate
@@ -16,12 +17,12 @@ SInt16 audioBuffer[32 * 1024 * 1024];
 int audioBufferLen = 0;
 int points = 1024;
 
-static OSStatus	renderCallback(void						*inRefCon, 
+static OSStatus	renderCallback(void						    *inRefCon, 
                                AudioUnitRenderActionFlags 	*ioActionFlags, 
                                const AudioTimeStamp 		*inTimeStamp, 
                                UInt32 						inBusNumber, 
                                UInt32 						inNumberFrames, 
-                               AudioBufferList 			*ioData)
+                               AudioBufferList 			    *ioData)
 {
     SInt8 *data = (SInt8 *)(ioData->mBuffers[0].mData);
     
@@ -41,12 +42,64 @@ static OSStatus	renderCallback(void						*inRefCon,
     oscilLine = (GLfloat*)malloc(points * 2 * sizeof(GLfloat));
 
 	try {	
-		AudioSessionInitialize(NULL, NULL, NULL, self);
+        AVAudioSession *mySession = [AVAudioSession sharedInstance];
+        
+        // Specify that this object is the delegate of the audio session, so that
+        //    this object's endInterruption method will be invoked when needed.
+        // [mySession setDelegate: self];
+        
 
-		Float32 preferredBufferSize = .005;
-		AudioSessionSetProperty(kAudioSessionProperty_PreferredHardwareIOBufferDuration, sizeof(preferredBufferSize), &preferredBufferSize);
-		
-		AudioSessionSetActive(true);
+        // Assign the Playback and Record category to the audio session.
+        NSError *audioSessionError = nil;
+        [mySession setCategory: AVAudioSessionCategoryPlayAndRecord 
+                         error: &audioSessionError];
+        
+        if (audioSessionError != nil) {
+            NSLog (@"Error setting audio session category.");
+        }
+        
+        if (![mySession inputIsAvailable]) {
+            NSLog(@"input device is not available");
+        }
+        
+        [mySession setPreferredHardwareSampleRate: 44100.0
+                                            error: &audioSessionError];
+        
+        
+        // refer to IOS developer library : Audio Session Programming Guide
+        // set preferred buffer duration to 1024 using
+        //  try ((buffer size + 1) / sample rate) - due to little arm6 floating point bug?
+        // doesn't seem to help - the duration seems to get set to whatever the system wants...
+        
+        Float32 currentBufferDuration =  (Float32) (1024.0 / 44100.0);  
+        UInt32 sss = sizeof(currentBufferDuration);
+        
+        AudioSessionSetProperty(kAudioSessionProperty_CurrentHardwareIOBufferDuration, sizeof(currentBufferDuration), &currentBufferDuration);
+        NSLog(@"setting buffer duration to: %f", currentBufferDuration);
+        
+        // note: this is where ipod touch (w/o mic) erred out when mic (ie earbud thing) was not plugged - before we added
+        // the code above to check for mic available 
+        // Activate the audio session
+        [mySession setActive: YES
+                       error: &audioSessionError];
+        
+        if (audioSessionError != nil) {
+            NSLog (@"Error activating audio session during initial setup.");
+            
+        }
+        
+        // find out the current buffer duration
+        // to calculate duration use: buffersize / sample rate, eg., 512 / 44100 = .012
+        
+        // Obtain the actual buffer duration - this may be necessary to get fft stuff working properly in passthru
+        AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareIOBufferDuration, &sss, &currentBufferDuration);
+        NSLog(@"Actual current hardware io buffer duration: %f ", currentBufferDuration );
+                
+        // find out how many input channels are available 
+        
+        NSInteger numberOfChannels = [mySession currentHardwareInputNumberOfChannels];  
+        NSLog(@"number of channels: %d", numberOfChannels );	
+        
 
         AUNode ioNode;
         AUNode mixerNode;
@@ -62,7 +115,7 @@ static OSStatus	renderCallback(void						*inRefCon,
         io_desc.componentFlagsMask = 0;
         io_desc.componentManufacturer = kAudioUnitManufacturer_Apple;
         
-        // Multichannel mixer unit
+        
         AudioComponentDescription mixer_desc;
         mixer_desc.componentType          = kAudioUnitType_Mixer;
         mixer_desc.componentSubType       = kAudioUnitSubType_MultiChannelMixer;
@@ -74,6 +127,7 @@ static OSStatus	renderCallback(void						*inRefCon,
         result = AUGraphAddNode(graph, &mixer_desc, &mixerNode);
         
         AUGraphConnectNodeInput(graph, mixerNode, 0, ioNode, 0);
+        AUGraphConnectNodeInput(graph, ioNode, 1, mixerNode, 1);
         
         result = AUGraphOpen(graph);
         result = AUGraphNodeInfo(graph, ioNode, NULL, &ioUnit);
@@ -235,19 +289,5 @@ static OSStatus	renderCallback(void						*inRefCon,
     [self drawOscilloscope];
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
-	
-}
-
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
-{
-	
-}
-
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
-
-}
 
 @end

@@ -28,6 +28,7 @@
 		F7CF73190EB126740099AA71 /* mute_on.png in Resources */ = {isa = PBXBuildFile; fileRef = F7CF73150EB126740099AA71 /* mute_on.png */; };
 		F7DF06DE0DF4AD57005687F5 /* button_press.caf in Resources */ = {isa = PBXBuildFile; fileRef = F7DF06DC0DF4AD57005687F5 /* button_press.caf */; };
 		F7E58EDA0DCFD988006C4A2F /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7E58ED90DCFD988006C4A2F /* AudioToolbox.framework */; };
+		F7F2D08B14D5681900B54B06 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7F2D08A14D5681900B54B06 /* AVFoundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +61,7 @@
 		F7CF73150EB126740099AA71 /* mute_on.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mute_on.png; sourceTree = "<group>"; };
 		F7DF06DC0DF4AD57005687F5 /* button_press.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = button_press.caf; sourceTree = "<group>"; };
 		F7E58ED90DCFD988006C4A2F /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		F7F2D08A14D5681900B54B06 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F7F2D08B14D5681900B54B06 /* AVFoundation.framework in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				1D3623EC0D0F72F000981E51 /* CoreGraphics.framework in Frameworks */,
@@ -134,6 +137,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F7F2D08A14D5681900B54B06 /* AVFoundation.framework */,
 				A16C473E0DE3801700F4A0B3 /* QuartzCore.framework */,
 				A16C47110DE37F9E00F4A0B3 /* OpenGLES.framework */,
 				F7E58ED90DCFD988006C4A2F /* AudioToolbox.framework */,
