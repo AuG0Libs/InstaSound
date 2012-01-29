@@ -181,19 +181,29 @@ static OSStatus	renderCallback(void                         *inRefCon,
 //    renderCallbackStruct.inputProc = &renderCallback;
 //    result = AUGraphSetNodeInputCallback(graph, mixerNode, 0, &renderCallbackStruct);
 
-    size_t bytesPerSample = sizeof (AudioUnitSampleType);
     
-    ioFormat.mFormatID          = kAudioFormatLinearPCM;
-    ioFormat.mFormatFlags       = kAudioFormatFlagsNativeFloatPacked;
-    ioFormat.mBytesPerPacket    = bytesPerSample;
-    ioFormat.mFramesPerPacket   = 1;
-    ioFormat.mBytesPerFrame     = bytesPerSample;
-    ioFormat.mChannelsPerFrame  = 1;
-    ioFormat.mBitsPerChannel    = 8 * bytesPerSample;
-    ioFormat.mSampleRate        = 44100;
+    UInt32 asbdSize = sizeof(AudioStreamBasicDescription);
+    memset (&ioFormat, 0, sizeof (ioFormat));
     
-    int busCount = 6;
+    result = AudioUnitGetProperty(distortionUnit,
+                                  kAudioUnitProperty_StreamFormat, 
+                                  kAudioUnitScope_Input, 
+                                  0, 
+                                  &ioFormat, 
+                                  &asbdSize);  
+    
+    
+//    size_t bytesPerSample = sizeof (AudioUnitSampleType);    
+//    ioFormat.mFormatID          = kAudioFormatLinearPCM;
+//    ioFormat.mFormatFlags       = kAudioFormatFlagIsFloat;
+//    ioFormat.mBytesPerPacket    = bytesPerSample;
+//    ioFormat.mFramesPerPacket   = 1;
+//    ioFormat.mBytesPerFrame     = bytesPerSample;
+//    ioFormat.mChannelsPerFrame  = 2;
+//    ioFormat.mBitsPerChannel    = 8 * bytesPerSample;
+//    ioFormat.mSampleRate        = 44100;
 
+    
     result = AudioUnitSetProperty(mixerUnit,
                                   kAudioUnitProperty_StreamFormat,
                                   kAudioUnitScope_Output,
@@ -207,30 +217,31 @@ static OSStatus	renderCallback(void                         *inRefCon,
                                   0,
                                   &ioFormat,
                                   sizeof(ioFormat));
-    
-    result = AudioUnitSetProperty(distortionUnit,
-                                  kAudioUnitProperty_StreamFormat,
-                                  kAudioUnitScope_Input,
-                                  0,
-                                  &ioFormat,
-                                  sizeof(ioFormat));
-    
-    result = AudioUnitSetProperty(distortionUnit,
-                                  kAudioUnitProperty_StreamFormat,
-                                  kAudioUnitScope_Output,
-                                  0,
-                                  &ioFormat,
-                                  sizeof(ioFormat));
+
     
     
+//    result = AudioUnitSetProperty(distortionUnit,
+//                                  kAudioUnitProperty_StreamFormat,
+//                                  kAudioUnitScope_Input,
+//                                  0,
+//                                  &ioFormat,
+//                                  sizeof(ioFormat));
+//    
+//    result = AudioUnitSetProperty(distortionUnit,
+//                                  kAudioUnitProperty_StreamFormat,
+//                                  kAudioUnitScope_Output,
+//                                  0,
+//                                  &ioFormat,
+//                                  sizeof(ioFormat));
     
     
-    result = AudioUnitSetProperty(mixerUnit,
-                                  kAudioUnitProperty_ElementCount,
-                                  kAudioUnitScope_Input,
-                                  0,
-                                  &busCount,
-                                  sizeof (busCount));
+    
+//    result = AudioUnitSetProperty(mixerUnit,
+//                                  kAudioUnitProperty_ElementCount,
+//                                  kAudioUnitScope_Input,
+//                                  0,
+//                                  &busCount,
+//                                  sizeof (busCount));
     
 
     result = AUGraphInitialize(graph);
