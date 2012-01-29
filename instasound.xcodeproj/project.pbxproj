@@ -7,7 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		512A759914D5B21400FB391E /* icon_Vinyl.png in Resources */ = {isa = PBXBuildFile; fileRef = 512A759814D5B21400FB391E /* icon_Vinyl.png */; };
+		51ABB21714D5C15600D62235 /* app_icon_57.png in Resources */ = {isa = PBXBuildFile; fileRef = 51ABB21614D5C15600D62235 /* app_icon_57.png */; };
+		51ABB21A14D5C15B00D62235 /* app_icon_114.png in Resources */ = {isa = PBXBuildFile; fileRef = 51ABB21914D5C15B00D62235 /* app_icon_114.png */; };
+		51ABB21C14D5C16900D62235 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 51ABB21B14D5C16900D62235 /* Default.png */; };
+		51ABB21E14D5C17300D62235 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 51ABB21D14D5C17300D62235 /* Default@2x.png */; };
+		51FDDFE614D5BCCE00A4E8ED /* icon_Vinyl.png in Resources */ = {isa = PBXBuildFile; fileRef = 51FDDFDD14D5BCCE00A4E8ED /* icon_Vinyl.png */; };
+		51FDDFE714D5BCCE00A4E8ED /* Record.png in Resources */ = {isa = PBXBuildFile; fileRef = 51FDDFDE14D5BCCE00A4E8ED /* Record.png */; };
+		51FDDFE814D5BCCE00A4E8ED /* Record@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 51FDDFDF14D5BCCE00A4E8ED /* Record@2x.png */; };
+		51FDDFE914D5BCCE00A4E8ED /* Stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 51FDDFE014D5BCCE00A4E8ED /* Stop.png */; };
+		51FDDFEA14D5BCCE00A4E8ED /* Stop@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 51FDDFE114D5BCCE00A4E8ED /* Stop@2x.png */; };
 		F784290214D5701D00F55C51 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290114D5701D00F55C51 /* UIKit.framework */; };
 		F784290414D5701D00F55C51 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290314D5701D00F55C51 /* Foundation.framework */; };
 		F784290614D5701D00F55C51 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290514D5701D00F55C51 /* CoreGraphics.framework */; };
@@ -23,7 +31,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		512A759814D5B21400FB391E /* icon_Vinyl.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_Vinyl.png; sourceTree = "<group>"; };
+		51ABB21614D5C15600D62235 /* app_icon_57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = app_icon_57.png; sourceTree = "<group>"; };
+		51ABB21914D5C15B00D62235 /* app_icon_114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = app_icon_114.png; sourceTree = "<group>"; };
+		51ABB21B14D5C16900D62235 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		51ABB21D14D5C17300D62235 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		51FDDFDD14D5BCCE00A4E8ED /* icon_Vinyl.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_Vinyl.png; sourceTree = "<group>"; };
+		51FDDFDE14D5BCCE00A4E8ED /* Record.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Record.png; sourceTree = "<group>"; };
+		51FDDFDF14D5BCCE00A4E8ED /* Record@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Record@2x.png"; sourceTree = "<group>"; };
+		51FDDFE014D5BCCE00A4E8ED /* Stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Stop.png; sourceTree = "<group>"; };
+		51FDDFE114D5BCCE00A4E8ED /* Stop@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Stop@2x.png"; sourceTree = "<group>"; };
 		F78428FD14D5701D00F55C51 /* instasound.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = instasound.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F784290114D5701D00F55C51 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		F784290314D5701D00F55C51 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -66,7 +82,11 @@
 		512A759614D5AEC600FB391E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				512A759814D5B21400FB391E /* icon_Vinyl.png */,
+				51FDDFDD14D5BCCE00A4E8ED /* icon_Vinyl.png */,
+				51FDDFDE14D5BCCE00A4E8ED /* Record.png */,
+				51FDDFDF14D5BCCE00A4E8ED /* Record@2x.png */,
+				51FDDFE014D5BCCE00A4E8ED /* Stop.png */,
+				51FDDFE114D5BCCE00A4E8ED /* Stop@2x.png */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -74,6 +94,10 @@
 		F78428F214D5701D00F55C51 = {
 			isa = PBXGroup;
 			children = (
+				51ABB21D14D5C17300D62235 /* Default@2x.png */,
+				51ABB21B14D5C16900D62235 /* Default.png */,
+				51ABB21914D5C15B00D62235 /* app_icon_114.png */,
+				51ABB21614D5C15600D62235 /* app_icon_57.png */,
 				F784290714D5701D00F55C51 /* instasound */,
 				F784290014D5701D00F55C51 /* Frameworks */,
 				F78428FE14D5701D00F55C51 /* Products */,
@@ -180,7 +204,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				F784290C14D5701D00F55C51 /* InfoPlist.strings in Resources */,
-				512A759914D5B21400FB391E /* icon_Vinyl.png in Resources */,
+				51FDDFE614D5BCCE00A4E8ED /* icon_Vinyl.png in Resources */,
+				51FDDFE714D5BCCE00A4E8ED /* Record.png in Resources */,
+				51FDDFE814D5BCCE00A4E8ED /* Record@2x.png in Resources */,
+				51FDDFE914D5BCCE00A4E8ED /* Stop.png in Resources */,
+				51FDDFEA14D5BCCE00A4E8ED /* Stop@2x.png in Resources */,
+				51ABB21714D5C15600D62235 /* app_icon_57.png in Resources */,
+				51ABB21A14D5C15B00D62235 /* app_icon_114.png in Resources */,
+				51ABB21C14D5C16900D62235 /* Default.png in Resources */,
+				51ABB21E14D5C17300D62235 /* Default@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -266,6 +298,7 @@
 				GCC_PREFIX_HEADER = "instasound/instasound-Prefix.pch";
 				INFOPLIST_FILE = "instasound/instasound-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -278,6 +311,7 @@
 				GCC_PREFIX_HEADER = "instasound/instasound-Prefix.pch";
 				INFOPLIST_FILE = "instasound/instasound-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
