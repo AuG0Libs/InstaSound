@@ -64,8 +64,7 @@ static OSStatus	renderCallback(void                         *inRefCon,
     
     [mySession setPreferredHardwareSampleRate: 44100.0
                                         error: &audioSessionError];
-    
-    
+
     // refer to IOS developer library : Audio Session Programming Guide
     // set preferred buffer duration to 1024 using
     //  try ((buffer size + 1) / sample rate) - due to little arm6 floating point bug?
@@ -118,9 +117,9 @@ static OSStatus	renderCallback(void                         *inRefCon,
     AudioComponentDescription mixer_desc;
     mixer_desc.componentType            = kAudioUnitType_Mixer;
     mixer_desc.componentSubType         = kAudioUnitSubType_MultiChannelMixer;
-    mixer_desc.componentManufacturer    = kAudioUnitManufacturer_Apple;
     mixer_desc.componentFlags           = 0;
     mixer_desc.componentFlagsMask       = 0;
+    mixer_desc.componentManufacturer    = kAudioUnitManufacturer_Apple;
     
     result = AUGraphAddNode(graph, &io_desc, &ioNode);
     result = AUGraphAddNode(graph, &mixer_desc, &mixerNode);
