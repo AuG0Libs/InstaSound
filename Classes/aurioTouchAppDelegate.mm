@@ -55,18 +55,18 @@ static OSStatus	renderCallback(void                         *inRefCon,
         result = NewAUGraph(&graph);
 
         AudioComponentDescription io_desc;
-        io_desc.componentType = kAudioUnitType_Output;
-        io_desc.componentSubType = kAudioUnitSubType_RemoteIO;
-        io_desc.componentFlags = 0;
-        io_desc.componentFlagsMask = 0;
-        io_desc.componentManufacturer = kAudioUnitManufacturer_Apple;
+        io_desc.componentType               = kAudioUnitType_Output;
+        io_desc.componentSubType            = kAudioUnitSubType_RemoteIO;
+        io_desc.componentFlags              = 0;
+        io_desc.componentFlagsMask          = 0;
+        io_desc.componentManufacturer       = kAudioUnitManufacturer_Apple;
 
         AudioComponentDescription mixer_desc;
-        mixer_desc.componentType          = kAudioUnitType_Mixer;
-        mixer_desc.componentSubType       = kAudioUnitSubType_MultiChannelMixer;
-        mixer_desc.componentManufacturer  = kAudioUnitManufacturer_Apple;
-        mixer_desc.componentFlags         = 0;
-        mixer_desc.componentFlagsMask     = 0;
+        mixer_desc.componentType            = kAudioUnitType_Mixer;
+        mixer_desc.componentSubType         = kAudioUnitSubType_MultiChannelMixer;
+        mixer_desc.componentManufacturer    = kAudioUnitManufacturer_Apple;
+        mixer_desc.componentFlags           = 0;
+        mixer_desc.componentFlagsMask       = 0;
 
         result = AUGraphAddNode(graph, &io_desc, &ioNode);
         result = AUGraphAddNode(graph, &mixer_desc, &mixerNode);
