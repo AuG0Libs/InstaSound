@@ -7,6 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5120486014D5DCAC003B0F42 /* SoundCloud.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5120485F14D5DCAC003B0F42 /* SoundCloud.bundle */; };
+		5120488214D5DDE5003B0F42 /* libJSONKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5120487914D5DDE5003B0F42 /* libJSONKit.a */; };
+		5120488314D5DDE5003B0F42 /* libOAuth2Client.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5120487A14D5DDE5003B0F42 /* libOAuth2Client.a */; };
+		5120488414D5DDE5003B0F42 /* libOHAttributedLabel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5120487B14D5DDE5003B0F42 /* libOHAttributedLabel.a */; };
+		5120488514D5DDE5003B0F42 /* libSoundCloudAPI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5120487C14D5DDE5003B0F42 /* libSoundCloudAPI.a */; };
+		5120488614D5DDE5003B0F42 /* libSoundCloudUI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5120487D14D5DDE5003B0F42 /* libSoundCloudUI.a */; };
+		5120488C14D60392003B0F42 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5120488A14D60392003B0F42 /* AddressBook.framework */; };
+		5120488D14D60392003B0F42 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5120488B14D60392003B0F42 /* AddressBookUI.framework */; };
+		5120488F14D6039B003B0F42 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5120488E14D6039B003B0F42 /* CoreLocation.framework */; };
+		5120489114D603A4003B0F42 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5120489014D603A4003B0F42 /* Security.framework */; };
+		5120489314D603B0003B0F42 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5120489214D603B0003B0F42 /* CoreText.framework */; };
 		51ABB21714D5C15600D62235 /* app_icon_57.png in Resources */ = {isa = PBXBuildFile; fileRef = 51ABB21614D5C15600D62235 /* app_icon_57.png */; };
 		51ABB21A14D5C15B00D62235 /* app_icon_114.png in Resources */ = {isa = PBXBuildFile; fileRef = 51ABB21914D5C15B00D62235 /* app_icon_114.png */; };
 		51ABB21C14D5C16900D62235 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 51ABB21B14D5C16900D62235 /* Default.png */; };
@@ -32,6 +43,17 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5120485F14D5DCAC003B0F42 /* SoundCloud.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = SoundCloud.bundle; path = ../../CocoaSoundCloudUI/SoundCloud.bundle; sourceTree = "<group>"; };
+		5120487914D5DDE5003B0F42 /* libJSONKit.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libJSONKit.a; path = "JSONKit/build/Release-iphoneos/libJSONKit.a"; sourceTree = "<group>"; };
+		5120487A14D5DDE5003B0F42 /* libOAuth2Client.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libOAuth2Client.a; path = "OAuth2Client/build/Release-iphoneos/libOAuth2Client.a"; sourceTree = "<group>"; };
+		5120487B14D5DDE5003B0F42 /* libOHAttributedLabel.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libOHAttributedLabel.a; path = "OHAttributedLabel/build/Release-iphoneos/libOHAttributedLabel.a"; sourceTree = "<group>"; };
+		5120487C14D5DDE5003B0F42 /* libSoundCloudAPI.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libSoundCloudAPI.a; path = "CocoaSoundCloudAPI/build/Release-iphoneos/libSoundCloudAPI.a"; sourceTree = "<group>"; };
+		5120487D14D5DDE5003B0F42 /* libSoundCloudUI.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libSoundCloudUI.a; path = "CocoaSoundCloudUI/build/Release-iphoneos/libSoundCloudUI.a"; sourceTree = "<group>"; };
+		5120488A14D60392003B0F42 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
+		5120488B14D60392003B0F42 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
+		5120488E14D6039B003B0F42 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		5120489014D603A4003B0F42 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		5120489214D603B0003B0F42 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		51ABB21614D5C15600D62235 /* app_icon_57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = app_icon_57.png; sourceTree = "<group>"; };
 		51ABB21914D5C15B00D62235 /* app_icon_114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = app_icon_114.png; sourceTree = "<group>"; };
 		51ABB21B14D5C16900D62235 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
@@ -69,6 +91,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5120489314D603B0003B0F42 /* CoreText.framework in Frameworks */,
+				5120489114D603A4003B0F42 /* Security.framework in Frameworks */,
+				5120488F14D6039B003B0F42 /* CoreLocation.framework in Frameworks */,
+				5120488C14D60392003B0F42 /* AddressBook.framework in Frameworks */,
+				5120488D14D60392003B0F42 /* AddressBookUI.framework in Frameworks */,
+				5120488214D5DDE5003B0F42 /* libJSONKit.a in Frameworks */,
+				5120488314D5DDE5003B0F42 /* libOAuth2Client.a in Frameworks */,
+				5120488414D5DDE5003B0F42 /* libOHAttributedLabel.a in Frameworks */,
+				5120488514D5DDE5003B0F42 /* libSoundCloudAPI.a in Frameworks */,
+				5120488614D5DDE5003B0F42 /* libSoundCloudUI.a in Frameworks */,
 				F784292D14D5725B00F55C51 /* QuartzCore.framework in Frameworks */,
 				F784292B14D5720E00F55C51 /* OpenGLES.framework in Frameworks */,
 				F784292714D571BE00F55C51 /* AVFoundation.framework in Frameworks */,
@@ -85,6 +117,7 @@
 		512A759614D5AEC600FB391E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				5120485F14D5DCAC003B0F42 /* SoundCloud.bundle */,
 				51FDDFDD14D5BCCE00A4E8ED /* icon_Vinyl.png */,
 				51FDDFDE14D5BCCE00A4E8ED /* Record.png */,
 				51FDDFDF14D5BCCE00A4E8ED /* Record@2x.png */,
@@ -118,6 +151,16 @@
 		F784290014D5701D00F55C51 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5120487914D5DDE5003B0F42 /* libJSONKit.a */,
+				5120487A14D5DDE5003B0F42 /* libOAuth2Client.a */,
+				5120487B14D5DDE5003B0F42 /* libOHAttributedLabel.a */,
+				5120487C14D5DDE5003B0F42 /* libSoundCloudAPI.a */,
+				5120487D14D5DDE5003B0F42 /* libSoundCloudUI.a */,
+				5120489214D603B0003B0F42 /* CoreText.framework */,
+				5120489014D603A4003B0F42 /* Security.framework */,
+				5120488E14D6039B003B0F42 /* CoreLocation.framework */,
+				5120488A14D60392003B0F42 /* AddressBook.framework */,
+				5120488B14D60392003B0F42 /* AddressBookUI.framework */,
 				F784292C14D5725B00F55C51 /* QuartzCore.framework */,
 				F784292A14D5720E00F55C51 /* OpenGLES.framework */,
 				F784292814D571CB00F55C51 /* AudioUnit.framework */,
@@ -218,6 +261,7 @@
 				51ABB21A14D5C15B00D62235 /* app_icon_114.png in Resources */,
 				51ABB21C14D5C16900D62235 /* Default.png in Resources */,
 				51ABB21E14D5C17300D62235 /* Default@2x.png in Resources */,
+				5120486014D5DCAC003B0F42 /* SoundCloud.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,7 +346,12 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "instasound/instasound-Prefix.pch";
+				HEADER_SEARCH_PATHS = "./**";
 				INFOPLIST_FILE = "instasound/instasound-Info.plist";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -315,7 +364,12 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "instasound/instasound-Prefix.pch";
+				HEADER_SEARCH_PATHS = "./**";
 				INFOPLIST_FILE = "instasound/instasound-Info.plist";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;

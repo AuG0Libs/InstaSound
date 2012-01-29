@@ -20,10 +20,12 @@
 
 @property (retain, nonatomic) IBOutlet UINavigationBar *navigationBar;
 @property (retain, nonatomic) IBOutlet UITabBar *buttonBar;
+@property (retain, nonatomic) IBOutlet UIButton *recordButton;
 
 - (void)initializeEAGLView;
 - (void)initializeNavigationView;
 - (void)initializeButtons;
+- (void)initializeRecordButton;
 
 @end
 

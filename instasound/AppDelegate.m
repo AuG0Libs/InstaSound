@@ -9,6 +9,7 @@
 @synthesize viewController = _viewController;
 @synthesize navigationBar = _navigationBar;
 @synthesize buttonBar = _buttonBar;
+@synthesize recordButton = _recordButton;
 
 int points = 1024;
 
@@ -23,10 +24,12 @@ int points = 1024;
     [self initializeEAGLView];
     [self initializeNavigationView];
     [self initializeButtons];
+    [self initializeRecordButton];
     
     [self.window addSubview:self.eaglView];
     [self.window addSubview:self.navigationBar];
     [self.window addSubview:self.buttonBar];
+    [self.window addSubview:self.recordButton];
 
     // self.viewController.view = view;
     // self.window.rootViewController = self.viewController;
@@ -69,6 +72,15 @@ int points = 1024;
     UITabBarItem *church = [[UITabBarItem alloc] initWithTitle:@"Church" image:image tag:1];
     
     [self.buttonBar setItems:[NSArray arrayWithObjects: church, nil]];
+}
+- (void)initializeRecordButton
+{
+    self.recordButton = [[UIButton alloc] initWithFrame:CGRectMake(99, 171, 123, 123)];
+    
+    NSString* pathToImageFile = [[NSBundle mainBundle] pathForResource:@"Record" ofType:@"png"];
+    [self.recordButton setImage:[[UIImage alloc] initWithContentsOfFile:pathToImageFile] forState:UIControlStateNormal];
+    [self.recordButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentCenter];
+    [self.recordButton setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
