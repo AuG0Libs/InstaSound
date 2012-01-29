@@ -138,13 +138,8 @@ static OSStatus	renderCallback(void						*inRefCon,
 		unitIsRunning = 0;
 	}
 
-	// Set ourself as the delegate for the EAGLView so that we get drawing and touch events
 	view.delegate = self;
-
-	// Enable multi touch so we can handle pinch and zoom in the oscilloscope
 	view.multipleTouchEnabled = YES;
-
-	// Set up the view to refresh at 20 hz
 	[view setAnimationInterval:1./20.];
 	[view startAnimation];
 }
