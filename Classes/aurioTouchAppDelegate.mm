@@ -1,6 +1,7 @@
 
 #import "aurioTouchAppDelegate.h"
 #import "AudioToolbox/AudioToolbox.h"
+#import "AVFoundation/AVFoundation.h"
 #import "CAXException.h"
 
 @implementation aurioTouchAppDelegate
