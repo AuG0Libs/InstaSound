@@ -16,12 +16,12 @@ SInt16 audioBuffer[32 * 1024 * 1024];
 int audioBufferLen = 0;
 int points = 1024;
 
-static OSStatus	renderCallback(void						*inRefCon,
+static OSStatus	renderCallback(void                         *inRefCon,
                                AudioUnitRenderActionFlags 	*ioActionFlags,
                                const AudioTimeStamp 		*inTimeStamp,
                                UInt32 						inBusNumber,
                                UInt32 						inNumberFrames,
-                               AudioBufferList 			*ioData)
+                               AudioBufferList              *ioData)
 {
     SInt8 *data = (SInt8 *)(ioData->mBuffers[0].mData);
 
