@@ -39,14 +39,13 @@ inline double linearInterp(double valA, double valB, double fract)
 
 
 @property (strong, nonatomic) UIWindow *window;
-
 @property (strong, nonatomic) ViewController *viewController;
+@property (strong, nonatomic) EAGLView *view;
 
-@property (strong, nonatomic)	EAGLView*				view;
+@property (nonatomic, assign) BOOL unitIsRunning;
+@property (nonatomic, assign) BOOL unitHasBeenCreated;
 
-@property (nonatomic, assign)	BOOL						unitIsRunning;
-@property (nonatomic, assign)	BOOL						unitHasBeenCreated;
-
+- (void) initializeView;
 
 @end
 
