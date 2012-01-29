@@ -254,6 +254,7 @@
 				GCC_PREFIX_HEADER = "instasound/instasound-Prefix.pch";
 				INFOPLIST_FILE = "instasound/instasound-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -265,6 +266,7 @@
 				GCC_PREFIX_HEADER = "instasound/instasound-Prefix.pch";
 				INFOPLIST_FILE = "instasound/instasound-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -288,6 +290,7 @@
 				F784292014D5701D00F55C51 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
