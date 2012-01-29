@@ -11,45 +11,60 @@
 @synthesize viewController = _viewController;
 @synthesize navigationBar = _navigationBar;
 @synthesize buttonBar = _buttonBar;
+@synthesize recordButton = _recordButton;
 
 @synthesize unitIsRunning;
 @synthesize unitHasBeenCreated;
 
-SInt16 audioBuffer[32 * 1024 * 1024];
+Float32 audioBuffer[32 * 1024 * 1024];
 
 int audioBufferLen = 0;
 int points = 1024;
 
-static OSStatus	renderCallback(void                         *inRefCon,
-                               AudioUnitRenderActionFlags 	*ioActionFlags,
-                               const AudioTimeStamp 		*inTimeStamp,
-                               UInt32 						inBusNumber,
-                               UInt32 						inNumberFrames,
-                               AudioBufferList              *ioData) {
+static OSStatus renderCallback (void *inRefCon, 
+                                AudioUnitRenderActionFlags 	*ioActionFlags, 
+                                const AudioTimeStamp		*inTimeStamp, 
+                                UInt32 						inBusNumber, 
+                                UInt32 						inNumberFrames, 
+                                AudioBufferList				*ioData)
+{
+    AudioUnit *unit = (AudioUnit *)inRefCon;
 
-    SInt8 *data = (SInt8 *)(ioData->mBuffers[0].mData);
+	OSStatus renderErr;
     
-    NSLog(@"%d\n", data[2]);
+    renderErr = AudioUnitRender(*unit, ioActionFlags, 
+								inTimeStamp, 0, inNumberFrames, ioData);
+	if (renderErr < 0) {
+		return renderErr;
+	}
     
+    SInt32 *data = (SInt32 *) ioData->mBuffers[0].mData; // left channel
+     
     for (int i = 0; i < inNumberFrames; i++)
     {
-        audioBuffer[audioBufferLen + i] = data[i * 4 + 2] << 8 | (UInt8) data[i * 4 + 3];
+        audioBuffer[audioBufferLen + i] = (data[i] >> 9) / 32512.0;
     }
-
+    
     audioBufferLen += inNumberFrames;
-
-	return 0;
+    
+    return noErr;	// return with samples in iOdata
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    // Make it red to see size issues
+    [self.window setBackgroundColor:[UIColor redColor]];
+    
     [self initializeEAGLView];
     [self initializeNavigationView];
     [self initializeButtons];
+    [self initializeRecordButton];
     
     [self.window addSubview:self.eaglView];
     [self.window addSubview:self.navigationBar];
     [self.window addSubview:self.buttonBar];
+    [self.window addSubview:self.recordButton];
 
     // self.viewController.view = view;
     // self.window.rootViewController = self.viewController;
@@ -125,6 +140,7 @@ static OSStatus	renderCallback(void                         *inRefCon,
     AUNode ioNode;
     AUNode mixerNode;
     AUNode mixer2Node;
+    AUNode mixer3Node;
 
     AUNode distortionNode;
     AUNode reverbNode;
@@ -183,15 +199,11 @@ static OSStatus	renderCallback(void                         *inRefCon,
     result = AUGraphAddNode(graph, &mixer_desc, &mixer2Node);    
 
     result = AUGraphAddNode(graph, &distortion_desc, &distortionNode);
-        if (result != 0) {NSLog(@"FAIL distortion: %ld", result);}
     result = AUGraphAddNode(graph, &reverb_desc, &reverbNode);
-        if (result != 0) {NSLog(@"FAIL reverb: %ld", result);}
     result = AUGraphAddNode(graph, &compression_desc, &compressionNode);
-        if (result != 0) {NSLog(@"FAIL compression: %ld", result);}
     result = AUGraphAddNode(graph, &lowpass_desc, &lowpassNode);
-        if (result != 0) {NSLog(@"FAIL lowpass: %ld", result);}
     
-
+    result = AUGraphAddNode(graph, &mixer_desc, &mixer3Node);      
 
     int outputChannel = 0;
     int inputChannel = 1;
@@ -199,7 +211,7 @@ static OSStatus	renderCallback(void                         *inRefCon,
     result = AUGraphConnectNodeInput(graph, ioNode, inputChannel, mixerNode, 0);
     result = AUGraphConnectNodeInput(graph, mixerNode, 0, reverbNode, 0);
     result = AUGraphConnectNodeInput(graph, reverbNode, 0, mixer2Node, 0);
-    result = AUGraphConnectNodeInput(graph, mixer2Node, 0, ioNode, outputChannel);
+    result = AUGraphConnectNodeInput(graph, mixer3Node, 0, ioNode, outputChannel);
     
     result = AUGraphOpen(graph);
     result = AUGraphNodeInfo(graph, ioNode, NULL, &ioUnit);
@@ -219,9 +231,10 @@ static OSStatus	renderCallback(void                         *inRefCon,
                                   &enableInput,
                                   sizeof(enableInput));
 
-//    AURenderCallbackStruct renderCallbackStruct;
-//    renderCallbackStruct.inputProc = &renderCallback;
-//    result = AUGraphSetNodeInputCallback(graph, mixerNode, 0, &renderCallbackStruct);
+    AURenderCallbackStruct renderCallbackStruct;
+    renderCallbackStruct.inputProc = &renderCallback;
+    renderCallbackStruct.inputProcRefCon = &mixer2Unit;
+    result = AUGraphSetNodeInputCallback(graph, mixer3Node, 0, &renderCallbackStruct);
     
     UInt32 asbdSize = sizeof(AudioStreamBasicDescription);
     memset (&ioFormat, 0, sizeof (ioFormat));
@@ -288,6 +301,10 @@ static OSStatus	renderCallback(void                         *inRefCon,
     
     unitHasBeenCreated = true;
     unitIsRunning = 1;
+       
+    // top: 20 (statusbar) + 44 (navigationBar)
+    // height: 480 (whole screen) - 49 (bottombar) - 64 (topbar)
+    self.eaglView = [[EAGLView alloc] initWithFrame: CGRectMake(0, 64, 320, 367)];
     
         
     // AudioUnit Parameters have to be set after the Graph has been started
@@ -369,17 +386,10 @@ static OSStatus	renderCallback(void                         *inRefCon,
     
     if (result != 0) {NSLog(@"FAIL in effect GetParameter: %ld", result);}
     
+    self.eaglView.delegate = self;
     
-
-    
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    
-    self.eaglView = [[EAGLView alloc] initWithFrame: CGRectMake ( 0, 0, 480, 640)];
-    
-    eaglView.delegate = self;
-    
-    [eaglView setAnimationInterval:1./20.];
-	[eaglView startAnimation];
+    [self.eaglView setAnimationInterval:1./20.];
+    [self.eaglView startAnimation];
 }
 
 - (void)initializeNavigationView
@@ -402,6 +412,15 @@ static OSStatus	renderCallback(void                         *inRefCon,
     UITabBarItem *church = [[UITabBarItem alloc] initWithTitle:@"Church" image:image tag:1];
     
     [self.buttonBar setItems:[NSArray arrayWithObjects: church, nil]];
+}
+- (void)initializeRecordButton
+{
+    self.recordButton = [[UIButton alloc] initWithFrame:CGRectMake(99, 171, 123, 123)];
+    
+    NSString* pathToImageFile = [[NSBundle mainBundle] pathForResource:@"Record" ofType:@"png"];
+    [self.recordButton setImage:[[UIImage alloc] initWithContentsOfFile:pathToImageFile] forState:UIControlStateNormal];
+    [self.recordButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentCenter];
+    [self.recordButton setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
@@ -430,12 +449,10 @@ static OSStatus	renderCallback(void                         *inRefCon,
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-	glColor4f(1., 1., 1., 1.);
-
 	glPushMatrix();
 
-	glTranslatef(0., 480., 0.);
-	glRotatef(-90., 0., 0., 1.);
+	// glTranslatef(0., 480., 0.);
+	// glRotatef(-90., 0., 0., 1.);
 
 	glEnable(GL_TEXTURE_2D);
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -443,8 +460,8 @@ static OSStatus	renderCallback(void                         *inRefCon,
 
 	glPushMatrix();
 
-	glTranslatef(17., 182., 0.);
-	glScalef(448., 116., 1.);
+	glTranslatef(0, 0, 0.);
+	glScalef(320., 300., 1.);
 
 	glDisable(GL_TEXTURE_2D);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -458,11 +475,11 @@ static OSStatus	renderCallback(void                         *inRefCon,
         for (int i = 0; i < points; i++)
         {
             oscilLine[i * 2 + 0] = ((Float32) i) / points;
-            oscilLine[i * 2 + 1] = ((Float32) audioBuffer[offset + i * 256]) / 32768.0;
+            oscilLine[i * 2 + 1] = audioBuffer[offset + i * 256];
         }
     }
 
-    glColor4f(0., 1., 0., 1.);
+    glColor4f(0.5, 0.5, 0.5, 1.);
     glVertexPointer(2, GL_FLOAT, 0, oscilLine);
     glDrawArrays(GL_LINE_STRIP, 0, points);
 
