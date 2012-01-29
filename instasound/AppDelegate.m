@@ -124,8 +124,8 @@ static OSStatus	renderCallback(void                         *inRefCon,
     result = AUGraphAddNode(graph, &io_desc, &ioNode);
     result = AUGraphAddNode(graph, &mixer_desc, &mixerNode);
 
-    AUGraphConnectNodeInput(graph, mixerNode, 0, ioNode, 0);
-    AUGraphConnectNodeInput(graph, ioNode, 1, mixerNode, 1);
+    // AUGraphConnectNodeInput(graph, mixerNode, 0, ioNode, 0);
+    AUGraphConnectNodeInput(graph, ioNode, 0, mixerNode, 1);
 
     result = AUGraphOpen(graph);
     result = AUGraphNodeInfo(graph, ioNode, NULL, &ioUnit);
@@ -142,7 +142,7 @@ static OSStatus	renderCallback(void                         *inRefCon,
     AURenderCallbackStruct renderCallbackStruct;
     renderCallbackStruct.inputProc = &renderCallback;
 
-    result = AUGraphSetNodeInputCallback(graph, mixerNode, 0, &renderCallbackStruct);
+    result = AUGraphSetNodeInputCallback(graph, mixerNode, 1, &renderCallbackStruct);
 
     size_t bytesPerSample = sizeof (AudioUnitSampleType);
 
@@ -163,7 +163,14 @@ static OSStatus	renderCallback(void                         *inRefCon,
                                   0,
                                   &ioFormat,
                                   sizeof(ioFormat));
-
+    
+    result = AudioUnitSetProperty(mixerUnit,
+                                  kAudioUnitProperty_StreamFormat,
+                                  kAudioUnitScope_Input,
+                                  0,
+                                  &ioFormat,
+                                  sizeof(ioFormat));
+    
     result = AudioUnitSetProperty (mixerUnit,
                                    kAudioUnitProperty_ElementCount,
                                    kAudioUnitScope_Input,
@@ -172,6 +179,14 @@ static OSStatus	renderCallback(void                         *inRefCon,
                                    sizeof (busCount));
 
     result = AUGraphInitialize(graph);
+    
+    if (result == 0) {
+        NSLog(@"INIT SUCCEEDED");
+    }
+    else {
+        NSLog(@"INIT FAILED");
+    }
+    
     CAShow(graph);
 
     AUGraphStart(graph);
@@ -182,7 +197,7 @@ static OSStatus	renderCallback(void                         *inRefCon,
 
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 
-    self.view = [[EAGLView alloc] initWithFrame: CGRectMake ( 0, 0, 200, 150)];
+    self.view = [[EAGLView alloc] initWithFrame: CGRectMake ( 0, 0, 480, 640)];
 
     view.delegate = self;
 

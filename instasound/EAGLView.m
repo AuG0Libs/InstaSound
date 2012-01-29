@@ -86,6 +86,8 @@
         return NO;
     }
     
+    NSLog(@"FRAMEBUFFER CREATION SUCEEDED");
+
     return YES;
 }
 
