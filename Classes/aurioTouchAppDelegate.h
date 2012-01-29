@@ -9,7 +9,7 @@
 #import "EAGLView.h"
 #import "aurio_helper.h"
 #import "CAStreamBasicDescription.h"
-#import "AudioUnit/AudioUnit.h"
+#import "AudioToolbox/AudioToolbox.h"
 
 #define SPECTRUM_BAR_WIDTH 4
 
@@ -26,29 +26,29 @@ inline double linearInterp(double valA, double valB, double fract)
 	IBOutlet UIWindow*			window;
 	IBOutlet EAGLView*			view;
     
-	AudioUnit					rioUnit;
+	AudioUnit					mixerUnit;
+    AudioUnit                   ioUnit;
+    AudioUnit                   output;
+    AUGraph                     graph;
 	BOOL						unitIsRunning;
 	BOOL						unitHasBeenCreated;
 	UInt32*						texBitBuffer;
 	
-	CAStreamBasicDescription	thruFormat;
+    CAStreamBasicDescription	ioFormat;
+
 	Float64						hwSampleRate;
 	
 	AURenderCallbackStruct		inputProc;
-	
-	int32_t*					l_fftData;
 
 	GLfloat*					oscilLine;
-	BOOL						resetOscilLine;
 }
 
 @property (nonatomic, retain)	UIWindow*				window;
 @property (nonatomic, retain)	EAGLView*				view;
 
-@property (nonatomic, assign)	AudioUnit				rioUnit;
 @property (nonatomic, assign)	BOOL						unitIsRunning;
 @property (nonatomic, assign)	BOOL						unitHasBeenCreated;
-@property (nonatomic, assign)	AURenderCallbackStruct	inputProc;
+
 
 @end
 

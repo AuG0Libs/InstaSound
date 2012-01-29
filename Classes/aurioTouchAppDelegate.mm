@@ -11,98 +11,19 @@
 @synthesize rioUnit;
 @synthesize unitIsRunning;
 @synthesize unitHasBeenCreated;
-@synthesize inputProc;
-
-#pragma mark-
-
-#pragma mark -Audio Session Interruption Listener
-
-void rioInterruptionListener(void *inClientData, UInt32 inInterruption)
-{
-	printf("Session interrupted! --- %s ---", inInterruption == kAudioSessionBeginInterruption ? "Begin Interruption" : "End Interruption");
-	
-	aurioTouchAppDelegate *THIS = (aurioTouchAppDelegate*)inClientData;
-	
-	if (inInterruption == kAudioSessionEndInterruption) {
-		// make sure we are again the active session
-		XThrowIfError(AudioSessionSetActive(true), "couldn't set audio session active");
-		XThrowIfError(AudioOutputUnitStart(THIS->rioUnit), "couldn't start unit");
-	}
-	
-	if (inInterruption == kAudioSessionBeginInterruption) {
-		XThrowIfError(AudioOutputUnitStop(THIS->rioUnit), "couldn't stop unit");
-    }
-}
 
 SInt16 audioBuffer[32 * 1024 * 1024];
 
 int audioBufferLen = 0;
 int points = 1024;
 
-#pragma mark -Audio Session Property Listener
-
-void propListener(	void *                  inClientData,
-					AudioSessionPropertyID	inID,
-					UInt32                  inDataSize,
-					const void *            inData)
+static OSStatus	renderCallback(void						*inRefCon, 
+                               AudioUnitRenderActionFlags 	*ioActionFlags, 
+                               const AudioTimeStamp 		*inTimeStamp, 
+                               UInt32 						inBusNumber, 
+                               UInt32 						inNumberFrames, 
+                               AudioBufferList 			*ioData)
 {
-	aurioTouchAppDelegate *THIS = (aurioTouchAppDelegate*)inClientData;
-	if (inID == kAudioSessionProperty_AudioRouteChange)
-	{
-		try {
-			 UInt32 isAudioInputAvailable; 
-			 UInt32 size = sizeof(isAudioInputAvailable);
-			 XThrowIfError(AudioSessionGetProperty(kAudioSessionProperty_AudioInputAvailable, &size, &isAudioInputAvailable), "couldn't get AudioSession AudioInputAvailable property value");
-			 
-			 if(THIS->unitIsRunning && !isAudioInputAvailable)
-			 {
-				 XThrowIfError(AudioOutputUnitStop(THIS->rioUnit), "couldn't stop unit");
-				 THIS->unitIsRunning = false;
-			 }
-			 
-			 else if(!THIS->unitIsRunning && isAudioInputAvailable)
-			 {
-				 XThrowIfError(AudioSessionSetActive(true), "couldn't set audio session active\n");
-			 
-				 if (!THIS->unitHasBeenCreated)	// the rio unit is being created for the first time
-				 {
-					 XThrowIfError(SetupRemoteIO(THIS->rioUnit, THIS->inputProc, THIS->thruFormat), "couldn't setup remote i/o unit");
-					 THIS->unitHasBeenCreated = true;
-					 
-					 UInt32 maxFPS;
-					 size = sizeof(maxFPS);
-					 XThrowIfError(AudioUnitGetProperty(THIS->rioUnit, kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, 0, &maxFPS, &size), "couldn't get the remote I/O unit's max frames per slice");
-					 
-				 }
-				 
-				 XThrowIfError(AudioOutputUnitStart(THIS->rioUnit), "couldn't start unit");
-				 THIS->unitIsRunning = true;
-			 }
-						
-		} catch (CAXException e) {
-			char buf[256];
-			fprintf(stderr, "Error: %s (%s)\n", e.mOperation, e.FormatError(buf));
-		}
-		
-	}
-}
-
-#pragma mark -RIO Render Callback
-
-static OSStatus	PerformThru(
-							void						*inRefCon, 
-							AudioUnitRenderActionFlags 	*ioActionFlags, 
-							const AudioTimeStamp 		*inTimeStamp, 
-							UInt32 						inBusNumber, 
-							UInt32 						inNumberFrames, 
-							AudioBufferList 			*ioData)
-{
-	aurioTouchAppDelegate *THIS = (aurioTouchAppDelegate *)inRefCon;
-	
-    OSStatus err = AudioUnitRender(THIS->rioUnit, ioActionFlags, inTimeStamp, 1, inNumberFrames, ioData);
-	
-    if (err) { printf("PerformThru: error %d\n", (int)err); return err; }
-	  
     SInt8 *data = (SInt8 *)(ioData->mBuffers[0].mData);
     
     for (int i = 0; i < inNumberFrames; i++)
@@ -112,52 +33,100 @@ static OSStatus	PerformThru(
 
     audioBufferLen += inNumberFrames;
     
-	return err;
+	return 0;
 }
 
-#pragma mark-
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application
 {	
     oscilLine = (GLfloat*)malloc(points * 2 * sizeof(GLfloat));
-    
-	// Turn off the idle timer, since this app doesn't rely on constant touch input
-	application.idleTimerDisabled = YES;
-		
-	// Initialize our remote i/o unit
-	
-	inputProc.inputProc = PerformThru;
-	inputProc.inputProcRefCon = self;
 
 	try {	
-		
-		// Initialize and configure the audio session
-		XThrowIfError(AudioSessionInitialize(NULL, NULL, rioInterruptionListener, self), "couldn't initialize audio session");
-			
-		UInt32 audioCategory = kAudioSessionCategory_PlayAndRecord;
-		XThrowIfError(AudioSessionSetProperty(kAudioSessionProperty_AudioCategory, sizeof(audioCategory), &audioCategory), "couldn't set audio category");
-		XThrowIfError(AudioSessionAddPropertyListener(kAudioSessionProperty_AudioRouteChange, propListener, self), "couldn't set property listener");
+		AudioSessionInitialize(NULL, NULL, NULL, self);
 
 		Float32 preferredBufferSize = .005;
-		XThrowIfError(AudioSessionSetProperty(kAudioSessionProperty_PreferredHardwareIOBufferDuration, sizeof(preferredBufferSize), &preferredBufferSize), "couldn't set i/o buffer duration");
+		AudioSessionSetProperty(kAudioSessionProperty_PreferredHardwareIOBufferDuration, sizeof(preferredBufferSize), &preferredBufferSize);
 		
-		UInt32 size = sizeof(hwSampleRate);
-		XThrowIfError(AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareSampleRate, &size, &hwSampleRate), "couldn't get hw sample rate");
-		
-		XThrowIfError(AudioSessionSetActive(true), "couldn't set audio session active\n");
+		AudioSessionSetActive(true);
 
-		XThrowIfError(SetupRemoteIO(rioUnit, inputProc, thruFormat), "couldn't setup remote i/o unit");
-		unitHasBeenCreated = true;
-	
-		UInt32 maxFPS;
-		size = sizeof(maxFPS);
-		XThrowIfError(AudioUnitGetProperty(rioUnit, kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, 0, &maxFPS, &size), "couldn't get the remote I/O unit's max frames per slice");
-		
-		XThrowIfError(AudioOutputUnitStart(rioUnit), "couldn't start remote i/o unit");
+        AUNode ioNode;
+        AUNode mixerNode;
+        
+        OSStatus result = noErr;
+        
+        result = NewAUGraph(&graph);
+        
+        AudioComponentDescription io_desc;
+        io_desc.componentType = kAudioUnitType_Output;
+        io_desc.componentSubType = kAudioUnitSubType_RemoteIO;
+        io_desc.componentFlags = 0;
+        io_desc.componentFlagsMask = 0;
+        io_desc.componentManufacturer = kAudioUnitManufacturer_Apple;
+        
+        // Multichannel mixer unit
+        AudioComponentDescription mixer_desc;
+        mixer_desc.componentType          = kAudioUnitType_Mixer;
+        mixer_desc.componentSubType       = kAudioUnitSubType_MultiChannelMixer;
+        mixer_desc.componentManufacturer  = kAudioUnitManufacturer_Apple;
+        mixer_desc.componentFlags         = 0;
+        mixer_desc.componentFlagsMask     = 0;
+        
+        result = AUGraphAddNode(graph, &io_desc, &ioNode);    
+        result = AUGraphAddNode(graph, &mixer_desc, &mixerNode);
+        
+        AUGraphConnectNodeInput(graph, mixerNode, 0, ioNode, 0);
+        
+        result = AUGraphOpen(graph);
+        result = AUGraphNodeInfo(graph, ioNode, NULL, &ioUnit);
+        result = AUGraphNodeInfo(graph, mixerNode, NULL, &mixerUnit);
+        
+        UInt32 enableInput = 1;
+		result = AudioUnitSetProperty(ioUnit, 
+                                      kAudioOutputUnitProperty_EnableIO, 
+                                      kAudioUnitScope_Input, 
+                                      1, 
+                                      &enableInput, 
+                                      sizeof(enableInput));
+        
+        AURenderCallbackStruct renderCallbackStruct;
+        renderCallbackStruct.inputProc = &renderCallback;
+        renderCallbackStruct.inputProcRefCon = self;
+        
+        result = AUGraphSetNodeInputCallback(graph, mixerNode, 0, &renderCallbackStruct);
+        
+        size_t bytesPerSample = sizeof (AudioUnitSampleType);
+        
+        ioFormat.mFormatID          = kAudioFormatLinearPCM;
+        ioFormat.mFormatFlags       = kAudioFormatFlagsAudioUnitCanonical;
+        ioFormat.mBytesPerPacket    = bytesPerSample;
+        ioFormat.mFramesPerPacket   = 1;
+        ioFormat.mBytesPerFrame     = bytesPerSample;
+        ioFormat.mChannelsPerFrame  = 1;                  // 1 indicates mono
+        ioFormat.mBitsPerChannel    = 8 * bytesPerSample;
+        ioFormat.mSampleRate        = 44100;
+        
+        int busCount = 6;
+        
+        result = AudioUnitSetProperty(ioUnit, 
+                                      kAudioUnitProperty_StreamFormat, 
+                                      kAudioUnitScope_Output, 
+                                      0, 
+                                      &ioFormat, 
+                                      sizeof(ioFormat));
 
-		size = sizeof(thruFormat);
-		XThrowIfError(AudioUnitGetProperty(rioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 1, &thruFormat, &size), "couldn't get the remote I/O unit's output client format");
-		
+        result = AudioUnitSetProperty (mixerUnit,
+                                       kAudioUnitProperty_ElementCount,
+                                       kAudioUnitScope_Input,
+                                       0,
+                                       &busCount,
+                                       sizeof (busCount));
+                                       
+        result = AUGraphInitialize(graph);
+        CAShow(graph);
+        
+        AUGraphStart(graph);
+        
+        unitHasBeenCreated = true;
 		unitIsRunning = 1;
 	}
 	catch (CAXException &e) {
