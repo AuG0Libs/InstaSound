@@ -6,9 +6,9 @@
 
 @implementation AppDelegate
 
-@synthesize window;
-@synthesize view;
-@synthesize viewController;
+@synthesize window = _window;
+@synthesize eaglView = _eaglView;
+@synthesize viewController = _viewController;
 
 @synthesize unitIsRunning;
 @synthesize unitHasBeenCreated;
@@ -41,8 +41,8 @@ static OSStatus	renderCallback(void                         *inRefCon,
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [self initializeView];
-    [self.window addSubview:view];
+    [self initializeEAGLView];
+    [self.window addSubview:eaglView];
 
     // self.viewController.view = view;
     // self.window.rootViewController = self.viewController;
@@ -53,7 +53,7 @@ static OSStatus	renderCallback(void                         *inRefCon,
     return YES;
 }
 
-- (void) initializeView
+- (void) initializeEAGLView
 {
     oscilLine = (GLfloat*)malloc(points * 2 * sizeof(GLfloat));
     
@@ -212,22 +212,22 @@ static OSStatus	renderCallback(void                         *inRefCon,
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
-    self.view = [[EAGLView alloc] initWithFrame: CGRectMake ( 0, 0, 480, 640)];
+    self.eaglView = [[EAGLView alloc] initWithFrame: CGRectMake ( 0, 0, 480, 640)];
     
-    view.delegate = self;
+    eaglView.delegate = self;
     
-    [view setAnimationInterval:1./20.];
-	[view startAnimation];
+    [eaglView setAnimationInterval:1./20.];
+	[eaglView startAnimation];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-    view.applicationResignedActive = NO;
-	[view startAnimation];
+    eaglView.applicationResignedActive = NO;
+	[eaglView startAnimation];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
-    view.applicationResignedActive = YES;
-    [view stopAnimation];
+    eaglView.applicationResignedActive = YES;
+    [eaglView stopAnimation];
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {

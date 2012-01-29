@@ -23,7 +23,7 @@ inline double linearInterp(double valA, double valB, double fract)
 
 @interface AppDelegate : NSObject <UIApplicationDelegate, EAGLViewDelegate> {
 	UIWindow*                   window;
-	EAGLView*                   view;
+	EAGLView*                   eaglView;
     
 	AudioUnit					mixerUnit;
     AudioUnit                   ioUnit;
@@ -40,12 +40,12 @@ inline double linearInterp(double valA, double valB, double fract)
 
 @property (strong, nonatomic) UIWindow *window;
 @property (strong, nonatomic) ViewController *viewController;
-@property (strong, nonatomic) EAGLView *view;
+@property (strong, nonatomic) EAGLView *eaglView;
 
 @property (nonatomic, assign) BOOL unitIsRunning;
 @property (nonatomic, assign) BOOL unitHasBeenCreated;
 
-- (void) initializeView;
+- (void) initializeEAGLView;
 
 @end
 
