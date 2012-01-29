@@ -7,7 +7,6 @@
 #include <CoreFoundation/CFURL.h>
 
 #import "EAGLView.h"
-#import "aurio_helper.h"
 #import "CAStreamBasicDescription.h"
 #import "AudioToolbox/AudioToolbox.h"
 

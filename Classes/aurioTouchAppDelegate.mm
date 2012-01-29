@@ -8,7 +8,6 @@
 @synthesize window;
 @synthesize view;
 
-@synthesize rioUnit;
 @synthesize unitIsRunning;
 @synthesize unitHasBeenCreated;
 
