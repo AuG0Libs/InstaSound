@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		512A759914D5B21400FB391E /* icon_Vinyl.png in Resources */ = {isa = PBXBuildFile; fileRef = 512A759814D5B21400FB391E /* icon_Vinyl.png */; };
 		F784290214D5701D00F55C51 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290114D5701D00F55C51 /* UIKit.framework */; };
 		F784290414D5701D00F55C51 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290314D5701D00F55C51 /* Foundation.framework */; };
 		F784290614D5701D00F55C51 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290514D5701D00F55C51 /* CoreGraphics.framework */; };
@@ -22,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		512A759814D5B21400FB391E /* icon_Vinyl.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_Vinyl.png; sourceTree = "<group>"; };
 		F78428FD14D5701D00F55C51 /* instasound.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = instasound.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F784290114D5701D00F55C51 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		F784290314D5701D00F55C51 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -61,6 +63,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		512A759614D5AEC600FB391E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				512A759814D5B21400FB391E /* icon_Vinyl.png */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		F78428F214D5701D00F55C51 = {
 			isa = PBXGroup;
 			children = (
@@ -96,6 +106,7 @@
 		F784290714D5701D00F55C51 /* instasound */ = {
 			isa = PBXGroup;
 			children = (
+				512A759614D5AEC600FB391E /* Resources */,
 				F784291014D5701D00F55C51 /* AppDelegate.h */,
 				F784291114D5701D00F55C51 /* AppDelegate.m */,
 				F784295D14D574F600F55C51 /* ViewController.h */,
@@ -169,6 +180,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F784290C14D5701D00F55C51 /* InfoPlist.strings in Resources */,
+				512A759914D5B21400FB391E /* icon_Vinyl.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

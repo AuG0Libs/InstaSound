@@ -44,10 +44,15 @@ inline double linearInterp(double valA, double valB, double fract)
 @property (strong, nonatomic) ViewController *viewController;
 @property (strong, nonatomic) EAGLView *eaglView;
 
+@property (retain, nonatomic) IBOutlet UINavigationBar *navigationBar;
+@property (retain, nonatomic) IBOutlet UITabBar *buttonBar;
+
 @property (nonatomic, assign) BOOL unitIsRunning;
 @property (nonatomic, assign) BOOL unitHasBeenCreated;
 
-- (void) initializeEAGLView;
+- (void)initializeEAGLView;
+- (void)initializeNavigationView;
+- (void)initializeButtons;
 
 @end
 
