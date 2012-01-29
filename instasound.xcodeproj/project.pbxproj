@@ -17,9 +17,9 @@
 		5120488F14D6039B003B0F42 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5120488E14D6039B003B0F42 /* CoreLocation.framework */; };
 		5120489114D603A4003B0F42 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5120489014D603A4003B0F42 /* Security.framework */; };
 		5120489314D603B0003B0F42 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5120489214D603B0003B0F42 /* CoreText.framework */; };
+		512048F914D612C0003B0F42 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 512048F814D612C0003B0F42 /* Default.png */; };
 		51ABB21714D5C15600D62235 /* app_icon_57.png in Resources */ = {isa = PBXBuildFile; fileRef = 51ABB21614D5C15600D62235 /* app_icon_57.png */; };
 		51ABB21A14D5C15B00D62235 /* app_icon_114.png in Resources */ = {isa = PBXBuildFile; fileRef = 51ABB21914D5C15B00D62235 /* app_icon_114.png */; };
-		51ABB21C14D5C16900D62235 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 51ABB21B14D5C16900D62235 /* Default.png */; };
 		51ABB21E14D5C17300D62235 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 51ABB21D14D5C17300D62235 /* Default@2x.png */; };
 		51FDDFE614D5BCCE00A4E8ED /* icon_Vinyl.png in Resources */ = {isa = PBXBuildFile; fileRef = 51FDDFDD14D5BCCE00A4E8ED /* icon_Vinyl.png */; };
 		51FDDFE714D5BCCE00A4E8ED /* Record.png in Resources */ = {isa = PBXBuildFile; fileRef = 51FDDFDE14D5BCCE00A4E8ED /* Record.png */; };
@@ -53,9 +53,9 @@
 		5120488E14D6039B003B0F42 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		5120489014D603A4003B0F42 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		5120489214D603B0003B0F42 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		512048F814D612C0003B0F42 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Default.png; path = Resources/Default.png; sourceTree = "<group>"; };
 		51ABB21614D5C15600D62235 /* app_icon_57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = app_icon_57.png; sourceTree = "<group>"; };
 		51ABB21914D5C15B00D62235 /* app_icon_114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = app_icon_114.png; sourceTree = "<group>"; };
-		51ABB21B14D5C16900D62235 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		51ABB21D14D5C17300D62235 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		51FDDFDD14D5BCCE00A4E8ED /* icon_Vinyl.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_Vinyl.png; sourceTree = "<group>"; };
 		51FDDFDE14D5BCCE00A4E8ED /* Record.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Record.png; sourceTree = "<group>"; };
@@ -130,8 +130,8 @@
 		F78428F214D5701D00F55C51 = {
 			isa = PBXGroup;
 			children = (
+				512048F814D612C0003B0F42 /* Default.png */,
 				51ABB21D14D5C17300D62235 /* Default@2x.png */,
-				51ABB21B14D5C16900D62235 /* Default.png */,
 				51ABB21914D5C15B00D62235 /* app_icon_114.png */,
 				51ABB21614D5C15600D62235 /* app_icon_57.png */,
 				F784290714D5701D00F55C51 /* instasound */,
@@ -259,9 +259,9 @@
 				51FDDFEA14D5BCCE00A4E8ED /* Stop@2x.png in Resources */,
 				51ABB21714D5C15600D62235 /* app_icon_57.png in Resources */,
 				51ABB21A14D5C15B00D62235 /* app_icon_114.png in Resources */,
-				51ABB21C14D5C16900D62235 /* Default.png in Resources */,
 				51ABB21E14D5C17300D62235 /* Default@2x.png in Resources */,
 				F7893B0314D60D1A002465AF /* SoundCloud.bundle in Resources */,
+				512048F914D612C0003B0F42 /* Default.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

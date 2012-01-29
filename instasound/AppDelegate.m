@@ -1,6 +1,7 @@
 #import "AudioEngine.h"
 #import "AppDelegate.h"
 #import "ViewController.h"
+#import "SCUI.h"
 
 @implementation AppDelegate
 
@@ -12,6 +13,13 @@
 @synthesize recordButton = _recordButton;
 
 int points = 1024;
+
++ (void)initialize;
+{
+    [SCSoundCloud  setClientID:@"02e56b33c5b3ba11cf4a4b387b0fc983"
+                        secret:@"f39445195a1bb5cffd1202da54bf6ad9"
+                   redirectURL:[NSURL URLWithString:@"instasound://oauth2"]];
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -57,7 +65,7 @@ int points = 1024;
     self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 20, 1, 1)];
     [self.navigationBar setBarStyle:UIBarStyleBlackOpaque];
     
-    UINavigationItem *title = [[UINavigationItem alloc] initWithTitle:@"InstaGramophone"];
+    UINavigationItem *title = [[UINavigationItem alloc] initWithTitle:@"InstaSound"];
     [self.navigationBar pushNavigationItem:title animated:true];
 
     [self.navigationBar sizeToFit];
