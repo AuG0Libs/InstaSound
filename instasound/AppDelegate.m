@@ -9,6 +9,8 @@
 @synthesize window = _window;
 @synthesize eaglView = _eaglView;
 @synthesize viewController = _viewController;
+@synthesize navigationBar = _navigationBar;
+@synthesize buttonBar = _buttonBar;
 
 @synthesize unitIsRunning;
 @synthesize unitHasBeenCreated;
@@ -42,11 +44,15 @@ static OSStatus	renderCallback(void                         *inRefCon,
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [self initializeEAGLView];
-    [self.window addSubview:eaglView];
+    [self initializeNavigationView];
+    [self initializeButtons];
+    
+    [self.window addSubview:self.eaglView];
+    [self.window addSubview:self.navigationBar];
+    [self.window addSubview:self.buttonBar];
 
     // self.viewController.view = view;
     // self.window.rootViewController = self.viewController;
-
 
     [self.window makeKeyAndVisible];
 
@@ -269,9 +275,31 @@ static OSStatus	renderCallback(void                         *inRefCon,
 	[eaglView startAnimation];
 }
 
+- (void)initializeNavigationView
+{
+    self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 20, 1, 1)];
+    [self.navigationBar setBarStyle:UIBarStyleBlackOpaque];
+    
+    UINavigationItem *title = [[UINavigationItem alloc] initWithTitle:@"InstaGramophone"];
+    [self.navigationBar pushNavigationItem:title animated:true];
+
+    [self.navigationBar sizeToFit];
+}
+
+- (void)initializeButtons
+{
+    self.buttonBar = [[UITabBar alloc] initWithFrame:CGRectMake(0, 431, 320, 49)];
+
+    NSString* pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Vinyl" ofType:@"png"];
+    UIImage *image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
+    UITabBarItem *church = [[UITabBarItem alloc] initWithTitle:@"Church" image:image tag:1];
+    
+    [self.buttonBar setItems:[NSArray arrayWithObjects: church, nil]];
+}
+
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     eaglView.applicationResignedActive = NO;
-	[eaglView startAnimation];
+    [eaglView startAnimation];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
