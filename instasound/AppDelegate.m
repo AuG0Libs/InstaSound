@@ -125,54 +125,91 @@ static OSStatus	renderCallback(void                         *inRefCon,
     AUNode ioNode;
     AUNode mixerNode;
     AUNode mixer2Node;
+
     AUNode distortionNode;
+    AUNode reverbNode;
+    AUNode compressionNode;
+    AUNode lowpassNode;
 
     OSStatus result = noErr;
     
     result = NewAUGraph(&graph);
     
     AudioComponentDescription io_desc;
-    io_desc.componentType               = kAudioUnitType_Output;
-    io_desc.componentSubType            = kAudioUnitSubType_RemoteIO;
-    io_desc.componentFlags              = 0;
-    io_desc.componentFlagsMask          = 0;
-    io_desc.componentManufacturer       = kAudioUnitManufacturer_Apple;
+    io_desc.componentType                       = kAudioUnitType_Output;
+    io_desc.componentSubType                    = kAudioUnitSubType_RemoteIO;
+    io_desc.componentFlags                      = 0;
+    io_desc.componentFlagsMask                  = 0;
+    io_desc.componentManufacturer               = kAudioUnitManufacturer_Apple;
     
     AudioComponentDescription mixer_desc;
-    mixer_desc.componentType            = kAudioUnitType_Mixer;
-    mixer_desc.componentSubType         = kAudioUnitSubType_MultiChannelMixer;
-    mixer_desc.componentFlags           = 0;
-    mixer_desc.componentFlagsMask       = 0;
-    mixer_desc.componentManufacturer    = kAudioUnitManufacturer_Apple;
+    mixer_desc.componentType                    = kAudioUnitType_Mixer;
+    mixer_desc.componentSubType                 = kAudioUnitSubType_MultiChannelMixer;
+    mixer_desc.componentFlags                   = 0;
+    mixer_desc.componentFlagsMask               = 0;
+    mixer_desc.componentManufacturer            = kAudioUnitManufacturer_Apple;
     
     AudioComponentDescription distortion_desc;
-    distortion_desc.componentType            = kAudioUnitType_Effect;
-    distortion_desc.componentSubType         = kAudioUnitSubType_Distortion;
-    distortion_desc.componentFlags           = 0;
-    distortion_desc.componentFlagsMask       = 0;
-    distortion_desc.componentManufacturer    = kAudioUnitManufacturer_Apple;
+    distortion_desc.componentType               = kAudioUnitType_Effect;
+    distortion_desc.componentSubType            = kAudioUnitSubType_Distortion;
+    distortion_desc.componentFlags              = 0;
+    distortion_desc.componentFlagsMask          = 0;
+    distortion_desc.componentManufacturer       = kAudioUnitManufacturer_Apple;
+    
+    AudioComponentDescription reverb_desc;
+    reverb_desc.componentType                   = kAudioUnitType_Effect;
+    reverb_desc.componentSubType                = kAudioUnitSubType_Reverb2;
+    reverb_desc.componentFlags                  = 0;
+    reverb_desc.componentFlagsMask              = 0;
+    reverb_desc.componentManufacturer           = kAudioUnitManufacturer_Apple;
+    
+    AudioComponentDescription compression_desc;
+    compression_desc.componentType              = kAudioUnitType_Effect;
+    compression_desc.componentSubType           = kAudioUnitSubType_DynamicsProcessor;
+    compression_desc.componentFlags             = 0;
+    compression_desc.componentFlagsMask         = 0;
+    compression_desc.componentManufacturer      = kAudioUnitManufacturer_Apple;
+    
+    AudioComponentDescription lowpass_desc;
+    lowpass_desc.componentType                  = kAudioUnitType_Effect;
+    lowpass_desc.componentSubType               = kAudioUnitSubType_LowPassFilter;
+    lowpass_desc.componentFlags                 = 0;
+    lowpass_desc.componentFlagsMask             = 0;
+    lowpass_desc.componentManufacturer          = kAudioUnitManufacturer_Apple;
+
     
     result = AUGraphAddNode(graph, &io_desc, &ioNode);
     result = AUGraphAddNode(graph, &mixer_desc, &mixerNode);
     result = AUGraphAddNode(graph, &mixer_desc, &mixer2Node);    
-    result = AUGraphAddNode(graph, &distortion_desc, &distortionNode);    
+
+    result = AUGraphAddNode(graph, &distortion_desc, &distortionNode);
+        if (result != 0) {NSLog(@"FAIL distortion: %ld", result);}
+    result = AUGraphAddNode(graph, &reverb_desc, &reverbNode);
+        if (result != 0) {NSLog(@"FAIL reverb: %ld", result);}
+    result = AUGraphAddNode(graph, &compression_desc, &compressionNode);
+        if (result != 0) {NSLog(@"FAIL compression: %ld", result);}
+    result = AUGraphAddNode(graph, &lowpass_desc, &lowpassNode);
+        if (result != 0) {NSLog(@"FAIL lowpass: %ld", result);}
+    
+
 
     int outputChannel = 0;
     int inputChannel = 1;
     
     result = AUGraphConnectNodeInput(graph, ioNode, inputChannel, mixerNode, 0);
-    result = AUGraphConnectNodeInput(graph, mixerNode, 0, distortionNode, 0);
-    result = AUGraphConnectNodeInput(graph, distortionNode, 0, mixer2Node, 0);
+    result = AUGraphConnectNodeInput(graph, mixerNode, 0, reverbNode, 0);
+    result = AUGraphConnectNodeInput(graph, reverbNode, 0, mixer2Node, 0);
     result = AUGraphConnectNodeInput(graph, mixer2Node, 0, ioNode, outputChannel);
-    
-    // result = AUGraphConnectNodeInput(graph, distortionNode, 0, ioNode, outputChannel);
-    // result = AUGraphConnectNodeInput(graph, ioNode, inputChannel, distortionNode, 0);
     
     result = AUGraphOpen(graph);
     result = AUGraphNodeInfo(graph, ioNode, NULL, &ioUnit);
     result = AUGraphNodeInfo(graph, mixerNode, NULL, &mixerUnit);
     result = AUGraphNodeInfo(graph, mixer2Node, NULL, &mixer2Unit);
+    
     result = AUGraphNodeInfo(graph, distortionNode, NULL, &distortionUnit);
+    result = AUGraphNodeInfo(graph, compressionNode, NULL, &compressionUnit);
+    result = AUGraphNodeInfo(graph, reverbNode, NULL, &reverbUnit);
+    result = AUGraphNodeInfo(graph, lowpassNode, NULL, &lowpassUnit);
 
     UInt32 enableInput = 1;
     result = AudioUnitSetProperty(ioUnit,
@@ -185,19 +222,20 @@ static OSStatus	renderCallback(void                         *inRefCon,
 //    AURenderCallbackStruct renderCallbackStruct;
 //    renderCallbackStruct.inputProc = &renderCallback;
 //    result = AUGraphSetNodeInputCallback(graph, mixerNode, 0, &renderCallbackStruct);
-
     
     UInt32 asbdSize = sizeof(AudioStreamBasicDescription);
     memset (&ioFormat, 0, sizeof (ioFormat));
     
-    result = AudioUnitGetProperty(distortionUnit,
+    result = AudioUnitGetProperty(compressionUnit,
                                   kAudioUnitProperty_StreamFormat, 
                                   kAudioUnitScope_Input, 
                                   0, 
                                   &ioFormat, 
-                                  &asbdSize);  
+                                  &asbdSize);
     
-    
+
+
+
 //    size_t bytesPerSample = sizeof (AudioUnitSampleType);    
 //    ioFormat.mFormatID          = kAudioFormatLinearPCM;
 //    ioFormat.mFormatFlags       = kAudioFormatFlagIsFloat;
@@ -215,8 +253,6 @@ static OSStatus	renderCallback(void                         *inRefCon,
                                   0,
                                   &ioFormat,
                                   sizeof(ioFormat));
-
-    if (result != 0) {NSLog(@"FAIL: %ld", result);}
     
     result = AudioUnitSetProperty(mixer2Unit,
                                   kAudioUnitProperty_StreamFormat,
@@ -253,6 +289,88 @@ static OSStatus	renderCallback(void                         *inRefCon,
     unitHasBeenCreated = true;
     unitIsRunning = 1;
     
+        
+    // AudioUnit Parameters have to be set after the Graph has been started
+    
+    
+    
+    /// <<- reverb parameters
+    
+    AudioUnitParameterID param1Type       = kReverb2Param_DecayTimeAtNyquist;
+    AudioUnitParameterValue param1Amount  = 1.5;
+    
+    result = AudioUnitSetParameter(reverbUnit,
+                                   param1Type,
+                                   kAudioUnitScope_Global,
+                                   0,                       // also 0, always
+                                   param1Amount,            // value
+                                   0);                      // it's...always 0
+
+    if (result != 0) {NSLog(@"FAIL in effect SetParameter: %ld", result);}  
+    
+    
+    
+    AudioUnitParameterID param2Type       = kReverb2Param_DecayTimeAt0Hz;
+    AudioUnitParameterValue param2Amount  = 2.5;
+    
+    result = AudioUnitSetParameter(reverbUnit,
+                                   param2Type,
+                                   kAudioUnitScope_Global,
+                                   0,                       // also 0, always
+                                   param2Amount,            // value
+                                   0);                      // it's...always 0
+    
+    
+    if (result != 0) {NSLog(@"FAIL in effect SetParameter: %ld", result);}      
+    
+    AudioUnitParameterValue outputVal = 0;
+    
+    
+    
+    AudioUnitParameterID param3Type       = kReverb2Param_DryWetMix;
+    AudioUnitParameterValue param3Amount  = 20;
+    
+    result = AudioUnitSetParameter(reverbUnit,
+                                   param3Type,
+                                   kAudioUnitScope_Global,
+                                   0,                       // also 0, always
+                                   param3Amount,            // value
+                                   0);                      // it's...always 0
+    
+    
+    if (result != 0) {NSLog(@"FAIL in effect SetParameter: %ld", result);}   
+    
+    
+    
+    AudioUnitParameterID param4Type       = kReverb2Param_RandomizeReflections;
+    AudioUnitParameterValue param4Amount  = 100;
+    
+    result = AudioUnitSetParameter(reverbUnit,
+                                   param4Type,
+                                   kAudioUnitScope_Global,
+                                   0,                       // also 0, always
+                                   param4Amount,            // value
+                                   0);                      // it's...always 0
+    
+    
+    if (result != 0) {NSLog(@"FAIL in effect SetParameter: %ld", result);}   
+    
+    
+    /// reverb parameters
+    
+    
+    
+    
+    result = AudioUnitGetParameter(reverbUnit,
+                                   param1Type,
+                                   kAudioUnitScope_Global,
+                                   0,
+                                   &outputVal);
+    
+    if (result != 0) {NSLog(@"FAIL in effect GetParameter: %ld", result);}
+    
+    
+
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     

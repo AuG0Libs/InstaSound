@@ -28,7 +28,12 @@ inline double linearInterp(double valA, double valB, double fract)
 	AudioUnit					mixerUnit;
 	AudioUnit					mixer2Unit;    
     AudioUnit                   ioUnit;
+
     AudioUnit                   distortionUnit;
+    AudioUnit                   reverbUnit;
+    AudioUnit                   compressionUnit;
+    AudioUnit                   lowpassUnit;
+
     AudioUnit                   output;
     AUGraph                     graph;
 	BOOL						unitIsRunning;
