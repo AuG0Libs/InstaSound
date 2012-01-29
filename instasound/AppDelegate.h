@@ -27,6 +27,7 @@ inline double linearInterp(double valA, double valB, double fract)
     
 	AudioUnit					mixerUnit;
 	AudioUnit					mixer2Unit;    
+	AudioUnit					mixer3Unit;    
     AudioUnit                   ioUnit;
     AudioUnit                   distortionUnit;
     AudioUnit                   output;

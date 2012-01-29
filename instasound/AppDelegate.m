@@ -29,8 +29,6 @@ static OSStatus	renderCallback(void                         *inRefCon,
 
     SInt8 *data = (SInt8 *)(ioData->mBuffers[0].mData);
     
-    NSLog(@"%d\n", data[2]);
-    
     for (int i = 0; i < inNumberFrames; i++)
     {
         audioBuffer[audioBufferLen + i] = data[i * 4 + 2] << 8 | (UInt8) data[i * 4 + 3];
@@ -125,6 +123,7 @@ static OSStatus	renderCallback(void                         *inRefCon,
     AUNode ioNode;
     AUNode mixerNode;
     AUNode mixer2Node;
+    AUNode mixer3Node;
     AUNode distortionNode;
 
     OSStatus result = noErr;
@@ -156,6 +155,7 @@ static OSStatus	renderCallback(void                         *inRefCon,
     result = AUGraphAddNode(graph, &io_desc, &ioNode);
     result = AUGraphAddNode(graph, &mixer_desc, &mixerNode);
     result = AUGraphAddNode(graph, &mixer_desc, &mixer2Node);    
+    result = AUGraphAddNode(graph, &mixer_desc, &mixer3Node);    
     result = AUGraphAddNode(graph, &distortion_desc, &distortionNode);    
 
     int outputChannel = 0;
@@ -164,10 +164,8 @@ static OSStatus	renderCallback(void                         *inRefCon,
     result = AUGraphConnectNodeInput(graph, ioNode, inputChannel, mixerNode, 0);
     result = AUGraphConnectNodeInput(graph, mixerNode, 0, distortionNode, 0);
     result = AUGraphConnectNodeInput(graph, distortionNode, 0, mixer2Node, 0);
-    result = AUGraphConnectNodeInput(graph, mixer2Node, 0, ioNode, outputChannel);
-    
-    // result = AUGraphConnectNodeInput(graph, distortionNode, 0, ioNode, outputChannel);
-    // result = AUGraphConnectNodeInput(graph, ioNode, inputChannel, distortionNode, 0);
+    result = AUGraphConnectNodeInput(graph, mixer2Node, 0, mixer3Node, 0);
+    result = AUGraphConnectNodeInput(graph, mixer3Node, 0, ioNode, outputChannel);
     
     result = AUGraphOpen(graph);
     result = AUGraphNodeInfo(graph, ioNode, NULL, &ioUnit);
@@ -183,9 +181,10 @@ static OSStatus	renderCallback(void                         *inRefCon,
                                   &enableInput,
                                   sizeof(enableInput));
 
-//    AURenderCallbackStruct renderCallbackStruct;
-//    renderCallbackStruct.inputProc = &renderCallback;
-//    result = AUGraphSetNodeInputCallback(graph, mixerNode, 0, &renderCallbackStruct);
+    AURenderCallbackStruct renderCallbackStruct;
+    renderCallbackStruct.inputProc = &renderCallback;
+    renderCallbackStruct.inputProcRefCon = nil;
+    result = AUGraphSetNodeInputCallback(graph, mixer2Node, 0, &renderCallbackStruct);
 
     
     UInt32 asbdSize = sizeof(AudioStreamBasicDescription);
