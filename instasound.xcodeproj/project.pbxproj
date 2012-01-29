@@ -1,0 +1,295 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F784290214D5701D00F55C51 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290114D5701D00F55C51 /* UIKit.framework */; };
+		F784290414D5701D00F55C51 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290314D5701D00F55C51 /* Foundation.framework */; };
+		F784290614D5701D00F55C51 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290514D5701D00F55C51 /* CoreGraphics.framework */; };
+		F784290C14D5701D00F55C51 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F784290A14D5701D00F55C51 /* InfoPlist.strings */; };
+		F784290E14D5701D00F55C51 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F784290D14D5701D00F55C51 /* main.m */; };
+		F784291214D5701D00F55C51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F784291114D5701D00F55C51 /* AppDelegate.m */; };
+		F784292314D5708600F55C51 /* EAGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = F784292214D5708600F55C51 /* EAGLView.m */; };
+		F784292514D571B200F55C51 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784292414D571B200F55C51 /* AudioToolbox.framework */; };
+		F784292714D571BE00F55C51 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784292614D571BE00F55C51 /* AVFoundation.framework */; };
+		F784292B14D5720E00F55C51 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784292A14D5720E00F55C51 /* OpenGLES.framework */; };
+		F784292D14D5725B00F55C51 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784292C14D5725B00F55C51 /* QuartzCore.framework */; };
+		F784295F14D574F600F55C51 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F784295E14D574F600F55C51 /* ViewController.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		F78428FD14D5701D00F55C51 /* instasound.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = instasound.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F784290114D5701D00F55C51 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		F784290314D5701D00F55C51 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		F784290514D5701D00F55C51 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		F784290914D5701D00F55C51 /* instasound-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "instasound-Info.plist"; sourceTree = "<group>"; };
+		F784290B14D5701D00F55C51 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F784290D14D5701D00F55C51 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		F784290F14D5701D00F55C51 /* instasound-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "instasound-Prefix.pch"; sourceTree = "<group>"; };
+		F784291014D5701D00F55C51 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		F784291114D5701D00F55C51 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		F784292114D5708600F55C51 /* EAGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAGLView.h; sourceTree = "<group>"; };
+		F784292214D5708600F55C51 /* EAGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EAGLView.m; sourceTree = "<group>"; };
+		F784292414D571B200F55C51 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		F784292614D571BE00F55C51 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		F784292814D571CB00F55C51 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
+		F784292A14D5720E00F55C51 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		F784292C14D5725B00F55C51 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		F784295D14D574F600F55C51 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		F784295E14D574F600F55C51 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F78428FA14D5701D00F55C51 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F784292D14D5725B00F55C51 /* QuartzCore.framework in Frameworks */,
+				F784292B14D5720E00F55C51 /* OpenGLES.framework in Frameworks */,
+				F784292714D571BE00F55C51 /* AVFoundation.framework in Frameworks */,
+				F784292514D571B200F55C51 /* AudioToolbox.framework in Frameworks */,
+				F784290214D5701D00F55C51 /* UIKit.framework in Frameworks */,
+				F784290414D5701D00F55C51 /* Foundation.framework in Frameworks */,
+				F784290614D5701D00F55C51 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F78428F214D5701D00F55C51 = {
+			isa = PBXGroup;
+			children = (
+				F784290714D5701D00F55C51 /* instasound */,
+				F784290014D5701D00F55C51 /* Frameworks */,
+				F78428FE14D5701D00F55C51 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F78428FE14D5701D00F55C51 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F78428FD14D5701D00F55C51 /* instasound.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F784290014D5701D00F55C51 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F784292C14D5725B00F55C51 /* QuartzCore.framework */,
+				F784292A14D5720E00F55C51 /* OpenGLES.framework */,
+				F784292814D571CB00F55C51 /* AudioUnit.framework */,
+				F784292614D571BE00F55C51 /* AVFoundation.framework */,
+				F784292414D571B200F55C51 /* AudioToolbox.framework */,
+				F784290114D5701D00F55C51 /* UIKit.framework */,
+				F784290314D5701D00F55C51 /* Foundation.framework */,
+				F784290514D5701D00F55C51 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F784290714D5701D00F55C51 /* instasound */ = {
+			isa = PBXGroup;
+			children = (
+				F784295D14D574F600F55C51 /* ViewController.h */,
+				F784295E14D574F600F55C51 /* ViewController.m */,
+				F784292114D5708600F55C51 /* EAGLView.h */,
+				F784292214D5708600F55C51 /* EAGLView.m */,
+				F784291014D5701D00F55C51 /* AppDelegate.h */,
+				F784291114D5701D00F55C51 /* AppDelegate.m */,
+				F784290814D5701D00F55C51 /* Supporting Files */,
+			);
+			path = instasound;
+			sourceTree = "<group>";
+		};
+		F784290814D5701D00F55C51 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F784290914D5701D00F55C51 /* instasound-Info.plist */,
+				F784290A14D5701D00F55C51 /* InfoPlist.strings */,
+				F784290D14D5701D00F55C51 /* main.m */,
+				F784290F14D5701D00F55C51 /* instasound-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F78428FC14D5701D00F55C51 /* instasound */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F784291E14D5701D00F55C51 /* Build configuration list for PBXNativeTarget "instasound" */;
+			buildPhases = (
+				F78428F914D5701D00F55C51 /* Sources */,
+				F78428FA14D5701D00F55C51 /* Frameworks */,
+				F78428FB14D5701D00F55C51 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = instasound;
+			productName = instasound;
+			productReference = F78428FD14D5701D00F55C51 /* instasound.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F78428F414D5701D00F55C51 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
+			buildConfigurationList = F78428F714D5701D00F55C51 /* Build configuration list for PBXProject "instasound" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = F78428F214D5701D00F55C51;
+			productRefGroup = F78428FE14D5701D00F55C51 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F78428FC14D5701D00F55C51 /* instasound */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F78428FB14D5701D00F55C51 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F784290C14D5701D00F55C51 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F78428F914D5701D00F55C51 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F784290E14D5701D00F55C51 /* main.m in Sources */,
+				F784291214D5701D00F55C51 /* AppDelegate.m in Sources */,
+				F784292314D5708600F55C51 /* EAGLView.m in Sources */,
+				F784295F14D574F600F55C51 /* ViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		F784290A14D5701D00F55C51 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F784290B14D5701D00F55C51 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		F784291C14D5701D00F55C51 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F784291D14D5701D00F55C51 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F784291F14D5701D00F55C51 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "instasound/instasound-Prefix.pch";
+				INFOPLIST_FILE = "instasound/instasound-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		F784292014D5701D00F55C51 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "instasound/instasound-Prefix.pch";
+				INFOPLIST_FILE = "instasound/instasound-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F78428F714D5701D00F55C51 /* Build configuration list for PBXProject "instasound" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F784291C14D5701D00F55C51 /* Debug */,
+				F784291D14D5701D00F55C51 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F784291E14D5701D00F55C51 /* Build configuration list for PBXNativeTarget "instasound" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F784291F14D5701D00F55C51 /* Debug */,
+				F784292014D5701D00F55C51 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F78428F414D5701D00F55C51 /* Project object */;
+}
