@@ -26,7 +26,6 @@
 		51FDDFE814D5BCCE00A4E8ED /* Record@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 51FDDFDF14D5BCCE00A4E8ED /* Record@2x.png */; };
 		51FDDFE914D5BCCE00A4E8ED /* Stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 51FDDFE014D5BCCE00A4E8ED /* Stop.png */; };
 		51FDDFEA14D5BCCE00A4E8ED /* Stop@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 51FDDFE114D5BCCE00A4E8ED /* Stop@2x.png */; };
-		AE0292C414D609F60065C101 /* SoundCloud.bundle in Resources */ = {isa = PBXBuildFile; fileRef = AE0292C314D609F60065C101 /* SoundCloud.bundle */; };
 		F784290214D5701D00F55C51 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290114D5701D00F55C51 /* UIKit.framework */; };
 		F784290414D5701D00F55C51 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290314D5701D00F55C51 /* Foundation.framework */; };
 		F784290614D5701D00F55C51 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290514D5701D00F55C51 /* CoreGraphics.framework */; };
@@ -39,6 +38,8 @@
 		F784292B14D5720E00F55C51 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784292A14D5720E00F55C51 /* OpenGLES.framework */; };
 		F784292D14D5725B00F55C51 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784292C14D5725B00F55C51 /* QuartzCore.framework */; };
 		F784295F14D574F600F55C51 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F784295E14D574F600F55C51 /* ViewController.m */; };
+		F7893AE814D60245002465AF /* AudioEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = F7893AE714D60245002465AF /* AudioEngine.m */; };
+		F7893B0314D60D1A002465AF /* SoundCloud.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F7893B0214D60D1A002465AF /* SoundCloud.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,7 +62,6 @@
 		51FDDFDF14D5BCCE00A4E8ED /* Record@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Record@2x.png"; sourceTree = "<group>"; };
 		51FDDFE014D5BCCE00A4E8ED /* Stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Stop.png; sourceTree = "<group>"; };
 		51FDDFE114D5BCCE00A4E8ED /* Stop@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Stop@2x.png"; sourceTree = "<group>"; };
-		AE0292C314D609F60065C101 /* SoundCloud.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = SoundCloud.bundle; path = ../CocoaSoundCloudUI/SoundCloud.bundle; sourceTree = "<group>"; };
 		F78428FD14D5701D00F55C51 /* instasound.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = instasound.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F784290114D5701D00F55C51 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		F784290314D5701D00F55C51 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -81,6 +81,9 @@
 		F784292C14D5725B00F55C51 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		F784295D14D574F600F55C51 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		F784295E14D574F600F55C51 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		F7893AE614D60245002465AF /* AudioEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioEngine.h; sourceTree = "<group>"; };
+		F7893AE714D60245002465AF /* AudioEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioEngine.m; sourceTree = "<group>"; };
+		F7893B0214D60D1A002465AF /* SoundCloud.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = SoundCloud.bundle; path = ../CocoaSoundCloudUI/SoundCloud.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,7 +117,7 @@
 		512A759614D5AEC600FB391E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				AE0292C314D609F60065C101 /* SoundCloud.bundle */,
+				F7893B0214D60D1A002465AF /* SoundCloud.bundle */,
 				51FDDFDD14D5BCCE00A4E8ED /* icon_Vinyl.png */,
 				51FDDFDE14D5BCCE00A4E8ED /* Record.png */,
 				51FDDFDF14D5BCCE00A4E8ED /* Record@2x.png */,
@@ -181,6 +184,8 @@
 				F784292114D5708600F55C51 /* EAGLView.h */,
 				F784292214D5708600F55C51 /* EAGLView.m */,
 				F784290814D5701D00F55C51 /* Supporting Files */,
+				F7893AE614D60245002465AF /* AudioEngine.h */,
+				F7893AE714D60245002465AF /* AudioEngine.m */,
 			);
 			path = instasound;
 			sourceTree = "<group>";
@@ -256,7 +261,7 @@
 				51ABB21A14D5C15B00D62235 /* app_icon_114.png in Resources */,
 				51ABB21C14D5C16900D62235 /* Default.png in Resources */,
 				51ABB21E14D5C17300D62235 /* Default@2x.png in Resources */,
-				AE0292C414D609F60065C101 /* SoundCloud.bundle in Resources */,
+				F7893B0314D60D1A002465AF /* SoundCloud.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -271,6 +276,7 @@
 				F784291214D5701D00F55C51 /* AppDelegate.m in Sources */,
 				F784292314D5708600F55C51 /* EAGLView.m in Sources */,
 				F784295F14D574F600F55C51 /* ViewController.m in Sources */,
+				F7893AE814D60245002465AF /* AudioEngine.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
