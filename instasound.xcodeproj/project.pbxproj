@@ -11,6 +11,8 @@
 		AE42263214D5B763009B6FEA /* app_icon_114.png in Resources */ = {isa = PBXBuildFile; fileRef = AE42263114D5B763009B6FEA /* app_icon_114.png */; };
 		AE42263514D5B7E5009B6FEA /* app_icon_57.png in Resources */ = {isa = PBXBuildFile; fileRef = AE42263414D5B7E5009B6FEA /* app_icon_57.png */; };
 		AE42263714D5B813009B6FEA /* app_icon_114.png in Resources */ = {isa = PBXBuildFile; fileRef = AE42263614D5B813009B6FEA /* app_icon_114.png */; };
+		AE42263914D5B8D1009B6FEA /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AE42263814D5B8D1009B6FEA /* Default@2x.png */; };
+		AE42263B14D5B8D8009B6FEA /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = AE42263A14D5B8D8009B6FEA /* Default.png */; };
 		F784290214D5701D00F55C51 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290114D5701D00F55C51 /* UIKit.framework */; };
 		F784290414D5701D00F55C51 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290314D5701D00F55C51 /* Foundation.framework */; };
 		F784290614D5701D00F55C51 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290514D5701D00F55C51 /* CoreGraphics.framework */; };
@@ -30,6 +32,8 @@
 		AE42263114D5B763009B6FEA /* app_icon_114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = app_icon_114.png; sourceTree = "<group>"; };
 		AE42263414D5B7E5009B6FEA /* app_icon_57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = app_icon_57.png; sourceTree = "<group>"; };
 		AE42263614D5B813009B6FEA /* app_icon_114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = app_icon_114.png; sourceTree = "<group>"; };
+		AE42263814D5B8D1009B6FEA /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		AE42263A14D5B8D8009B6FEA /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		F78428FD14D5701D00F55C51 /* instasound.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = instasound.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F784290114D5701D00F55C51 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		F784290314D5701D00F55C51 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -80,6 +84,8 @@
 		F78428F214D5701D00F55C51 = {
 			isa = PBXGroup;
 			children = (
+				AE42263A14D5B8D8009B6FEA /* Default.png */,
+				AE42263814D5B8D1009B6FEA /* Default@2x.png */,
 				AE42263614D5B813009B6FEA /* app_icon_114.png */,
 				AE42263414D5B7E5009B6FEA /* app_icon_57.png */,
 				AE42263114D5B763009B6FEA /* app_icon_114.png */,
@@ -193,6 +199,8 @@
 				AE42263214D5B763009B6FEA /* app_icon_114.png in Resources */,
 				AE42263514D5B7E5009B6FEA /* app_icon_57.png in Resources */,
 				AE42263714D5B813009B6FEA /* app_icon_114.png in Resources */,
+				AE42263914D5B8D1009B6FEA /* Default@2x.png in Resources */,
+				AE42263B14D5B8D8009B6FEA /* Default.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
