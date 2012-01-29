@@ -26,7 +26,9 @@ inline double linearInterp(double valA, double valB, double fract)
 	EAGLView*                   view;
     
 	AudioUnit					mixerUnit;
+	AudioUnit					mixer2Unit;    
     AudioUnit                   ioUnit;
+    AudioUnit                   distortionUnit;
     AudioUnit                   output;
     AUGraph                     graph;
 	BOOL						unitIsRunning;

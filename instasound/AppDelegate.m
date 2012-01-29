@@ -104,6 +104,8 @@ static OSStatus	renderCallback(void                         *inRefCon,
 
     AUNode ioNode;
     AUNode mixerNode;
+    AUNode mixer2Node;
+    AUNode distortionNode;
 
     OSStatus result = noErr;
 
@@ -122,16 +124,36 @@ static OSStatus	renderCallback(void                         *inRefCon,
     mixer_desc.componentFlags           = 0;
     mixer_desc.componentFlagsMask       = 0;
     mixer_desc.componentManufacturer    = kAudioUnitManufacturer_Apple;
-
+    
+    AudioComponentDescription distortion_desc;
+    distortion_desc.componentType            = kAudioUnitType_Effect;
+    distortion_desc.componentSubType         = kAudioUnitSubType_BandPassFilter;
+    distortion_desc.componentFlags           = 0;
+    distortion_desc.componentFlagsMask       = 0;
+    distortion_desc.componentManufacturer    = kAudioUnitManufacturer_Apple;
+    
+    
     result = AUGraphAddNode(graph, &io_desc, &ioNode);
     result = AUGraphAddNode(graph, &mixer_desc, &mixerNode);
+    result = AUGraphAddNode(graph, &mixer_desc, &mixer2Node);    
+    result = AUGraphAddNode(graph, &distortion_desc, &distortionNode);    
 
-    AUGraphConnectNodeInput(graph, mixerNode, 0, ioNode, 0);
-    AUGraphConnectNodeInput(graph, ioNode, 1, mixerNode, 0);
-
+    int outputChannel = 0;
+    int inputChannel = 1;
+    
+    result = AUGraphConnectNodeInput(graph, ioNode, inputChannel, mixerNode, 0);
+    result = AUGraphConnectNodeInput(graph, mixerNode, 0, distortionNode, 0);
+    result = AUGraphConnectNodeInput(graph, distortionNode, 0, mixer2Node, 0);
+    result = AUGraphConnectNodeInput(graph, mixer2Node, 0, ioNode, outputChannel);
+    
+    // result = AUGraphConnectNodeInput(graph, distortionNode, 0, ioNode, outputChannel);
+    // result = AUGraphConnectNodeInput(graph, ioNode, inputChannel, distortionNode, 0);
+    
     result = AUGraphOpen(graph);
     result = AUGraphNodeInfo(graph, ioNode, NULL, &ioUnit);
     result = AUGraphNodeInfo(graph, mixerNode, NULL, &mixerUnit);
+    result = AUGraphNodeInfo(graph, mixer2Node, NULL, &mixer2Unit);
+    result = AUGraphNodeInfo(graph, distortionNode, NULL, &distortionUnit);
 
     UInt32 enableInput = 1;
     result = AudioUnitSetProperty(ioUnit,
@@ -141,14 +163,14 @@ static OSStatus	renderCallback(void                         *inRefCon,
                                   &enableInput,
                                   sizeof(enableInput));
 
-    AURenderCallbackStruct renderCallbackStruct;
-    renderCallbackStruct.inputProc = &renderCallback;
-    result = AUGraphSetNodeInputCallback(graph, mixerNode, 0, &renderCallbackStruct);
+//    AURenderCallbackStruct renderCallbackStruct;
+//    renderCallbackStruct.inputProc = &renderCallback;
+//    result = AUGraphSetNodeInputCallback(graph, mixerNode, 0, &renderCallbackStruct);
 
     size_t bytesPerSample = sizeof (AudioUnitSampleType);
 
     ioFormat.mFormatID          = kAudioFormatLinearPCM;
-    ioFormat.mFormatFlags       = kAudioFormatFlagsAudioUnitCanonical;
+    ioFormat.mFormatFlags       = kAudioFormatFlagsNativeFloatPacked;
     ioFormat.mBytesPerPacket    = bytesPerSample;
     ioFormat.mFramesPerPacket   = 1;
     ioFormat.mBytesPerFrame     = bytesPerSample;
@@ -158,26 +180,44 @@ static OSStatus	renderCallback(void                         *inRefCon,
 
     int busCount = 6;
 
-    result = AudioUnitSetProperty(ioUnit,
+    result = AudioUnitSetProperty(mixerUnit,
                                   kAudioUnitProperty_StreamFormat,
                                   kAudioUnitScope_Output,
                                   0,
                                   &ioFormat,
                                   sizeof(ioFormat));
-    
-    result = AudioUnitSetProperty(mixerUnit,
+
+    result = AudioUnitSetProperty(mixer2Unit,
                                   kAudioUnitProperty_StreamFormat,
                                   kAudioUnitScope_Input,
                                   0,
                                   &ioFormat,
                                   sizeof(ioFormat));
     
-    result = AudioUnitSetProperty (mixerUnit,
-                                   kAudioUnitProperty_ElementCount,
-                                   kAudioUnitScope_Input,
-                                   0,
-                                   &busCount,
-                                   sizeof (busCount));
+    result = AudioUnitSetProperty(distortionUnit,
+                                  kAudioUnitProperty_StreamFormat,
+                                  kAudioUnitScope_Input,
+                                  0,
+                                  &ioFormat,
+                                  sizeof(ioFormat));
+    
+    result = AudioUnitSetProperty(distortionUnit,
+                                  kAudioUnitProperty_StreamFormat,
+                                  kAudioUnitScope_Output,
+                                  0,
+                                  &ioFormat,
+                                  sizeof(ioFormat));
+    
+    
+    
+    
+    result = AudioUnitSetProperty(mixerUnit,
+                                  kAudioUnitProperty_ElementCount,
+                                  kAudioUnitScope_Input,
+                                  0,
+                                  &busCount,
+                                  sizeof (busCount));
+    
 
     result = AUGraphInitialize(graph);
     
