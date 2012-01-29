@@ -201,6 +201,8 @@ static OSStatus	renderCallback(void                         *inRefCon,
                                   &ioFormat,
                                   sizeof(ioFormat));
 
+    if (result != 0) {NSLog(@"FAIL: %ld", result);}
+    
     result = AudioUnitSetProperty(mixer2Unit,
                                   kAudioUnitProperty_StreamFormat,
                                   kAudioUnitScope_Input,
@@ -208,12 +210,16 @@ static OSStatus	renderCallback(void                         *inRefCon,
                                   &ioFormat,
                                   sizeof(ioFormat));
     
+    if (result != 0) {NSLog(@"FAIL: %ld", result);}
+    
     result = AudioUnitSetProperty(distortionUnit,
                                   kAudioUnitProperty_StreamFormat,
                                   kAudioUnitScope_Input,
                                   0,
                                   &ioFormat,
                                   sizeof(ioFormat));
+    
+    if (result != 0) {NSLog(@"FAIL: %ld", result);}
     
     result = AudioUnitSetProperty(distortionUnit,
                                   kAudioUnitProperty_StreamFormat,
@@ -223,7 +229,7 @@ static OSStatus	renderCallback(void                         *inRefCon,
                                   sizeof(ioFormat));
     
     
-    
+    if (result != 0) {NSLog(@"FAIL: %ld", result);}
     
     result = AudioUnitSetProperty(mixerUnit,
                                   kAudioUnitProperty_ElementCount,
@@ -231,15 +237,18 @@ static OSStatus	renderCallback(void                         *inRefCon,
                                   0,
                                   &busCount,
                                   sizeof (busCount));
-    
+    if (result != 0) {NSLog(@"FAIL: %ld", result);}
 
     result = AUGraphInitialize(graph);
+    
+    
+    if (result != 0) {NSLog(@"FAIL: %ld", result);}
     
     if (result == 0) {
         NSLog(@"INIT SUCCEEDED");
     }
     else {
-        NSLog(@"INIT FAILED");
+        NSLog(@"INIT FAILED: %ld", result);
     }
     
     CAShow(graph);
