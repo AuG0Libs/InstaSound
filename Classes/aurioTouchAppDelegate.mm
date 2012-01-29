@@ -21,8 +21,8 @@ static OSStatus	renderCallback(void                         *inRefCon,
                                const AudioTimeStamp 		*inTimeStamp,
                                UInt32 						inBusNumber,
                                UInt32 						inNumberFrames,
-                               AudioBufferList              *ioData)
-{
+                               AudioBufferList              *ioData) {
+
     SInt8 *data = (SInt8 *)(ioData->mBuffers[0].mData);
 
     for (int i = 0; i < inNumberFrames; i++)
@@ -35,9 +35,8 @@ static OSStatus	renderCallback(void                         *inRefCon,
 	return 0;
 }
 
+- (void)applicationDidFinishLaunching:(UIApplication *)application {
 
-- (void)applicationDidFinishLaunching:(UIApplication *)application
-{
     oscilLine = (GLfloat*)malloc(points * 2 * sizeof(GLfloat));
 
 	try {
@@ -163,9 +162,7 @@ static OSStatus	renderCallback(void                         *inRefCon,
 - (void)applicationWillEnterForeground:(UIApplication *)application {
 }
 
-
-- (void)dealloc
-{
+- (void)dealloc {
 	[view release];
 	[window release];
 
@@ -174,9 +171,7 @@ static OSStatus	renderCallback(void                         *inRefCon,
 	[super dealloc];
 }
 
-
-- (void)drawOscilloscope
-{
+- (void)drawOscilloscope {
 	// Clear the view
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -225,23 +220,19 @@ static OSStatus	renderCallback(void                         *inRefCon,
 	glPopMatrix();
 }
 
-- (void)drawView:(id)sender forTime:(NSTimeInterval)time
-{
+- (void)drawView:(id)sender forTime:(NSTimeInterval)time {
     [self drawOscilloscope];
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 
 }
 
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
-{
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
 
 }
 
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
 
 }
 
