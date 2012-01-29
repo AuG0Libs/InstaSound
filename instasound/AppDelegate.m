@@ -147,11 +147,10 @@ static OSStatus	renderCallback(void                         *inRefCon,
     
     AudioComponentDescription distortion_desc;
     distortion_desc.componentType            = kAudioUnitType_Effect;
-    distortion_desc.componentSubType         = kAudioUnitSubType_BandPassFilter;
+    distortion_desc.componentSubType         = kAudioUnitSubType_Distortion;
     distortion_desc.componentFlags           = 0;
     distortion_desc.componentFlagsMask       = 0;
     distortion_desc.componentManufacturer    = kAudioUnitManufacturer_Apple;
-    
     
     result = AUGraphAddNode(graph, &io_desc, &ioNode);
     result = AUGraphAddNode(graph, &mixer_desc, &mixerNode);
