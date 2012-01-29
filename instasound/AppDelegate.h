@@ -47,6 +47,7 @@ inline double linearInterp(double valA, double valB, double fract)
 
 @property (retain, nonatomic) IBOutlet UINavigationBar *navigationBar;
 @property (retain, nonatomic) IBOutlet UITabBar *buttonBar;
+@property (retain, nonatomic) IBOutlet UIButton *recordButton;
 
 @property (nonatomic, assign) BOOL unitIsRunning;
 @property (nonatomic, assign) BOOL unitHasBeenCreated;
@@ -54,6 +55,7 @@ inline double linearInterp(double valA, double valB, double fract)
 - (void)initializeEAGLView;
 - (void)initializeNavigationView;
 - (void)initializeButtons;
+- (void)initializeRecordButton;
 
 @end
 
