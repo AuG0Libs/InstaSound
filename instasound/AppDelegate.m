@@ -43,6 +43,10 @@ static OSStatus	renderCallback(void                         *inRefCon,
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    // Make it red to see size issues
+    [self.window setBackgroundColor:[UIColor redColor]];
+    
     [self initializeEAGLView];
     [self initializeNavigationView];
     [self initializeButtons];
@@ -252,16 +256,15 @@ static OSStatus	renderCallback(void                         *inRefCon,
     
     unitHasBeenCreated = true;
     unitIsRunning = 1;
+       
+    // top: 20 (statusbar) + 44 (navigationBar)
+    // height: 480 (whole screen) - 49 (bottombar) - 64 (topbar)
+    self.eaglView = [[EAGLView alloc] initWithFrame: CGRectMake(0, 64, 320, 367)];
     
+    self.eaglView.delegate = self;
     
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    
-    self.eaglView = [[EAGLView alloc] initWithFrame: CGRectMake ( 0, 0, 480, 640)];
-    
-    eaglView.delegate = self;
-    
-    [eaglView setAnimationInterval:1./20.];
-	[eaglView startAnimation];
+    [self.eaglView setAnimationInterval:1./20.];
+    [self.eaglView startAnimation];
 }
 
 - (void)initializeNavigationView
