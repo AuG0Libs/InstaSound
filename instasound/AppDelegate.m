@@ -15,28 +15,38 @@
 @synthesize unitIsRunning;
 @synthesize unitHasBeenCreated;
 
-SInt16 audioBuffer[32 * 1024 * 1024];
+Float32 audioBuffer[32 * 1024 * 1024];
 
 int audioBufferLen = 0;
 int points = 1024;
 
-static OSStatus	renderCallback(void                         *inRefCon,
-                               AudioUnitRenderActionFlags 	*ioActionFlags,
-                               const AudioTimeStamp 		*inTimeStamp,
-                               UInt32 						inBusNumber,
-                               UInt32 						inNumberFrames,
-                               AudioBufferList              *ioData) {
+static OSStatus renderCallback (void *inRefCon, 
+                                AudioUnitRenderActionFlags 	*ioActionFlags, 
+                                const AudioTimeStamp		*inTimeStamp, 
+                                UInt32 						inBusNumber, 
+                                UInt32 						inNumberFrames, 
+                                AudioBufferList				*ioData)
+{
+    AudioUnit *unit = (AudioUnit *)inRefCon;
 
-    SInt8 *data = (SInt8 *)(ioData->mBuffers[0].mData);
+	OSStatus renderErr;
     
+    renderErr = AudioUnitRender(*unit, ioActionFlags, 
+								inTimeStamp, 0, inNumberFrames, ioData);
+	if (renderErr < 0) {
+		return renderErr;
+	}
+    
+    SInt32 *data = (SInt32 *) ioData->mBuffers[0].mData; // left channel
+     
     for (int i = 0; i < inNumberFrames; i++)
     {
-        audioBuffer[audioBufferLen + i] = data[i * 4 + 2] << 8 | (UInt8) data[i * 4 + 3];
+        audioBuffer[audioBufferLen + i] = (data[i] >> 9) / 32512.0;
     }
-
+    
     audioBufferLen += inNumberFrames;
-
-	return 0;
+    
+    return noErr;	// return with samples in iOdata
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -167,7 +177,7 @@ static OSStatus	renderCallback(void                         *inRefCon,
     result = AUGraphConnectNodeInput(graph, ioNode, inputChannel, mixerNode, 0);
     result = AUGraphConnectNodeInput(graph, mixerNode, 0, distortionNode, 0);
     result = AUGraphConnectNodeInput(graph, distortionNode, 0, mixer2Node, 0);
-    result = AUGraphConnectNodeInput(graph, mixer2Node, 0, mixer3Node, 0);
+    // result = AUGraphConnectNodeInput(graph, mixer2Node, 0, mixer3Node, 0);
     result = AUGraphConnectNodeInput(graph, mixer3Node, 0, ioNode, outputChannel);
     
     result = AUGraphOpen(graph);
@@ -186,8 +196,8 @@ static OSStatus	renderCallback(void                         *inRefCon,
 
     AURenderCallbackStruct renderCallbackStruct;
     renderCallbackStruct.inputProc = &renderCallback;
-    renderCallbackStruct.inputProcRefCon = nil;
-    result = AUGraphSetNodeInputCallback(graph, mixer2Node, 0, &renderCallbackStruct);
+    renderCallbackStruct.inputProcRefCon = &mixer2Unit;
+    result = AUGraphSetNodeInputCallback(graph, mixer3Node, 0, &renderCallbackStruct);
 
     
     UInt32 asbdSize = sizeof(AudioStreamBasicDescription);
@@ -314,12 +324,10 @@ static OSStatus	renderCallback(void                         *inRefCon,
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-	glColor4f(1., 1., 1., 1.);
-
 	glPushMatrix();
 
-	glTranslatef(0., 480., 0.);
-	glRotatef(-90., 0., 0., 1.);
+	// glTranslatef(0., 480., 0.);
+	// glRotatef(-90., 0., 0., 1.);
 
 	glEnable(GL_TEXTURE_2D);
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -327,8 +335,8 @@ static OSStatus	renderCallback(void                         *inRefCon,
 
 	glPushMatrix();
 
-	glTranslatef(17., 182., 0.);
-	glScalef(448., 116., 1.);
+	glTranslatef(0, 0, 0.);
+	glScalef(320., 300., 1.);
 
 	glDisable(GL_TEXTURE_2D);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -342,11 +350,11 @@ static OSStatus	renderCallback(void                         *inRefCon,
         for (int i = 0; i < points; i++)
         {
             oscilLine[i * 2 + 0] = ((Float32) i) / points;
-            oscilLine[i * 2 + 1] = ((Float32) audioBuffer[offset + i * 256]) / 32768.0;
+            oscilLine[i * 2 + 1] = audioBuffer[offset + i * 256];
         }
     }
 
-    glColor4f(0., 1., 0., 1.);
+    glColor4f(0.5, 0.5, 0.5, 1.);
     glVertexPointer(2, GL_FLOAT, 0, oscilLine);
     glDrawArrays(GL_LINE_STRIP, 0, points);
 
