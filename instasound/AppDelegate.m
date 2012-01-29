@@ -26,7 +26,9 @@ static OSStatus	renderCallback(void                         *inRefCon,
                                AudioBufferList              *ioData) {
 
     SInt8 *data = (SInt8 *)(ioData->mBuffers[0].mData);
-
+    
+    NSLog(@"%d\n", data[2]);
+    
     for (int i = 0; i < inNumberFrames; i++)
     {
         audioBuffer[audioBufferLen + i] = data[i * 4 + 2] << 8 | (UInt8) data[i * 4 + 3];
@@ -125,7 +127,7 @@ static OSStatus	renderCallback(void                         *inRefCon,
     result = AUGraphAddNode(graph, &mixer_desc, &mixerNode);
 
     // AUGraphConnectNodeInput(graph, mixerNode, 0, ioNode, 0);
-    AUGraphConnectNodeInput(graph, ioNode, 0, mixerNode, 1);
+    AUGraphConnectNodeInput(graph, ioNode, 0, mixerNode, 0);
 
     result = AUGraphOpen(graph);
     result = AUGraphNodeInfo(graph, ioNode, NULL, &ioUnit);
@@ -142,7 +144,7 @@ static OSStatus	renderCallback(void                         *inRefCon,
     AURenderCallbackStruct renderCallbackStruct;
     renderCallbackStruct.inputProc = &renderCallback;
 
-    result = AUGraphSetNodeInputCallback(graph, mixerNode, 1, &renderCallbackStruct);
+    result = AUGraphSetNodeInputCallback(graph, mixerNode, 0, &renderCallbackStruct);
 
     size_t bytesPerSample = sizeof (AudioUnitSampleType);
 
