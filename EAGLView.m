@@ -23,16 +23,11 @@
 
 @synthesize animationInterval, applicationResignedActive;
 
-// You must implement this
-+ (Class) layerClass
-{
++ (Class) layerClass {
 	return [CAEAGLLayer class];
 }
 
-
-//The GL view is stored in the nib file. When it's unarchived it's sent -initWithCoder:
-- (id)initWithCoder:(NSCoder*)coder
-{
+- (id)initWithCoder:(NSCoder*)coder {
 	if((self = [super initWithCoder:coder])) {
 		// Get the layer
 		CAEAGLLayer *eaglLayer = (CAEAGLLayer*) self.layer;
@@ -59,18 +54,14 @@
 	return self;
 }
 
-
-- (void)layoutSubviews
-{
+- (void)layoutSubviews {
 	[EAGLContext setCurrentContext:context];
 	[self destroyFramebuffer];
 	[self createFramebuffer];
 	[self drawView];
 }
 
-
-- (BOOL)createFramebuffer
-{
+- (BOOL)createFramebuffer {
 	glGenFramebuffersOES(1, &viewFramebuffer);
 	glGenRenderbuffersOES(1, &viewRenderbuffer);
 
@@ -97,9 +88,7 @@
 	return YES;
 }
 
-
-- (void)destroyFramebuffer
-{
+- (void)destroyFramebuffer {
 	glDeleteFramebuffersOES(1, &viewFramebuffer);
 	viewFramebuffer = 0;
 	glDeleteRenderbuffersOES(1, &viewRenderbuffer);
@@ -111,20 +100,17 @@
 	}
 }
 
-- (void)startAnimation
-{
+- (void)startAnimation {
 	animationTimer = [NSTimer scheduledTimerWithTimeInterval:animationInterval target:self selector:@selector(drawView) userInfo:nil repeats:YES];
 	animationStarted = [NSDate timeIntervalSinceReferenceDate];
 }
 
-- (void)stopAnimation
-{
+- (void)stopAnimation {
 	[animationTimer invalidate];
 	animationTimer = nil;
 }
 
-- (void)setAnimationInterval:(NSTimeInterval)interval
-{
+- (void)setAnimationInterval:(NSTimeInterval)interval {
 	animationInterval = interval;
 
 	if(animationTimer) {
@@ -133,33 +119,23 @@
 	}
 }
 
-
-- (void)setupView
-{
-
-	// Sets up matrices and transforms for OpenGL ES
+- (void)setupView {
 	glViewport(0, 0, backingWidth, backingHeight);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrthof(0, backingWidth, 0, backingHeight, -1.0f, 1.0f);
 	glMatrixMode(GL_MODELVIEW);
 
-	// Clears the view with black
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
-	///glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
 }
 
-// Updates the OpenGL view when the timer fires
-- (void)drawView
-{
+- (void)drawView {
     // the NSTimer seems to fire one final time even though it's been invalidated
     // so just make sure and not draw if we're resigning active
     if (self.applicationResignedActive) return;
 
-	// Make sure that you are drawing to the current context
 	[EAGLContext setCurrentContext:context];
 
 	glBindFramebufferOES(GL_FRAMEBUFFER_OES, viewFramebuffer);
@@ -177,9 +153,7 @@
 	[context presentRenderbuffer:GL_RENDERBUFFER_OES];
 }
 
-// Stop animating and release resources when they are no longer needed.
-- (void)dealloc
-{
+- (void)dealloc {
 	[self stopAnimation];
 
 	if([EAGLContext currentContext] == context) {
@@ -192,30 +166,27 @@
 	[super dealloc];
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 	if ([(id)delegate respondsToSelector:@selector(touchesBegan:withEvent:)])
 		[delegate touchesBegan:touches withEvent:event];
 }
 
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
-{
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
 	if ([(id)delegate respondsToSelector:@selector(touchesMoved:withEvent:)])
 		[delegate touchesMoved:touches withEvent:event];
 }
 
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
 	if ([(id)delegate respondsToSelector:@selector(touchesEnded:withEvent:)])
 		[delegate touchesEnded:touches withEvent:event];
 }
 
+- (id <EAGLViewDelegate>)delegate {
+    return delegate;
+}
 
-
-- (id <EAGLViewDelegate>)delegate { return delegate; }
-- (void)setDelegate:(id <EAGLViewDelegate>)v
-{
-	delegate = v;
+- (void)setDelegate:(id <EAGLViewDelegate>)v {
+    delegate = v;
 }
 
 @end

@@ -61,7 +61,6 @@ static OSStatus	renderCallback(void                         *inRefCon,
         io_desc.componentFlagsMask = 0;
         io_desc.componentManufacturer = kAudioUnitManufacturer_Apple;
 
-        // Multichannel mixer unit
         AudioComponentDescription mixer_desc;
         mixer_desc.componentType          = kAudioUnitType_Mixer;
         mixer_desc.componentSubType       = kAudioUnitSubType_MultiChannelMixer;
@@ -99,7 +98,7 @@ static OSStatus	renderCallback(void                         *inRefCon,
         ioFormat.mBytesPerPacket    = bytesPerSample;
         ioFormat.mFramesPerPacket   = 1;
         ioFormat.mBytesPerFrame     = bytesPerSample;
-        ioFormat.mChannelsPerFrame  = 1;                  // 1 indicates mono
+        ioFormat.mChannelsPerFrame  = 1;
         ioFormat.mBitsPerChannel    = 8 * bytesPerSample;
         ioFormat.mSampleRate        = 44100;
 
@@ -144,14 +143,12 @@ static OSStatus	renderCallback(void                         *inRefCon,
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-	//start animation now that we're in the foreground
     view.applicationResignedActive = NO;
 	[view startAnimation];
 	AudioSessionSetActive(true);
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
-	//stop animation before going into background
     view.applicationResignedActive = YES;
     [view stopAnimation];
 }
@@ -172,7 +169,7 @@ static OSStatus	renderCallback(void                         *inRefCon,
 }
 
 - (void)drawOscilloscope {
-	// Clear the view
+
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -190,12 +187,9 @@ static OSStatus	renderCallback(void                         *inRefCon,
 
 	glPushMatrix();
 
-	// Translate to the left side and vertical center of the screen, and scale so that the screen coordinates
-	// go from 0 to 1 along the X, and -1 to 1 along the Y
 	glTranslatef(17., 182., 0.);
 	glScalef(448., 116., 1.);
 
-	// Set up some GL state for our oscilloscope lines
 	glDisable(GL_TEXTURE_2D);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
