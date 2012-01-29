@@ -126,8 +126,8 @@ static OSStatus	renderCallback(void                         *inRefCon,
     result = AUGraphAddNode(graph, &io_desc, &ioNode);
     result = AUGraphAddNode(graph, &mixer_desc, &mixerNode);
 
-    // AUGraphConnectNodeInput(graph, mixerNode, 0, ioNode, 0);
-    AUGraphConnectNodeInput(graph, ioNode, 0, mixerNode, 0);
+    AUGraphConnectNodeInput(graph, mixerNode, 0, ioNode, 0);
+    AUGraphConnectNodeInput(graph, ioNode, 1, mixerNode, 0);
 
     result = AUGraphOpen(graph);
     result = AUGraphNodeInfo(graph, ioNode, NULL, &ioUnit);
@@ -143,7 +143,6 @@ static OSStatus	renderCallback(void                         *inRefCon,
 
     AURenderCallbackStruct renderCallbackStruct;
     renderCallbackStruct.inputProc = &renderCallback;
-
     result = AUGraphSetNodeInputCallback(graph, mixerNode, 0, &renderCallbackStruct);
 
     size_t bytesPerSample = sizeof (AudioUnitSampleType);
