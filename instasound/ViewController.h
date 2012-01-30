@@ -32,5 +32,7 @@
 
 - (void)record;
 - (void)upload;
+- (void)saveFile;
+- (void)reset;
 
 @end
