@@ -2,6 +2,15 @@
 #import "AVFoundation/AVFoundation.h"
 #import "AudioPreset.h"
 
+#define WAV_HEADER_LEN 44
+
+#define WRITE_4CHARS(buffer, index, a, b, c, d) buffer[index] = a; buffer[index + 1] = b; buffer[index + 2] = c; buffer[index + 3] = d;
+
+
+#define WRITE_INT16(buffer, index, value) OSWriteBigInt16(buffer, index, value)
+#define WRITE_INT32(buffer, index, value) OSWriteBigInt32(buffer, index, value)
+
+
 int outputChannel = 0; // because it looks most like the "O" in I/O
 int inputChannel = 1;  // because it looks most like the "I" in I/O
 
@@ -54,40 +63,33 @@ static void convertToSInt16(Float32 *input, SInt16 *output, int length)
 {
     for (int i = 0; i < length; i++)
     {
-        output[i] = (SInt16) (input[i] / 32768);
+        WRITE_INT16(output, i * 2, (SInt16) (input[i] * 32768));
     }
 }
 
-#define WAV_HEADER_LEN 44
-
-#define WRITE_UINT8(buffer, index, value) ((UInt8 *)buffer)[index] = value
-#define WRITE_UINT16(buffer, index, value) ((UInt16 *)buffer)[index / sizeof(UInt16)] = value
-#define WRITE_UINT32(buffer, index, value) ((UInt32 *)buffer)[index / sizeof(UInt32)] = value
-#define WRITE_4CHARS(buffer, index, a, b, c, d) buffer[index] = a; buffer[index + 1] = b; buffer[index + 2] = c; buffer[index + 3] = d;
-
-
 NSData *getAudioData(int offset, int length)
 {
-    UInt8 *buffer = malloc(WAV_HEADER_LEN + length * sizeof(SInt16));
-
+    int bytes = length * 2;
+    UInt8 *buffer = malloc(WAV_HEADER_LEN + bytes);
+    
     WRITE_4CHARS(buffer, 0, 'R', 'I', 'F', 'F');
-    WRITE_UINT32(buffer, 4, audioBufferLen * 2 - 36); // File length - 8
+    WRITE_INT32(buffer, 4, bytes - 36); // File length - 8
     WRITE_4CHARS(buffer, 8, 'W', 'A', 'V', 'E');
     WRITE_4CHARS(buffer, 16, 'f', 'm', 't', 0);
-    WRITE_UINT16(buffer, 20, 1); // Type
-    WRITE_UINT16(buffer, 22, 1); // Channels
-    WRITE_UINT32(buffer, 24, 44100); // Samples per second
-    WRITE_UINT32(buffer, 28, 44100 * 2); // Bytes per second
-    WRITE_UINT16(buffer, 32, 2); //  ((<bits/sample>+7) / 8)
-    WRITE_UINT16(buffer, 34, 16); // Bits per sample
+    WRITE_INT16(buffer, 20, 1); // Type
+    WRITE_INT16(buffer, 22, 1); // Channels
+    WRITE_INT32(buffer, 24, 44100); // Samples per second
+    WRITE_INT32(buffer, 28, 44100 * 2); // Bytes per second
+    WRITE_INT16(buffer, 32, 2); //  ((<bits/sample>+7) / 8)
+    WRITE_INT16(buffer, 34, 16); // Bits per sample
     WRITE_4CHARS(buffer, 36, 'd', 'a', 't', 'a');
-    WRITE_UINT32(buffer, 40, audioBufferLen); // Data length
+    WRITE_INT32(buffer, 40, bytes); // Data length
 
     convertToSInt16(audioBuffer + offset, (SInt16 *) (buffer + WAV_HEADER_LEN), length);
 
     return [[NSData alloc]
             initWithBytesNoCopy:(void *)buffer
-            length:audioBufferLen
+            length:bytes
             freeWhenDone:TRUE];
 }
 
