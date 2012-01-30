@@ -2,11 +2,15 @@
 
 @implementation AudioPreset
 
+@synthesize enabled;
+
 - (AudioPreset *) create:(AUGraph) _graph
 {
     graph = _graph;
     
     [self initDescriptions];
+ 
+    enabled = NO;
     
     AUGraphAddNode(graph, &reverb_desc, &reverbNode);
     AUGraphAddNode(graph, &compression_desc, &compressionNode);
@@ -21,8 +25,11 @@
     return self;
 }
 
+
 - (AudioPreset *) connect:(AUNode)input with:(AUNode)output;
 {
+    enabled = YES;
+    
     AUGraphConnectNodeInput(graph, input, 0, bandpassNode, 0);
     AUGraphConnectNodeInput(graph, bandpassNode, 0, compressionNode, 0);
     AUGraphConnectNodeInput(graph, compressionNode, 0, distortionNode, 0);
@@ -37,7 +44,9 @@
 
 - (AudioPreset *) disconnect:(AUNode)output;
 {
-    AUGraphDisconnectNodeInput(graph, bandpassNode, 0);
+    enabled = NO;
+    
+    // AUGraphDisconnectNodeInput(graph, bandpassNode, 0);
     AUGraphDisconnectNodeInput(graph, output, 0);    
     
     Boolean isUpdated = NO;

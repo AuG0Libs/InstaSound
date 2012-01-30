@@ -5,6 +5,7 @@
 @interface AudioPreset : NSObject
 {
     AUGraph graph;
+    Boolean enabled;
     
     AudioComponentDescription distortion_desc;
     AudioComponentDescription reverb_desc;
@@ -22,10 +23,13 @@
     AudioUnit bandpassUnit;
 }
 
+@property (atomic) Boolean enabled;
+
 - (void) initDescriptions;
 
 - (AudioPreset *) create:(AUGraph) graph;
 - (AudioPreset *) connect:(AUNode)input with:(AUNode)output;
+- (AudioPreset *) disconnect:(AUNode)output;
 
 - (id) distortion: (AudioUnitParameterID)type to:(AudioUnitParameterValue) value;
 - (id) reverb: (AudioUnitParameterID)type to:(AudioUnitParameterValue) value;

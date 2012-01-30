@@ -33,6 +33,13 @@ AudioComponentDescription distortion_desc;
 AVAudioSession *audioSession;
 AudioStreamBasicDescription	ioFormat;
 
+AudioPreset *preset1;
+AudioPreset *preset2;
+AudioPreset *preset3;
+AudioPreset *preset4;
+AudioPreset *preset5;
+
+
 Float32 *getAudioBuffer()
 {
     return audioBuffer;
@@ -277,25 +284,59 @@ static AudioPreset *createPreset()
     return [[AudioPreset alloc] create:graph];
 }
 
-void enableTelephone()
+static void togglePreset(AudioPreset *preset)
+{
+    if (preset.enabled == NO) {
+        [preset connect:mixerNode with:mixer2Node];    
+    }
+    else {
+        [preset disconnect:mixer2Node];                
+    }
+}
+
+void initPresets()
 {   
-    AudioPreset *preset = createPreset();
+    preset1 = createPreset();
     
-//    [preset reverb:kReverb2Param_DecayTimeAtNyquist to:1.5];
-//    [preset reverb:kReverb2Param_DecayTimeAt0Hz to:2.5];
-//    [preset reverb:kReverb2Param_DryWetMix to:20];
-//    [preset reverb:kReverb2Param_RandomizeReflections to:100];
+    [preset1 bandpass:kBandpassParam_CenterFrequency to:2000];
+    [preset1 bandpass:kBandpassParam_Bandwidth to:100];
 
-    [preset bandpass:kBandpassParam_CenterFrequency to:2000];
-    [preset bandpass:kBandpassParam_Bandwidth to:100];
+    [preset1 compression:kDynamicsProcessorParam_ExpansionRatio to:50];
+    [preset1 compression:kDynamicsProcessorParam_Threshold to:-40];
+    [preset1 compression:kDynamicsProcessorParam_MasterGain to:15];
+    [preset1 compression:kDynamicsProcessorParam_AttackTime to:0.0002];
+    [preset1 compression:kDynamicsProcessorParam_HeadRoom to:6];
 
-    [preset compression:kDynamicsProcessorParam_ExpansionRatio to:50];
-    [preset compression:kDynamicsProcessorParam_Threshold to:-40];
-    [preset compression:kDynamicsProcessorParam_MasterGain to:15];
-    [preset compression:kDynamicsProcessorParam_AttackTime to:0.0002];
-    [preset compression:kDynamicsProcessorParam_HeadRoom to:6];
+    preset2 = createPreset();
+    [preset2 reverb:kReverb2Param_DecayTimeAtNyquist to:1.5];
+    [preset2 reverb:kReverb2Param_DecayTimeAt0Hz to:2.5];
+    [preset2 reverb:kReverb2Param_DryWetMix to:20];
+    [preset2 reverb:kReverb2Param_RandomizeReflections to:100];
+}
 
-    [preset connect:mixerNode with:mixer2Node];
+void toggleEffect1()
+{
+    togglePreset(preset1);
+}
+
+void toggleEffect2()
+{
+    togglePreset(preset2);
+}
+
+void toggleEffect3()
+{
+    
+}
+
+void toggleEffect4()
+{
+    
+}
+
+void toggleEffect5()
+{
+    
 }
 
 int initAudioEngine()
@@ -307,7 +348,9 @@ int initAudioEngine()
     result = initAudioSession();
     result = initAudioGraph();
     result = initAudioUnits();
-       
+    
+    initPresets();
+    
     result = AUGraphInitialize(graph);
 
     CAShow(graph);

@@ -10,4 +10,8 @@ int getAudioBufferLength();
 
 NSData *getAudioData(int offset, int length);
 
-id 
+void toggleEffect1();
+void toggleEffect2();
+void toggleEffect3();
+void toggleEffect4();
+void toggleEffect5();
