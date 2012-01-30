@@ -7,20 +7,20 @@
 - (AudioPreset *) create:(AUGraph) _graph
 {
     graph = _graph;
-    
+
     [self initDescriptions];
- 
+
     enabled = NO;
-    
+
     AUGraphAddNode(graph, &reverb_desc, &reverbNode);
     AUGraphAddNode(graph, &compression_desc, &compressionNode);
     AUGraphAddNode(graph, &bandpass_desc, &bandpassNode);
     AUGraphAddNode(graph, &distortion_desc, &distortionNode);
-    
+
     AUGraphNodeInfo(graph, distortionNode, NULL, &distortionUnit);
     AUGraphNodeInfo(graph, compressionNode, NULL, &compressionUnit);
     AUGraphNodeInfo(graph, reverbNode, NULL, &reverbUnit);
-    AUGraphNodeInfo(graph, bandpassNode, NULL, &bandpassUnit);    
+    AUGraphNodeInfo(graph, bandpassNode, NULL, &bandpassUnit);
 
     return self;
 }
@@ -49,19 +49,19 @@
     distortion_desc.componentFlags              = 0;
     distortion_desc.componentFlagsMask          = 0;
     distortion_desc.componentManufacturer       = kAudioUnitManufacturer_Apple;
-    
+
     reverb_desc.componentType                   = kAudioUnitType_Effect;
     reverb_desc.componentSubType                = kAudioUnitSubType_Reverb2;
     reverb_desc.componentFlags                  = 0;
     reverb_desc.componentFlagsMask              = 0;
     reverb_desc.componentManufacturer           = kAudioUnitManufacturer_Apple;
-    
+
     compression_desc.componentType              = kAudioUnitType_Effect;
     compression_desc.componentSubType           = kAudioUnitSubType_DynamicsProcessor;
     compression_desc.componentFlags             = 0;
     compression_desc.componentFlagsMask         = 0;
     compression_desc.componentManufacturer      = kAudioUnitManufacturer_Apple;
-    
+
     bandpass_desc.componentType                 = kAudioUnitType_Effect;
     bandpass_desc.componentSubType              = kAudioUnitSubType_BandPassFilter;
     bandpass_desc.componentFlags                = 0;
