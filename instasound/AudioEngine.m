@@ -510,16 +510,6 @@ int initAudioEngine()
 
     AUGraphStart(graph);
 
-    //    size_t bytesPerSample = sizeof (AudioUnitSampleType);
-    //    ioFormat.mFormatID          = kAudioFormatLinearPCM;
-    //    ioFormat.mFormatFlags       = kAudioFormatFlagIsFloat;
-    //    ioFormat.mBytesPerPacket    = bytesPerSample;
-    //    ioFormat.mFramesPerPacket   = 1;
-    //    ioFormat.mBytesPerFrame     = bytesPerSample;
-    //    ioFormat.mChannelsPerFrame  = 2;
-    //    ioFormat.mBitsPerChannel    = 8 * bytesPerSample;
-    //    ioFormat.mSampleRate        = 44100;
-
     return result;
 }
 
