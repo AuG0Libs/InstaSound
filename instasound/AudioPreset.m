@@ -11,6 +11,7 @@
     [self initDescriptions];
  
     enabled = NO;
+    nodeCount = 0;
     
     AUGraphAddNode(graph, &reverb_desc, &reverbNode);
     AUGraphAddNode(graph, &compression_desc, &compressionNode);
@@ -25,14 +26,36 @@
     return self;
 }
 
+- (void) enableDistortion
+{
+    nodes[nodeCount++] = distortionNode;
+}
+
+- (void) enableReverb
+{
+    nodes[nodeCount++] = reverbNode; 
+}
+
+- (void) enableBandpass
+{
+    nodes[nodeCount++] = bandpassNode;
+}
+
+- (void) enableCompression
+{
+    nodes[nodeCount++] = compressionNode;    
+}
+
 
 - (AudioPreset *) connect:(AUNode)input with:(AUNode)output on:(int)channel
 {
-    AUGraphConnectNodeInput(graph, input, 0, bandpassNode, 0);
-    AUGraphConnectNodeInput(graph, bandpassNode, 0, compressionNode, 0);
-    AUGraphConnectNodeInput(graph, compressionNode, 0, distortionNode, 0);
-    AUGraphConnectNodeInput(graph, distortionNode, 0, reverbNode, 0);
-    AUGraphConnectNodeInput(graph, reverbNode, 0, output, channel);
+    AUGraphConnectNodeInput(graph, input, 0, nodes[0], 0);
+ 
+    for (int i = 0; i < nodeCount - 1; i++) {
+        AUGraphConnectNodeInput(graph, nodes[i], 0, nodes[i + 1], 0);
+    }
+    
+    AUGraphConnectNodeInput(graph, nodes[nodeCount], 0, output, channel);
 
     return self;
 }
