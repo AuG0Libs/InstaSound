@@ -76,7 +76,7 @@ static void convertToSInt16(Float32 *input, SInt16 *output, int length)
 #define WRITE_4CHARS(buffer, index, a, b, c, d) buffer[index] = a; buffer[index + 1] = b; buffer[index + 2] = c; buffer[index + 3] = d;
 
 
-NSData *getAudioData(int offset, int length)
+static NSData *getAudioData(int offset, int length)
 {
     UInt8 *buffer = malloc(WAV_HEADER_LEN + length * sizeof(SInt16));
 
@@ -551,7 +551,7 @@ int initAudioEngine()
     return result;
 }
 
-OSStatus enableEffect1(){
+static OSStatus enableEffect1(){
     OSStatus result = noErr;
 
     // cathedral
@@ -564,7 +564,7 @@ OSStatus enableEffect1(){
     return result;
 }
 
-OSStatus enableEffect2(){
+static OSStatus enableEffect2(){
     OSStatus result = noErr;
 
 
@@ -572,7 +572,7 @@ OSStatus enableEffect2(){
     return result;
 }
 
-OSStatus enableEffect3(){
+static OSStatus enableEffect3(){
     OSStatus result = noErr;
 
 
@@ -580,7 +580,7 @@ OSStatus enableEffect3(){
     return result;
 }
 
-OSStatus enableEffect4(){
+static OSStatus enableEffect4(){
     OSStatus result = noErr;
 
 
@@ -588,7 +588,7 @@ OSStatus enableEffect4(){
     return result;
 }
 
-OSStatus enableEffect5(){
+static OSStatus enableEffect5(){
     OSStatus result = noErr;
 
 
@@ -599,7 +599,7 @@ OSStatus enableEffect5(){
 
 
 
-OSStatus disableEffect1(){
+static OSStatus disableEffect1(){
     OSStatus result = noErr;
 
     result = AUGraphDisconnectNodeInput(graph, reverbNode, 0); // first effect unit
@@ -613,7 +613,7 @@ OSStatus disableEffect1(){
     return result;
 }
 
-OSStatus disableEffect2(){
+static OSStatus disableEffect2(){
     OSStatus result = noErr;
 
 
@@ -621,7 +621,7 @@ OSStatus disableEffect2(){
     return result;
 }
 
-OSStatus disableEffect3(){
+static OSStatus disableEffect3(){
     OSStatus result = noErr;
 
 
@@ -629,7 +629,7 @@ OSStatus disableEffect3(){
     return result;
 }
 
-OSStatus disableEffect4(){
+static OSStatus disableEffect4(){
     OSStatus result = noErr;
 
 
@@ -637,7 +637,7 @@ OSStatus disableEffect4(){
     return result;
 }
 
-OSStatus disableEffect5(){
+static OSStatus disableEffect5(){
     OSStatus result = noErr;
 
 
@@ -645,9 +645,8 @@ OSStatus disableEffect5(){
     return result;
 }
 
-
-void toggleEffect1(){ NSLog(@"toggleEffect1() called!"); effect1==YES ? disableEffect1() : enableEffect1(); }
-void toggleEffect2(){ effect2==YES ? disableEffect2() : enableEffect2(); }
-void toggleEffect3(){ effect3==YES ? disableEffect3() : enableEffect3(); }
-void toggleEffect4(){ effect4==YES ? disableEffect4() : enableEffect4(); }
-void toggleEffect5(){ effect5==YES ? disableEffect5() : enableEffect5(); }
+static void toggleEffect1(){ NSLog(@"toggleEffect1() called!"); effect1==YES ? disableEffect1() : enableEffect1(); }
+static void toggleEffect2(){ effect2==YES ? disableEffect2() : enableEffect2(); }
+static void toggleEffect3(){ effect3==YES ? disableEffect3() : enableEffect3(); }
+static void toggleEffect4(){ effect4==YES ? disableEffect4() : enableEffect4(); }
+static void toggleEffect5(){ effect5==YES ? disableEffect5() : enableEffect5(); }

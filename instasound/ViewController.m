@@ -60,6 +60,7 @@ int points = 1024;
     [self.buttonBar setItems:[NSArray arrayWithObjects: church, nil]];
     
     [self.view addSubview:self.buttonBar];
+    
 }
 
 - (void)initializeEAGL
