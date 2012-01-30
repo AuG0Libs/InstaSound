@@ -354,28 +354,23 @@ static void initPresets()
 
     preset2 = createPreset();
 
-    [ preset2 bandpass:kBandpassParam_CenterFrequency            to:2000    ];
-    [ preset2 bandpass:kBandpassParam_Bandwidth                  to:100     ];
+    [ preset2 bandpass:kBandpassParam_CenterFrequency            to:1000    ];
+    [ preset2 bandpass:kBandpassParam_Bandwidth                  to:200     ];
+    [ preset2 compression:kDynamicsProcessorParam_Threshold      to:-40    ];
+    [ preset2 compression:kDynamicsProcessorParam_MasterGain     to:20    ];
 
-    [ preset2 compression:kDynamicsProcessorParam_ExpansionRatio to:50      ];
-    [ preset2 compression:kDynamicsProcessorParam_Threshold      to:-40     ];
-    [ preset2 compression:kDynamicsProcessorParam_MasterGain     to:15      ];
-    [ preset2 compression:kDynamicsProcessorParam_AttackTime     to:0.0002  ];
-    [ preset2 compression:kDynamicsProcessorParam_HeadRoom       to:6       ];
-
-//    [ preset2 distortion:kDistortionParam_FinalMix               to:50      ];
-
-    [preset2 enableBandpass     ];
-    [preset2 enableCompression  ];    
-
+    [ preset2 enableBandpass     ];
+    [ preset2 enableCompression   ];
+    
     preset3 = createPreset(); // temp
     
-    [ preset2 compression:kDynamicsProcessorParam_ExpansionRatio to:50      ];
-    [ preset2 compression:kDynamicsProcessorParam_Threshold      to:-20     ];
-    [ preset2 compression:kDynamicsProcessorParam_MasterGain     to:6       ];
-    [ preset2 compression:kDynamicsProcessorParam_AttackTime     to:0.0002  ];
-    [ preset2 compression:kDynamicsProcessorParam_HeadRoom       to:6       ];
+    [ preset3 highshelf:kHighShelfParam_Gain                     to:6       ];
+     
+    [ preset3 compression:kDynamicsProcessorParam_Threshold      to:-40     ];
+    [ preset3 compression:kDynamicsProcessorParam_MasterGain     to:12       ];
+    [ preset3 compression:kDynamicsProcessorParam_AttackTime     to:0.0002  ];
     
+    [ preset3 enableHighshelf ];
     [ preset3 enableCompression ];
 
     preset4 = createPreset(); // temp

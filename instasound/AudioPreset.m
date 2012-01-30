@@ -17,6 +17,7 @@
     AUGraphAddNode(graph, &reverb_desc, &reverbNode);
     AUGraphAddNode(graph, &compression_desc, &compressionNode);
     AUGraphAddNode(graph, &bandpass_desc, &bandpassNode);
+    AUGraphAddNode(graph, &highshelf_desc, &highshelfNode);
     AUGraphAddNode(graph, &distortion_desc, &distortionNode);
     AUGraphAddNode(graph, &fileplayer_desc, &fileplayerNode);
     
@@ -24,6 +25,7 @@
     AUGraphNodeInfo(graph, compressionNode, NULL, &compressionUnit);
     AUGraphNodeInfo(graph, reverbNode, NULL, &reverbUnit);
     AUGraphNodeInfo(graph, bandpassNode, NULL, &bandpassUnit);
+    AUGraphNodeInfo(graph, highshelfNode, NULL, &highshelfUnit);
     AUGraphNodeInfo(graph, fileplayerNode, NULL, &fileplayerUnit);
 
     return self;
@@ -123,6 +125,11 @@
     nodes[nodeCount++] = bandpassNode;
 }
 
+- (void) enableHighshelf
+{
+    nodes[nodeCount++] = highshelfNode;
+}
+
 - (void) enableCompression
 {
     nodes[nodeCount++] = compressionNode;    
@@ -173,6 +180,12 @@
     bandpass_desc.componentFlagsMask            = 0;
     bandpass_desc.componentManufacturer         = kAudioUnitManufacturer_Apple;
 
+    highshelf_desc.componentType                 = kAudioUnitType_Effect;
+    highshelf_desc.componentSubType              = kAudioUnitSubType_HighShelfFilter;
+    highshelf_desc.componentFlags                = 0;
+    highshelf_desc.componentFlagsMask            = 0;
+    highshelf_desc.componentManufacturer         = kAudioUnitManufacturer_Apple;
+
     fileplayer_desc.componentType = kAudioUnitType_Generator;
     fileplayer_desc.componentSubType = kAudioUnitSubType_AudioFilePlayer;
     fileplayer_desc.componentManufacturer = kAudioUnitManufacturer_Apple;
@@ -202,4 +215,9 @@
     return self;
 }
 
+- (id) highshelf: (AudioUnitParameterID)type to:(AudioUnitParameterValue) value
+{
+    AudioUnitSetParameter(highshelfUnit, type, kAudioUnitScope_Global, 0, value, 0);
+    return self;
+}
 @end

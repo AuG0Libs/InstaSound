@@ -11,18 +11,21 @@
     AudioComponentDescription reverb_desc;
     AudioComponentDescription compression_desc;
     AudioComponentDescription bandpass_desc;
+    AudioComponentDescription highshelf_desc;    
     AudioComponentDescription fileplayer_desc;
     
     AUNode distortionNode;
     AUNode reverbNode;
     AUNode compressionNode;
     AUNode bandpassNode;
+    AUNode highshelfNode;
     AUNode fileplayerNode;
     
     AudioUnit distortionUnit;
     AudioUnit reverbUnit;
     AudioUnit compressionUnit;
     AudioUnit bandpassUnit;
+    AudioUnit highshelfUnit;
     AudioUnit fileplayerUnit;
     
     AUNode nodes[16];
@@ -38,6 +41,7 @@
 - (void) enableDistortion;
 - (void) enableReverb;
 - (void) enableBandpass;
+- (void) enableHighshelf;
 - (void) enableCompression;
 - (void) enableFile: (NSString *)file ofType:(NSString *)type withFormat:(AudioStreamBasicDescription)ioFormat;
 
@@ -45,5 +49,6 @@
 - (id) reverb: (AudioUnitParameterID)type to:(AudioUnitParameterValue) value;
 - (id) compression: (AudioUnitParameterID)type to:(AudioUnitParameterValue) value;
 - (id) bandpass: (AudioUnitParameterID)type to:(AudioUnitParameterValue) value;
+- (id) highshelf: (AudioUnitParameterID)type to:(AudioUnitParameterValue) value;
 
 @end
