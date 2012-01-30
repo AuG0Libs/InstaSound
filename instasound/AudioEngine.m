@@ -522,6 +522,10 @@ OSStatus enableEffect1(){
     result = AUGraphConnectNodeInput(graph, reverbNode, 0, mixer2Node, 0);
     result = AUGraphConnectNodeInput(graph, mixer3Node, 0, ioNode, outputChannel);
 
+    result = AUGraphConnectNodeInput(graph, ioNode, inputChannel, mixerNode, 0);
+    result = AUGraphConnectNodeInput(graph, mixerNode, 0, mixer2Node, 0);
+    result = AUGraphConnectNodeInput(graph, mixer3Node, 0, ioNode, outputChannel);
+
     BOOL isUpdated = NO;
     result = AUGraphUpdate(graph, &isUpdated);
     effect1 = YES;
@@ -571,7 +575,7 @@ OSStatus enableEffect5(){
     OSStatus result = noErr;
 
     BOOL isUpdated = NO;
-    result = AUGraphUpdate(graph, &isUpdated);
+    result = AUGraphUpdate(graph, isUpdated);
     effect5 = YES;
     NSLog(@"Effect5 enabled");
     return result;

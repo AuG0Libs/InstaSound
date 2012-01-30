@@ -135,11 +135,11 @@ int points = 1024;
     }
 }
 
-- (void)effect1{
-
-    toggleEffect1();
-
-}
+- (void)effect1{ toggleEffect1(); }
+- (void)effect2{ toggleEffect2(); }
+- (void)effect3{ toggleEffect3(); }
+- (void)effect4{ toggleEffect4(); }
+- (void)effect5{ toggleEffect5(); }
 
 - (void)record
 {
