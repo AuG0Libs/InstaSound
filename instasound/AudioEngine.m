@@ -515,36 +515,40 @@ int initAudioEngine()
 
 OSStatus enableEffect1(){
     OSStatus result = noErr;
-
-    // cathedral
-    result = AUGraphConnectNodeInput(graph, ioNode, inputChannel, mixerNode, 0);
-    result = AUGraphConnectNodeInput(graph, mixerNode, 0, reverbNode, 0);
-    result = AUGraphConnectNodeInput(graph, reverbNode, 0, mixer2Node, 0);
-    result = AUGraphConnectNodeInput(graph, mixer3Node, 0, ioNode, outputChannel);
-
-    result = AUGraphConnectNodeInput(graph, ioNode, inputChannel, mixerNode, 0);
-    result = AUGraphConnectNodeInput(graph, mixerNode, 0, mixer2Node, 0);
-    result = AUGraphConnectNodeInput(graph, mixer3Node, 0, ioNode, outputChannel);
+    
+    // clear standard setting
+    result = AUGraphDisconnectNodeInput(graph, mixer2Node, 0);
 
     BOOL isUpdated = NO;
     result = AUGraphUpdate(graph, &isUpdated);
+    
+    // cathedral
+    result = AUGraphConnectNodeInput(graph, mixerNode, 0, reverbNode, 0);
+    result = AUGraphConnectNodeInput(graph, reverbNode, 0, mixer2Node, 0);
+
+    isUpdated = NO;
+    result = AUGraphUpdate(graph, &isUpdated);
     effect1 = YES;
-    NSLog(@"Effect1 enabled");
+    NSLog(@"Effect1 enabled");    
     return result;
 }
 
 OSStatus enableEffect2(){
     OSStatus result = noErr;
     
+    // clear standard setting
+    result = AUGraphDisconnectNodeInput(graph, mixer2Node, 0);
+    
+    BOOL isUpdated = NO;
+    result = AUGraphUpdate(graph, &isUpdated);
+    
     // shitty answering machine
-    result = AUGraphConnectNodeInput(graph, ioNode, inputChannel, mixerNode, 0);
     result = AUGraphConnectNodeInput(graph, mixerNode, 0, distortionNode, 0);
     result = AUGraphConnectNodeInput(graph, distortionNode, 0, bandpassNode, 0);
     result = AUGraphConnectNodeInput(graph, bandpassNode, 0, compressionNode, 0);
     result = AUGraphConnectNodeInput(graph, compressionNode, 0, mixer2Node, 0);
-    result = AUGraphConnectNodeInput(graph, mixer3Node, 0, ioNode, outputChannel);
 
-    BOOL isUpdated = NO;
+    isUpdated = NO;
     result = AUGraphUpdate(graph, &isUpdated);
     effect2 = YES;
     NSLog(@"Effect2 enabled");
@@ -585,13 +589,14 @@ OSStatus enableEffect5(){
 OSStatus disableEffect1(){
     OSStatus result = noErr;
 
-    result = AUGraphDisconnectNodeInput(graph, reverbNode, 0); // first effect unit
-    result = AUGraphDisconnectNodeInput(graph, mixer2Node, 0); // first output unit
+    result = AUGraphDisconnectNodeInput(graph, reverbNode, 0); // must disconnect the first effect unit in the FX chain
+    result = AUGraphDisconnectNodeInput(graph, mixer2Node, 0); // and the first receiving from the last in the FX chain
 
-    result = AUGraphConnectNodeInput(graph, mixerNode, 0, mixer2Node, 0);
+    result = AUGraphConnectNodeInput(graph, mixerNode, 0, mixer2Node, 0); // Then reconnect the initial output flow
 
     BOOL isUpdated = NO;
     result = AUGraphUpdate(graph, &isUpdated);
+    AUGraphStart(graph);
     effect1 = NO;
     NSLog(@"Effect1 disabled");
     return result;
@@ -599,6 +604,11 @@ OSStatus disableEffect1(){
 
 OSStatus disableEffect2(){
     OSStatus result = noErr;
+    
+    result = AUGraphDisconnectNodeInput(graph, distortionNode, 0);
+    result = AUGraphDisconnectNodeInput(graph, mixer2Node, 0);
+    
+    result = AUGraphConnectNodeInput(graph, mixerNode, 0, mixer2Node, 0);
 
     BOOL isUpdated = NO;
     result = AUGraphUpdate(graph, &isUpdated);
