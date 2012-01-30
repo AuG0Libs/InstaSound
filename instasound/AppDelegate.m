@@ -54,6 +54,7 @@ int points = 1024;
     // top: 20 (statusbar) + 44 (navigationBar)
     // height: 480 (whole screen) - 49 (bottombar) - 64 (topbar)
     self.eaglView = [[EAGLView alloc] initWithFrame: CGRectMake(0, 64, 320, 367)];
+
     self.eaglView.delegate = self;
     
     [self.eaglView setAnimationInterval:1./20.];
@@ -80,6 +81,7 @@ int points = 1024;
     UITabBarItem *church = [[UITabBarItem alloc] initWithTitle:@"Church" image:image tag:1];
     
     [self.buttonBar setItems:[NSArray arrayWithObjects: church, nil]];
+    
 }
 - (void)initializeRecordButton
 {
@@ -89,6 +91,8 @@ int points = 1024;
     [self.recordButton setImage:[[UIImage alloc] initWithContentsOfFile:pathToImageFile] forState:UIControlStateNormal];
     [self.recordButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentCenter];
     [self.recordButton setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
+    
+    [self.recordButton addTarget:self.viewController action:@selector(toggleEffect1) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
