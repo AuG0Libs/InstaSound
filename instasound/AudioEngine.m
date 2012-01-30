@@ -73,9 +73,10 @@ NSData *getAudioData(int offset, int length)
     UInt8 *buffer = malloc(WAV_HEADER_LEN + bytes);
     
     WRITE_4CHARS(buffer, 0, 'R', 'I', 'F', 'F');
-    WRITE_INT32(buffer, 4, bytes - 36); // File length - 8
+    WRITE_INT32(buffer, 4, bytes + WAV_HEADER_LEN - 8); // File length - 8
     WRITE_4CHARS(buffer, 8, 'W', 'A', 'V', 'E');
-    WRITE_4CHARS(buffer, 16, 'f', 'm', 't', 0);
+    WRITE_4CHARS(buffer, 12, 'f', 'm', 't', ' ');
+    WRITE_INT32(buffer, 16, 16); // Length of fmt data
     WRITE_INT16(buffer, 20, 1); // Type
     WRITE_INT16(buffer, 22, 1); // Channels
     WRITE_INT32(buffer, 24, 44100); // Samples per second
