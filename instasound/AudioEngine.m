@@ -338,30 +338,30 @@ static void initPresets()
 {   
     preset1 = createPreset();
 
-    [ preset1 bandpass:kBandpassParam_CenterFrequency            to:2000    ];
-    [ preset1 bandpass:kBandpassParam_Bandwidth                  to:100     ];
+    [ preset1 reverb:kReverb2Param_DecayTimeAtNyquist            to:1.5     ];
+    [ preset1 reverb:kReverb2Param_DecayTimeAt0Hz                to:2.5     ];
+    [ preset1 reverb:kReverb2Param_DryWetMix                     to:20      ];
+    [ preset1 reverb:kReverb2Param_RandomizeReflections          to:100     ];
 
-    [ preset1 compression:kDynamicsProcessorParam_ExpansionRatio to:50      ];
-    [ preset1 compression:kDynamicsProcessorParam_Threshold      to:-40     ];
-    [ preset1 compression:kDynamicsProcessorParam_MasterGain     to:15      ];
-    [ preset1 compression:kDynamicsProcessorParam_AttackTime     to:0.0002  ];
-    [ preset1 compression:kDynamicsProcessorParam_HeadRoom       to:6       ];
-    
-    [ preset1 distortion:kDistortionParam_FinalMix               to:50      ];
+    [ preset1 enableReverb ];
 
-    [preset1 enableBandpass     ];
-    [preset1 enableCompression  ];    
-    [preset1 enableDistortion   ];
-    
     preset2 = createPreset();
 
-    [ preset2 reverb:kReverb2Param_DecayTimeAtNyquist            to:1.5     ];
-    [ preset2 reverb:kReverb2Param_DecayTimeAt0Hz                to:2.5     ];
-    [ preset2 reverb:kReverb2Param_DryWetMix                     to:20      ];
-    [ preset2 reverb:kReverb2Param_RandomizeReflections          to:100     ];
+    [ preset2 bandpass:kBandpassParam_CenterFrequency            to:2000    ];
+    [ preset2 bandpass:kBandpassParam_Bandwidth                  to:100     ];
 
-    [ preset2 enableReverb ];
-    
+    [ preset2 compression:kDynamicsProcessorParam_ExpansionRatio to:50      ];
+    [ preset2 compression:kDynamicsProcessorParam_Threshold      to:-40     ];
+    [ preset2 compression:kDynamicsProcessorParam_MasterGain     to:15      ];
+    [ preset2 compression:kDynamicsProcessorParam_AttackTime     to:0.0002  ];
+    [ preset2 compression:kDynamicsProcessorParam_HeadRoom       to:6       ];
+
+    [ preset2 distortion:kDistortionParam_FinalMix               to:50      ];
+
+    [preset2 enableBandpass     ];
+    [preset2 enableCompression  ];    
+    [preset2 enableDistortion   ];
+
     preset3 = createPreset(); // temp
     
     [ preset3 reverb:kReverb2Param_DecayTimeAtNyquist            to:.66     ];

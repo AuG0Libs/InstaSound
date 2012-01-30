@@ -59,17 +59,27 @@ int recordingLength = -1;
     self.toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 411, 320, 49)];
     [self.toolBar setBarStyle:UIBarStyleBlackOpaque];
     
-    NSString* pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Vinyl" ofType:@"png"];
+    NSString* pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Church" ofType:@"png"];
     UIImage *image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
     UIBarButtonItem *effect1 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect1)];
-    [effect1 setTitle:@"effect1"];
+
+    pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Phone" ofType:@"png"];
+    image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
+    UIBarButtonItem *effect2 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect2)];
+    
+    pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Enhancer" ofType:@"png"];
+    image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
+    UIBarButtonItem *effect3 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect3)];
+    
+    pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Radio" ofType:@"png"];
+    image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
+    UIBarButtonItem *effect4 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect2)];
 
     pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Vinyl" ofType:@"png"];
     image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
-    UIBarButtonItem *effect2 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect2)];
-    [effect2 setTitle:@"effect2"];
-
-    [self.toolBar setItems:[NSArray arrayWithObjects: effect1, effect2, nil]];
+    UIBarButtonItem *effect5 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect5)];
+    
+    [self.toolBar setItems:[NSArray arrayWithObjects: effect1, effect2, effect3, effect4, effect5, nil]];
 
     [self.view addSubview:self.toolBar];
 }
