@@ -13,7 +13,7 @@
 @implementation ViewController
 
 @synthesize navigationBar = _navigationBar;
-@synthesize buttonBar = _buttonBar;
+@synthesize toolBar = _buttonBar;
 @synthesize eaglView = _eaglView;
 @synthesize recordButton = _recordButton;
 
@@ -51,16 +51,21 @@ int points = 1024;
 
 - (void)initializeButtons
 {
-    self.buttonBar = [[UITabBar alloc] initWithFrame:CGRectMake(0, 411, 320, 49)];
+    self.toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 411, 320, 49)];
     
     NSString* pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Vinyl" ofType:@"png"];
     UIImage *image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
-    UITabBarItem *church = [[UITabBarItem alloc] initWithTitle:@"Church" image:image tag:1];
+    UIBarButtonItem *effect1 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect1)];
+    [effect1 setTitle:@"effect1"];
     
-    [self.buttonBar setItems:[NSArray arrayWithObjects: church, nil]];
+    pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Vinyl" ofType:@"png"];
+    image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
+    UIBarButtonItem *effect2 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect2)];
+    [effect2 setTitle:@"effect2"];
+
+    [self.toolBar setItems:[NSArray arrayWithObjects: effect1, effect2, nil]];
     
-    [self.view addSubview:self.buttonBar];
-    
+    [self.view addSubview:self.toolBar];
 }
 
 - (void)initializeEAGL
@@ -88,8 +93,7 @@ int points = 1024;
     [self.recordButton setImage:[[UIImage alloc] initWithContentsOfFile:pathToImageFile] forState:UIControlStateNormal];
     [self.recordButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentCenter];
     [self.recordButton setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
-//    [self.recordButton addTarget:self action:@selector(record) forControlEvents:UIControlEventTouchUpInside];
-    [self.recordButton addTarget:self action:@selector(effect1) forControlEvents:UIControlEventTouchUpInside];
+    [self.recordButton addTarget:self action:@selector(record) forControlEvents:UIControlEventTouchUpInside];
     
     [self.view addSubview:self.recordButton];
 }

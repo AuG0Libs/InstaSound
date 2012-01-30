@@ -15,7 +15,7 @@
 }
 
 @property (retain, nonatomic) IBOutlet UINavigationBar *navigationBar;
-@property (retain, nonatomic) IBOutlet UITabBar *buttonBar;
+@property (retain, nonatomic) IBOutlet UIToolbar *toolBar;
 @property (retain, nonatomic) EAGLView *eaglView;
 @property (retain, nonatomic) IBOutlet UIButton *recordButton;
 
