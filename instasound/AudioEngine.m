@@ -522,6 +522,8 @@ OSStatus enableEffect1(){
     result = AUGraphConnectNodeInput(graph, reverbNode, 0, mixer2Node, 0);
     result = AUGraphConnectNodeInput(graph, mixer3Node, 0, ioNode, outputChannel);
 
+    BOOL isUpdated = NO;
+    result = AUGraphUpdate(graph, &isUpdated);
     effect1 = YES;
     NSLog(@"Effect1 enabled");
     return result;
@@ -538,6 +540,8 @@ OSStatus enableEffect2(){
     result = AUGraphConnectNodeInput(graph, compressionNode, 0, mixer2Node, 0);
     result = AUGraphConnectNodeInput(graph, mixer3Node, 0, ioNode, outputChannel);
 
+    BOOL isUpdated = NO;
+    result = AUGraphUpdate(graph, &isUpdated);
     effect2 = YES;
     NSLog(@"Effect2 enabled");
     return result;
@@ -546,7 +550,8 @@ OSStatus enableEffect2(){
 OSStatus enableEffect3(){
     OSStatus result = noErr;
 
-
+    BOOL isUpdated = NO;
+    result = AUGraphUpdate(graph, &isUpdated);
     effect3 = YES;
     NSLog(@"Effect3 enabled");
     return result;
@@ -555,7 +560,8 @@ OSStatus enableEffect3(){
 OSStatus enableEffect4(){
     OSStatus result = noErr;
 
-
+    BOOL isUpdated = NO;
+    result = AUGraphUpdate(graph, &isUpdated);
     effect4 = YES;
     NSLog(@"Effect4 enabled");
     return result;
@@ -564,7 +570,8 @@ OSStatus enableEffect4(){
 OSStatus enableEffect5(){
     OSStatus result = noErr;
 
-
+    BOOL isUpdated = NO;
+    result = AUGraphUpdate(graph, &isUpdated);
     effect5 = YES;
     NSLog(@"Effect5 enabled");
     return result;
@@ -589,7 +596,8 @@ OSStatus disableEffect1(){
 OSStatus disableEffect2(){
     OSStatus result = noErr;
 
-
+    BOOL isUpdated = NO;
+    result = AUGraphUpdate(graph, &isUpdated);
     effect2 = NO;
     NSLog(@"Effect2 disabled");
     return result;
@@ -598,7 +606,8 @@ OSStatus disableEffect2(){
 OSStatus disableEffect3(){
     OSStatus result = noErr;
 
-
+    BOOL isUpdated = NO;
+    result = AUGraphUpdate(graph, &isUpdated);
     effect3 = NO;
     NSLog(@"Effect3 disabled");
     return result;
@@ -607,7 +616,8 @@ OSStatus disableEffect3(){
 OSStatus disableEffect4(){
     OSStatus result = noErr;
 
-
+    BOOL isUpdated = NO;
+    result = AUGraphUpdate(graph, &isUpdated);
     effect4 = NO;
     NSLog(@"Effect4 disabled");
     return result;
@@ -616,7 +626,8 @@ OSStatus disableEffect4(){
 OSStatus disableEffect5(){
     OSStatus result = noErr;
 
-
+    BOOL isUpdated = NO;
+    result = AUGraphUpdate(graph, &isUpdated);
     effect5 = NO;
     NSLog(@"Effect5 disabled");
     return result;
