@@ -26,6 +26,7 @@
 		51FDDFE814D5BCCE00A4E8ED /* Record@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 51FDDFDF14D5BCCE00A4E8ED /* Record@2x.png */; };
 		51FDDFE914D5BCCE00A4E8ED /* Stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 51FDDFE014D5BCCE00A4E8ED /* Stop.png */; };
 		51FDDFEA14D5BCCE00A4E8ED /* Stop@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 51FDDFE114D5BCCE00A4E8ED /* Stop@2x.png */; };
+		51FFE7B414D619FA004D552B /* short_old.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 51FFE7B314D619FA004D552B /* short_old.mp3 */; };
 		F784290214D5701D00F55C51 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290114D5701D00F55C51 /* UIKit.framework */; };
 		F784290414D5701D00F55C51 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290314D5701D00F55C51 /* Foundation.framework */; };
 		F784290614D5701D00F55C51 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290514D5701D00F55C51 /* CoreGraphics.framework */; };
@@ -62,6 +63,7 @@
 		51FDDFDF14D5BCCE00A4E8ED /* Record@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Record@2x.png"; sourceTree = "<group>"; };
 		51FDDFE014D5BCCE00A4E8ED /* Stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Stop.png; sourceTree = "<group>"; };
 		51FDDFE114D5BCCE00A4E8ED /* Stop@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Stop@2x.png"; sourceTree = "<group>"; };
+		51FFE7B314D619FA004D552B /* short_old.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = short_old.mp3; path = Resources/short_old.mp3; sourceTree = SOURCE_ROOT; };
 		F78428FD14D5701D00F55C51 /* instasound.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = instasound.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F784290114D5701D00F55C51 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		F784290314D5701D00F55C51 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -117,6 +119,7 @@
 		512A759614D5AEC600FB391E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				51FFE7B314D619FA004D552B /* short_old.mp3 */,
 				F7893B0214D60D1A002465AF /* SoundCloud.bundle */,
 				51FDDFDD14D5BCCE00A4E8ED /* icon_Vinyl.png */,
 				51FDDFDE14D5BCCE00A4E8ED /* Record.png */,
@@ -262,6 +265,7 @@
 				51ABB21E14D5C17300D62235 /* Default@2x.png in Resources */,
 				F7893B0314D60D1A002465AF /* SoundCloud.bundle in Resources */,
 				512048F914D612C0003B0F42 /* Default.png in Resources */,
+				51FFE7B414D619FA004D552B /* short_old.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
