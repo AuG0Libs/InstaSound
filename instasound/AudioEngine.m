@@ -7,8 +7,8 @@
 #define WRITE_4CHARS(buffer, index, a, b, c, d) buffer[index] = a; buffer[index + 1] = b; buffer[index + 2] = c; buffer[index + 3] = d;
 
 
-#define WRITE_INT16(buffer, index, value) OSWriteBigInt16(buffer, index, value)
-#define WRITE_INT32(buffer, index, value) OSWriteBigInt32(buffer, index, value)
+#define WRITE_INT16(buffer, index, value) OSWriteLittleInt16(buffer, index, value)
+#define WRITE_INT32(buffer, index, value) OSWriteLittleInt32(buffer, index, value)
 
 
 int outputChannel = 0; // because it looks most like the "O" in I/O
@@ -73,7 +73,7 @@ NSData *getAudioData(int offset, int length)
     UInt8 *buffer = malloc(WAV_HEADER_LEN + bytes);
     
     WRITE_4CHARS(buffer, 0, 'R', 'I', 'F', 'F');
-    WRITE_INT32(buffer, 4, bytes + WAV_HEADER_LEN - 8); // File length - 8
+    WRITE_INT32(buffer, 4, WAV_HEADER_LEN + bytes - 8); // File length - 8
     WRITE_4CHARS(buffer, 8, 'W', 'A', 'V', 'E');
     WRITE_4CHARS(buffer, 12, 'f', 'm', 't', ' ');
     WRITE_INT32(buffer, 16, 16); // Length of fmt data
@@ -90,7 +90,7 @@ NSData *getAudioData(int offset, int length)
 
     return [[NSData alloc]
             initWithBytesNoCopy:(void *)buffer
-            length:bytes
+            length:WAV_HEADER_LEN + bytes
             freeWhenDone:TRUE];
 }
 

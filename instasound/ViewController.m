@@ -159,7 +159,7 @@ int recordingLength = -1;
         [self.recordButton setImage:[[UIImage alloc] initWithContentsOfFile:pathToImageFile] forState:UIControlStateNormal];
     } else {
         recordingLength = getAudioBufferLength() - recordingStart;
-        [self saveFile];
+        [self upload];
     }
 }
 
@@ -178,11 +178,8 @@ int recordingLength = -1;
 
 - (void)upload
 {
-//    NSString *mp3_filepath = [[NSBundle mainBundle] pathForResource:@"short_old" ofType:@"mp3"];
-//    NSURL *trackURL = [NSURL fileURLWithPath: mp3_filepath];
-    
     NSData *data = getAudioData(recordingStart, recordingLength);
-
+    
     SCShareViewController *shareViewController;
     shareViewController = [SCShareViewController shareViewControllerWithFileData:data
                                                               completionHandler:^(NSDictionary *trackInfo, NSError *error) {
@@ -201,7 +198,7 @@ int recordingLength = -1;
                                                               }];
 
     // We can preset the title ...
-    [shareViewController setTitle:@"Funny sounds"];
+    [shareViewController setTitle:@"My new InstaSound"];
 
     // ... and other options like the private flag.
     [shareViewController setPrivate:YES];
@@ -214,7 +211,6 @@ int recordingLength = -1;
 {
     recordingStart = -1;
     recordingLength = -1;
-    
     NSString* pathToImageFile = [[NSBundle mainBundle] pathForResource:@"Record" ofType:@"png"];
     [self.recordButton setImage:[[UIImage alloc] initWithContentsOfFile:pathToImageFile] forState:UIControlStateNormal];
 }
