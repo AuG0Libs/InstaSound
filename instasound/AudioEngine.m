@@ -54,9 +54,9 @@ static void convertToSInt16(Float32 *input, SInt16 *output, int length)
 #define WRITE_4CHARS(buffer, index, a, b, c, d) buffer[index] = a; buffer[index + 1] = b; buffer[index + 2] = c; buffer[index + 3] = d;
 
 
-NSData *getAudioData()
+NSData *getAudioData(int offset, int length)
 {
-    UInt8 *buffer = malloc(WAV_HEADER_LEN + audioBufferLen * sizeof(SInt16));
+    UInt8 *buffer = malloc(WAV_HEADER_LEN + length * sizeof(SInt16));
     
     WRITE_4CHARS(buffer, 0, 'R', 'I', 'F', 'F');
     WRITE_UINT32(buffer, 4, audioBufferLen * 2 - 36); // File length - 8
@@ -69,9 +69,9 @@ NSData *getAudioData()
     WRITE_UINT16(buffer, 32, 2); //  ((<bits/sample>+7) / 8)
     WRITE_UINT16(buffer, 34, 16); // Bits per sample
     WRITE_4CHARS(buffer, 36, 'd', 'a', 't', 'a');
-    WRITE_UINT16(buffer, 40, audioBufferLen); // Data length
+    WRITE_UINT32(buffer, 40, audioBufferLen); // Data length
 
-    convertToSInt16(audioBuffer, (SInt16 *) (buffer + WAV_HEADER_LEN), audioBufferLen); 
+    convertToSInt16(audioBuffer + offset, (SInt16 *) (buffer + WAV_HEADER_LEN), length); 
     
     return [[NSData alloc] 
             initWithBytesNoCopy:(void *)buffer
