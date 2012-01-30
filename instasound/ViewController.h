@@ -15,7 +15,7 @@
 }
 
 @property (retain, nonatomic) IBOutlet UINavigationBar *navigationBar;
-@property (retain, nonatomic) IBOutlet UITabBar *buttonBar;
+@property (retain, nonatomic) IBOutlet UIToolbar *toolBar;
 @property (retain, nonatomic) EAGLView *eaglView;
 @property (retain, nonatomic) IBOutlet UIButton *recordButton;
 
@@ -23,6 +23,12 @@
 - (void)initializeButtons;
 - (void)initializeEAGL;
 - (void)initializeRecordButton;
+
+- (void)effect1;
+- (void)effect2;
+- (void)effect3;
+- (void)effect4;
+- (void)effect5;
 
 - (void)record;
 

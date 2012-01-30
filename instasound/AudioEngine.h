@@ -1,8 +1,8 @@
 int initAudioEngine();
 
-static OSStatus initAudioUnits();
+OSStatus initAudioUnits();
 
-static OSStatus initAudioGraph();
+OSStatus initAudioGraph();
 
 Float32 *getAudioBuffer();
 

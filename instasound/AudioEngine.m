@@ -121,13 +121,13 @@ static void initDescriptions()
     io_desc.componentFlags                      = 0;
     io_desc.componentFlagsMask                  = 0;
     io_desc.componentManufacturer               = kAudioUnitManufacturer_Apple;
-    
+
     mixer_desc.componentType                    = kAudioUnitType_Mixer;
     mixer_desc.componentSubType                 = kAudioUnitSubType_MultiChannelMixer;
     mixer_desc.componentFlags                   = 0;
     mixer_desc.componentFlagsMask               = 0;
     mixer_desc.componentManufacturer            = kAudioUnitManufacturer_Apple;
-    
+
     distortion_desc.componentType               = kAudioUnitType_Effect;
     distortion_desc.componentSubType            = kAudioUnitSubType_Distortion;
     distortion_desc.componentFlags              = 0;
@@ -229,7 +229,7 @@ static OSStatus initAudioGraph()
     return result;
 }
 
-static OSStatus initAudioUnits()
+OSStatus initAudioUnits()
 {
     
     UInt32 enableInput = 1;
