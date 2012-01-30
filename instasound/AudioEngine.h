@@ -4,4 +4,4 @@ Float32 *getAudioBuffer();
 
 int getAudioBufferLength();
 
-NSData *getAudioData();
+NSData *getAudioData(int offset, int length);
