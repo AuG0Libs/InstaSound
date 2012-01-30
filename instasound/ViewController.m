@@ -97,7 +97,7 @@ int points = 1024;
     [self.recordButton setImage:[[UIImage alloc] initWithContentsOfFile:pathToImageFile] forState:UIControlStateNormal];
     [self.recordButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentCenter];
     [self.recordButton setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
-    [self.recordButton addTarget:self action:@selector(record) forControlEvents:UIControlEventTouchUpInside];
+    [self.recordButton addTarget:self action:@selector(saveFile) forControlEvents:UIControlEventTouchUpInside];
 
     [self.view addSubview:self.recordButton];
 }
@@ -151,11 +151,29 @@ int points = 1024;
 
 - (void)record
 {
-    NSString *mp3_filepath = [[NSBundle mainBundle] pathForResource:@"short_old" ofType:@"mp3"];
-    NSURL *trackURL = [NSURL fileURLWithPath: mp3_filepath];
+    [self.recordButton setHidden:TRUE];
+}
+
+
+- (void)saveFile
+{
+    NSData *data = getAudioData(0, getAudioBufferLength());
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *appFile = [documentsDirectory stringByAppendingPathComponent:@"MyFile.mp3"];
+    NSLog(@"Write to: %@", appFile);
+    [data writeToFile:appFile atomically:YES];
+}
+
+- (void)upload
+{
+//    NSString *mp3_filepath = [[NSBundle mainBundle] pathForResource:@"short_old" ofType:@"mp3"];
+//    NSURL *trackURL = [NSURL fileURLWithPath: mp3_filepath];
+    
+    NSData *data = getAudioData(0, getAudioBufferLength());
 
     SCShareViewController *shareViewController;
-    shareViewController = [SCShareViewController shareViewControllerWithFileURL:trackURL
+    shareViewController = [SCShareViewController shareViewControllerWithFileData:data
                                                               completionHandler:^(NSDictionary *trackInfo, NSError *error) {
                                                                   if (SC_CANCELED(error)) {
                                                                       NSLog(@"Canceled!");

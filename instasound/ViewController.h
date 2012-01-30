@@ -31,5 +31,6 @@
 - (void)effect5;
 
 - (void)record;
+- (void)upload;
 
 @end
