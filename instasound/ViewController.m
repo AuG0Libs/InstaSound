@@ -18,6 +18,8 @@
 @synthesize recordButton = _recordButton;
 
 int points = 1024;
+int recordingStart = -1;
+int recordingLength = -1;
 
 - (void)didReceiveMemoryWarning
 {
@@ -97,7 +99,7 @@ int points = 1024;
     [self.recordButton setImage:[[UIImage alloc] initWithContentsOfFile:pathToImageFile] forState:UIControlStateNormal];
     [self.recordButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentCenter];
     [self.recordButton setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
-    [self.recordButton addTarget:self action:@selector(saveFile) forControlEvents:UIControlEventTouchUpInside];
+    [self.recordButton addTarget:self action:@selector(record) forControlEvents:UIControlEventTouchUpInside];
 
     [self.view addSubview:self.recordButton];
 }
@@ -151,18 +153,27 @@ int points = 1024;
 
 - (void)record
 {
-    [self.recordButton setHidden:TRUE];
+    if (recordingStart == -1) {
+        recordingStart = getAudioBufferLength();
+        NSString* pathToImageFile = [[NSBundle mainBundle] pathForResource:@"Stop" ofType:@"png"];
+        [self.recordButton setImage:[[UIImage alloc] initWithContentsOfFile:pathToImageFile] forState:UIControlStateNormal];
+    } else {
+        recordingLength = getAudioBufferLength() - recordingStart;
+        [self saveFile];
+    }
 }
 
 
 - (void)saveFile
 {
-    NSData *data = getAudioData(0, getAudioBufferLength());
+    NSData *data = getAudioData(recordingStart, recordingLength);
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *appFile = [documentsDirectory stringByAppendingPathComponent:@"MyFile.mp3"];
+    NSString *appFile = [documentsDirectory stringByAppendingPathComponent:@"Recording.wav"];
     NSLog(@"Write to: %@", appFile);
     [data writeToFile:appFile atomically:YES];
+    
+    [self reset];
 }
 
 - (void)upload
@@ -170,19 +181,22 @@ int points = 1024;
 //    NSString *mp3_filepath = [[NSBundle mainBundle] pathForResource:@"short_old" ofType:@"mp3"];
 //    NSURL *trackURL = [NSURL fileURLWithPath: mp3_filepath];
     
-    NSData *data = getAudioData(0, getAudioBufferLength());
+    NSData *data = getAudioData(recordingStart, recordingLength);
 
     SCShareViewController *shareViewController;
     shareViewController = [SCShareViewController shareViewControllerWithFileData:data
                                                               completionHandler:^(NSDictionary *trackInfo, NSError *error) {
                                                                   if (SC_CANCELED(error)) {
                                                                       NSLog(@"Canceled!");
+                                                                      [self reset];
                                                                   } else if (error) {
                                                                       NSLog(@"Ooops, something went wrong: %@", [error localizedDescription]);
+                                                                      [self reset];
                                                                   } else {
                                                                       // If you want to do something with the uploaded
                                                                       // track this is the right place for that.
                                                                       NSLog(@"Uploaded track: %@", trackInfo);
+                                                                      [self reset];
                                                                   }
                                                               }];
 
@@ -194,6 +208,15 @@ int points = 1024;
 
     // Now present the share view controller.
     [self presentModalViewController:shareViewController animated:YES];
+}
+
+- (void)reset
+{
+    recordingStart = -1;
+    recordingLength = -1;
+    
+    NSString* pathToImageFile = [[NSBundle mainBundle] pathForResource:@"Record" ofType:@"png"];
+    [self.recordButton setImage:[[UIImage alloc] initWithContentsOfFile:pathToImageFile] forState:UIControlStateNormal];
 }
 
 - (void)dealloc {
