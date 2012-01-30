@@ -8,7 +8,6 @@ Float32 *getAudioBuffer();
 
 int getAudioBufferLength();
 
-
 static void toggleEffect1();
 static void toggleEffect2();
 static void toggleEffect3();
@@ -26,3 +25,6 @@ static OSStatus disableEffect2();
 static OSStatus disableEffect3();
 static OSStatus disableEffect4();
 static OSStatus disableEffect5();
+
+NSData *getAudioData(int offset, int length);
+
