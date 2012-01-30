@@ -16,7 +16,8 @@ int inputChannel = 1;  // because it looks most like the "I" in I/O
 
 int initAudioEngine();
 
-Float32 audioBuffer[32 * 1024 * 1024];
+#define AUDIO_BUFFER_MAX 32 * 1024 * 1024
+Float32 audioBuffer[AUDIO_BUFFER_MAX];
 
 int audioBufferLen = 0;
 
@@ -113,6 +114,8 @@ static OSStatus renderCallback (void *inRefCon,
 	if (renderErr < 0) {
 		return renderErr;
 	}
+
+    audioBufferLen %= AUDIO_BUFFER_MAX;
 
     SInt32 *data = (SInt32 *) ioData->mBuffers[0].mData; // left channel
 
