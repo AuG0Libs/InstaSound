@@ -1,5 +1,6 @@
 #import "AudioToolbox/AudioToolbox.h"
 #import "AVFoundation/AVFoundation.h"
+#import "AudioPreset.h"
 
 int outputChannel = 0; // because it looks most like the "O" in I/O
 int inputChannel = 1;  // because it looks most like the "I" in I/O
@@ -11,15 +12,10 @@ Float32 audioBuffer[32 * 1024 * 1024];
 int audioBufferLen = 0;
 
 AudioUnit ioUnit;
-
 AudioUnit mixerUnit;
 AudioUnit mixer2Unit;
 AudioUnit mixer3Unit;
-
 AudioUnit distortionUnit;
-AudioUnit reverbUnit;
-AudioUnit compressionUnit;
-AudioUnit bandpassUnit;
 
 AUGraph graph;
 
@@ -28,27 +24,14 @@ AUNode ioNode;
 AUNode mixerNode;
 AUNode mixer2Node;
 AUNode mixer3Node;
-
 AUNode distortionNode;
-AUNode reverbNode;
-AUNode compressionNode;
-AUNode bandpassNode;
 
 AudioComponentDescription io_desc;
 AudioComponentDescription mixer_desc;
 AudioComponentDescription distortion_desc;
-AudioComponentDescription reverb_desc;
-AudioComponentDescription compression_desc;
-AudioComponentDescription bandpass_desc;
 
 AVAudioSession *audioSession;
 AudioStreamBasicDescription	ioFormat;
-
-BOOL effect1 = NO;
-BOOL effect2 = NO;
-BOOL effect3 = NO;
-BOOL effect4 = NO;
-BOOL effect5 = NO;
 
 Float32 *getAudioBuffer()
 {
@@ -150,29 +133,6 @@ static void initDescriptions()
     distortion_desc.componentFlags              = 0;
     distortion_desc.componentFlagsMask          = 0;
     distortion_desc.componentManufacturer       = kAudioUnitManufacturer_Apple;
-    
-
-    reverb_desc.componentType                   = kAudioUnitType_Effect;
-    reverb_desc.componentSubType                = kAudioUnitSubType_Reverb2;
-    reverb_desc.componentFlags                  = 0;
-    reverb_desc.componentFlagsMask              = 0;
-    reverb_desc.componentManufacturer           = kAudioUnitManufacturer_Apple;
-
-    compression_desc.componentType              = kAudioUnitType_Effect;
-    compression_desc.componentSubType           = kAudioUnitSubType_DynamicsProcessor;
-    compression_desc.componentFlags             = 0;
-    compression_desc.componentFlagsMask         = 0;
-    compression_desc.componentManufacturer      = kAudioUnitManufacturer_Apple;
-    
-    bandpass_desc.componentType                  = kAudioUnitType_Effect;
-    bandpass_desc.componentSubType               = kAudioUnitSubType_BandPassFilter;
-    bandpass_desc.componentFlags                 = 0;
-    bandpass_desc.componentFlagsMask             = 0;
-    bandpass_desc.componentManufacturer          = kAudioUnitManufacturer_Apple;
-
-
-
-
 }
 
 static OSStatus initAudioSession()
@@ -249,13 +209,10 @@ static OSStatus initAudioGraph()
     result = AUGraphAddNode(graph, &mixer_desc, &mixerNode);
     result = AUGraphAddNode(graph, &mixer_desc, &mixer2Node);
     result = AUGraphAddNode(graph, &mixer_desc, &mixer3Node);
-    result = AUGraphAddNode(graph, &reverb_desc, &reverbNode);
-    result = AUGraphAddNode(graph, &compression_desc, &compressionNode);
-    result = AUGraphAddNode(graph, &bandpass_desc, &bandpassNode);
     result = AUGraphAddNode(graph, &distortion_desc, &distortionNode);
-
+    
     result = AUGraphConnectNodeInput(graph, ioNode, inputChannel, mixerNode, 0);
-    result = AUGraphConnectNodeInput(graph, mixerNode, 0, mixer2Node, 0);
+    // result = AUGraphConnectNodeInput(graph, mixerNode, 0, mixer2Node, 0);
     result = AUGraphConnectNodeInput(graph, mixer3Node, 0, ioNode, outputChannel);
 
     result = AUGraphOpen(graph);
@@ -263,10 +220,6 @@ static OSStatus initAudioGraph()
     result = AUGraphNodeInfo(graph, mixerNode, NULL, &mixerUnit);
     result = AUGraphNodeInfo(graph, mixer2Node, NULL, &mixer2Unit);
     result = AUGraphNodeInfo(graph, distortionNode, NULL, &distortionUnit);
-    result = AUGraphNodeInfo(graph, compressionNode, NULL, &compressionUnit);
-    result = AUGraphNodeInfo(graph, reverbNode, NULL, &reverbUnit);
-    result = AUGraphNodeInfo(graph, bandpassNode, NULL, &bandpassUnit);
-
 
     AURenderCallbackStruct renderCallbackStruct;
     renderCallbackStruct.inputProc = &renderCallback;
@@ -278,6 +231,7 @@ static OSStatus initAudioGraph()
 
 static OSStatus initAudioUnits()
 {
+    
     UInt32 enableInput = 1;
     OSStatus result = noErr;
 
@@ -291,14 +245,14 @@ static OSStatus initAudioUnits()
 
     UInt32 asbdSize = sizeof(AudioStreamBasicDescription);
     memset (&ioFormat, 0, sizeof (ioFormat));
-
+    
     result = AudioUnitGetProperty(distortionUnit,
                                   kAudioUnitProperty_StreamFormat,
                                   kAudioUnitScope_Input,
                                   0,
                                   &ioFormat,
                                   &asbdSize);
-
+    
     result = AudioUnitSetProperty(mixerUnit,
                                   kAudioUnitProperty_StreamFormat,
                                   kAudioUnitScope_Output,
@@ -315,176 +269,33 @@ static OSStatus initAudioUnits()
                                   &ioFormat,
                                   sizeof(ioFormat));
 
-    
-    AudioUnitParameterID param1Type       = kReverb2Param_DecayTimeAtNyquist;
-    AudioUnitParameterValue param1Amount  = 1.5;
-    
-    result = AudioUnitSetParameter(reverbUnit,
-                                   param1Type,
-                                   kAudioUnitScope_Global,
-                                   0,                       // also 0, always
-                                   param1Amount,            // value
-                                   0);                      // it's...always 0
-    
-    if (result != 0) {NSLog(@"FAIL in effect SetParameter: %ld", result);}
-    
-    
-    
-    AudioUnitParameterID param2Type       = kReverb2Param_DecayTimeAt0Hz;
-    AudioUnitParameterValue param2Amount  = 2.5;
-    
-    result = AudioUnitSetParameter(reverbUnit,
-                                   param2Type,
-                                   kAudioUnitScope_Global,
-                                   0,                       // also 0, always
-                                   param2Amount,            // value
-                                   0);                      // it's...always 0
-    
-    
-    if (result != 0) {NSLog(@"FAIL in effect SetParameter: %ld", result);}
-    
-    
-    AudioUnitParameterID param3Type       = kReverb2Param_DryWetMix;
-    AudioUnitParameterValue param3Amount  = 20;
-    
-    result = AudioUnitSetParameter(reverbUnit,
-                                   param3Type,
-                                   kAudioUnitScope_Global,
-                                   0,                       // also 0, always
-                                   param3Amount,            // value
-                                   0);                      // it's...always 0
-    
-    
-    if (result != 0) {NSLog(@"FAIL in effect SetParameter: %ld", result);}
-    
-    
-    
-    AudioUnitParameterID param4Type       = kReverb2Param_RandomizeReflections;
-    AudioUnitParameterValue param4Amount  = 100;
-    
-    result = AudioUnitSetParameter(reverbUnit,
-                                   param4Type,
-                                   kAudioUnitScope_Global,
-                                   0,                       // also 0, always
-                                   param4Amount,            // value
-                                   0);                      // it's...always 0
-    
-    
-    if (result != 0) {NSLog(@"FAIL in effect SetParameter: %ld", result);}
-    
-    
-    /// fx1 parameters
-    
-    /// fx2 parameters (bandpass)
-    
-    AudioUnitParameterID fx2Param1Type       = kBandpassParam_CenterFrequency;
-    AudioUnitParameterValue fx2Param1Amount  = 2000;
-    
-    result = AudioUnitSetParameter(bandpassUnit,
-                                   fx2Param1Type,
-                                   kAudioUnitScope_Global,
-                                   0,                           // also 0, always
-                                   fx2Param1Amount,             // value
-                                   0);                          // it's...always 0
-    
-    
-    if (result != 0) {NSLog(@"FAIL in effect SetParameter: %ld", result);}
-    
-    
-    
-    AudioUnitParameterID fx2Param2Type       = kBandpassParam_Bandwidth;
-    AudioUnitParameterValue fx2Param2Amount  = 100;
-    
-    result = AudioUnitSetParameter(bandpassUnit,
-                                   fx2Param2Type,
-                                   kAudioUnitScope_Global,
-                                   0,                           // also 0, always
-                                   fx2Param2Amount,             // value
-                                   0);                          // it's...always 0
-    
-    
-    if (result != 0) {NSLog(@"FAIL in effect SetParameter: %ld", result);}
-    
-    /// fx2 parameters
-    
-    
-    /// fx3 parameters (brick wall compression)
-    
-    AudioUnitParameterID fx3Param1Type       = kDynamicsProcessorParam_ExpansionRatio;
-    AudioUnitParameterValue fx3Param1Amount  = 50;
-    
-    result = AudioUnitSetParameter(compressionUnit,
-                                   fx3Param1Type,
-                                   kAudioUnitScope_Global,
-                                   0,                           // also 0, always
-                                   fx3Param1Amount,             // value
-                                   0);                          // it's...always 0
-    
-    
-    if (result != 0) {NSLog(@"FAIL in effect SetParameter: %ld", result);}
-    
-    
-    
-    AudioUnitParameterID fx3Param2Type       = kDynamicsProcessorParam_Threshold;
-    AudioUnitParameterValue fx3Param2Amount  = -40;
-    
-    result = AudioUnitSetParameter(compressionUnit,
-                                   fx3Param2Type,
-                                   kAudioUnitScope_Global,
-                                   0,                           // also 0, always
-                                   fx3Param2Amount,             // value
-                                   0);                          // it's...always 0
-    
-    
-    if (result != 0) {NSLog(@"FAIL in effect SetParameter: %ld", result);}
-    
-    
-    
-    AudioUnitParameterID fx3Param3Type       = kDynamicsProcessorParam_MasterGain;
-    AudioUnitParameterValue fx3Param3Amount  = 15;
-    
-    result = AudioUnitSetParameter(compressionUnit,
-                                   fx3Param3Type,
-                                   kAudioUnitScope_Global,
-                                   0,                           // also 0, always
-                                   fx3Param3Amount,             // value
-                                   0);                          // it's...always 0
-    
-    
-    if (result != 0) {NSLog(@"FAIL in effect SetParameter: %ld", result);}
-    
-    
-    AudioUnitParameterID fx3Param4Type       = kDynamicsProcessorParam_AttackTime;
-    AudioUnitParameterValue fx3Param4Amount  = 0.0002;
-    
-    result = AudioUnitSetParameter(compressionUnit,
-                                   fx3Param4Type,
-                                   kAudioUnitScope_Global,
-                                   0,                           // also 0, always
-                                   fx3Param4Amount,             // value
-                                   0);                          // it's...always 0
-    
-    
-    if (result != 0) {NSLog(@"FAIL in effect SetParameter: %ld", result);}
-    
-    
-    
-    AudioUnitParameterID fx3Param5Type       = kDynamicsProcessorParam_HeadRoom;
-    AudioUnitParameterValue fx3Param5Amount  = 6;
-    
-    result = AudioUnitSetParameter(compressionUnit,
-                                   fx3Param5Type,
-                                   kAudioUnitScope_Global,
-                                   0,                           // also 0, always
-                                   fx3Param5Amount,             // value
-                                   0);                          // it's...always 0
-    
-    
-    if (result != 0) {NSLog(@"FAIL in effect SetParameter: %ld", result);}
-    
-    
-
     return result;
+}
+
+static AudioPreset *createPreset()
+{
+    return [[AudioPreset alloc] create:graph];
+}
+
+void enableTelephone()
+{   
+    AudioPreset *preset = createPreset();
+    
+//    [preset reverb:kReverb2Param_DecayTimeAtNyquist to:1.5];
+//    [preset reverb:kReverb2Param_DecayTimeAt0Hz to:2.5];
+//    [preset reverb:kReverb2Param_DryWetMix to:20];
+//    [preset reverb:kReverb2Param_RandomizeReflections to:100];
+
+    [preset bandpass:kBandpassParam_CenterFrequency to:2000];
+    [preset bandpass:kBandpassParam_Bandwidth to:100];
+
+    [preset compression:kDynamicsProcessorParam_ExpansionRatio to:50];
+    [preset compression:kDynamicsProcessorParam_Threshold to:-40];
+    [preset compression:kDynamicsProcessorParam_MasterGain to:15];
+    [preset compression:kDynamicsProcessorParam_AttackTime to:0.0002];
+    [preset compression:kDynamicsProcessorParam_HeadRoom to:6];
+
+    [preset connect:mixerNode with:mixer2Node];
 }
 
 int initAudioEngine()
@@ -496,6 +307,7 @@ int initAudioEngine()
     result = initAudioSession();
     result = initAudioGraph();
     result = initAudioUnits();
+       
     result = AUGraphInitialize(graph);
 
     CAShow(graph);
@@ -509,145 +321,9 @@ int initAudioEngine()
     }
 
     AUGraphStart(graph);
-
-    // shitty answering machine
-//    result = AUGraphConnectNodeInput(graph, ioNode, inputChannel, mixerNode, 0);
-//    result = AUGraphConnectNodeInput(graph, mixerNode, 0, distortionNode, 0);
-//    result = AUGraphConnectNodeInput(graph, distortionNode, 0, bandpassNode, 0);
-//    result = AUGraphConnectNodeInput(graph, bandpassNode, 0, compressionNode, 0);
-//    result = AUGraphConnectNodeInput(graph, compressionNode, 0, mixer2Node, 0);
-//    result = AUGraphConnectNodeInput(graph, mixer3Node, 0, ioNode, outputChannel);
-
-/*
-    OSStatus AUGraphDisconnectNodeInput (
-                                         AUGraph inGraph,
-                                         AUNode inDestNode,
-                                         UInt32 inDestInputNumber
-                                         );
-*/
-
-    //    size_t bytesPerSample = sizeof (AudioUnitSampleType);
-    //    ioFormat.mFormatID          = kAudioFormatLinearPCM;
-    //    ioFormat.mFormatFlags       = kAudioFormatFlagIsFloat;
-    //    ioFormat.mBytesPerPacket    = bytesPerSample;
-    //    ioFormat.mFramesPerPacket   = 1;
-    //    ioFormat.mBytesPerFrame     = bytesPerSample;
-    //    ioFormat.mChannelsPerFrame  = 2;
-    //    ioFormat.mBitsPerChannel    = 8 * bytesPerSample;
-    //    ioFormat.mSampleRate        = 44100;
-
-    /// <<- fx1 parameters (spacious)
-
-
-    /// fx3 parameters
-
-
-    /// fx4 parameters (distortion)
-
-
-    /// fx4 paramteters
-
+    
+    // enableTelephone();
 
     return result;
 }
 
-OSStatus enableEffect1(){
-    OSStatus result = noErr;
-
-    // cathedral
-    result = AUGraphConnectNodeInput(graph, ioNode, inputChannel, mixerNode, 0);
-    result = AUGraphConnectNodeInput(graph, mixerNode, 0, reverbNode, 0);
-    result = AUGraphConnectNodeInput(graph, reverbNode, 0, mixer2Node, 0);
-    result = AUGraphConnectNodeInput(graph, mixer3Node, 0, ioNode, outputChannel);
-
-    effect1 = NO;
-    return result;
-}
-
-OSStatus enableEffect2(){
-    OSStatus result = noErr;
-
-
-    effect2 = NO;
-    return result;
-}
-
-OSStatus enableEffect3(){
-    OSStatus result = noErr;
-
-
-    effect3 = NO;
-    return result;
-}
-
-OSStatus enableEffect4(){
-    OSStatus result = noErr;
-
-
-    effect4 = NO;
-    return result;
-}
-
-OSStatus enableEffect5(){
-    OSStatus result = noErr;
-
-
-    effect5 = NO;
-    return result;
-}
-
-
-
-
-OSStatus disableEffect1(){
-    OSStatus result = noErr;
-
-    result = AUGraphDisconnectNodeInput(graph, reverbNode, 0); // first effect unit
-    result = AUGraphDisconnectNodeInput(graph, mixer2Node, 0); // first output unit
-
-    result = AUGraphConnectNodeInput(graph, mixerNode, 0, mixer2Node, 0);
-
-    BOOL isUpdated = NO;
-    result = AUGraphUpdate(graph, &isUpdated);
-    effect1 = NO;
-    return result;
-}
-
-OSStatus disableEffect2(){
-    OSStatus result = noErr;
-
-
-    effect2 = NO;
-    return result;
-}
-
-OSStatus disableEffect3(){
-    OSStatus result = noErr;
-
-
-    effect3 = NO;
-    return result;
-}
-
-OSStatus disableEffect4(){
-    OSStatus result = noErr;
-
-
-    effect4 = NO;
-    return result;
-}
-
-OSStatus disableEffect5(){
-    OSStatus result = noErr;
-
-
-    effect5 = NO;
-    return result;
-}
-
-
-void toggleEffect1(){ NSLog(@"toggleEffect1() called!"); effect1==YES ? disableEffect1() : enableEffect1(); }
-void toggleEffect2(){ effect2==YES ? disableEffect2() : enableEffect2(); }
-void toggleEffect3(){ effect3==YES ? disableEffect3() : enableEffect3(); }
-void toggleEffect4(){ effect4==YES ? disableEffect4() : enableEffect4(); }
-void toggleEffect5(){ effect5==YES ? disableEffect5() : enableEffect5(); }

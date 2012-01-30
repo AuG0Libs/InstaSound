@@ -27,6 +27,7 @@
 		51FDDFE914D5BCCE00A4E8ED /* Stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 51FDDFE014D5BCCE00A4E8ED /* Stop.png */; };
 		51FDDFEA14D5BCCE00A4E8ED /* Stop@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 51FDDFE114D5BCCE00A4E8ED /* Stop@2x.png */; };
 		51FFE7B414D619FA004D552B /* short_old.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 51FFE7B314D619FA004D552B /* short_old.mp3 */; };
+		F7561FDC14D6354900CC57E0 /* AudioPreset.m in Sources */ = {isa = PBXBuildFile; fileRef = F7561FDB14D6354900CC57E0 /* AudioPreset.m */; };
 		F784290214D5701D00F55C51 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290114D5701D00F55C51 /* UIKit.framework */; };
 		F784290414D5701D00F55C51 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290314D5701D00F55C51 /* Foundation.framework */; };
 		F784290614D5701D00F55C51 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290514D5701D00F55C51 /* CoreGraphics.framework */; };
@@ -64,6 +65,8 @@
 		51FDDFE014D5BCCE00A4E8ED /* Stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Stop.png; sourceTree = "<group>"; };
 		51FDDFE114D5BCCE00A4E8ED /* Stop@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Stop@2x.png"; sourceTree = "<group>"; };
 		51FFE7B314D619FA004D552B /* short_old.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = short_old.mp3; path = Resources/short_old.mp3; sourceTree = SOURCE_ROOT; };
+		F7561FDA14D6354900CC57E0 /* AudioPreset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioPreset.h; sourceTree = "<group>"; };
+		F7561FDB14D6354900CC57E0 /* AudioPreset.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioPreset.m; sourceTree = "<group>"; };
 		F78428FD14D5701D00F55C51 /* instasound.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = instasound.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F784290114D5701D00F55C51 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		F784290314D5701D00F55C51 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -189,6 +192,8 @@
 				F7893AE714D60245002465AF /* AudioEngine.m */,
 				512A759614D5AEC600FB391E /* Resources */,
 				F784290814D5701D00F55C51 /* Supporting Files */,
+				F7561FDA14D6354900CC57E0 /* AudioPreset.h */,
+				F7561FDB14D6354900CC57E0 /* AudioPreset.m */,
 			);
 			path = instasound;
 			sourceTree = "<group>";
@@ -281,6 +286,7 @@
 				F784292314D5708600F55C51 /* EAGLView.m in Sources */,
 				F784295F14D574F600F55C51 /* ViewController.m in Sources */,
 				F7893AE814D60245002465AF /* AudioEngine.m in Sources */,
+				F7561FDC14D6354900CC57E0 /* AudioPreset.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
