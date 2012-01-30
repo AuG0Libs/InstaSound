@@ -20,20 +20,22 @@ Float32 audioBuffer[32 * 1024 * 1024];
 
 int audioBufferLen = 0;
 
+AUGraph graph;
+
+AUNode ioNode;
+
 AudioUnit ioUnit;
 AudioUnit mixerUnit;
 AudioUnit mixer2Unit;
 AudioUnit mixer3Unit;
 AudioUnit distortionUnit;
 
-AUGraph graph;
-
-AUNode ioNode;
 
 AUNode mixerNode;
 AUNode mixer2Node;
 AUNode mixer3Node;
 AUNode distortionNode;
+
 
 AudioComponentDescription io_desc;
 AudioComponentDescription mixer_desc;
@@ -124,6 +126,8 @@ static OSStatus renderCallback (void *inRefCon,
     return noErr;	// return with samples in iOdata
 }
 
+
+
 static void initDescriptions()
 {
     io_desc.componentType                       = kAudioUnitType_Output;
@@ -142,7 +146,7 @@ static void initDescriptions()
     distortion_desc.componentSubType            = kAudioUnitSubType_Distortion;
     distortion_desc.componentFlags              = 0;
     distortion_desc.componentFlagsMask          = 0;
-    distortion_desc.componentManufacturer       = kAudioUnitManufacturer_Apple;
+    distortion_desc.componentManufacturer       = kAudioUnitManufacturer_Apple;		
 }
 
 static OSStatus initAudioSession()
@@ -220,6 +224,7 @@ static OSStatus initAudioGraph()
     result = AUGraphAddNode(graph, &mixer_desc, &mixer2Node);
     result = AUGraphAddNode(graph, &mixer_desc, &mixer3Node);
     result = AUGraphAddNode(graph, &distortion_desc, &distortionNode);
+
     
     result = AUGraphOpen(graph);
     result = AUGraphNodeInfo(graph, ioNode, NULL, &ioUnit);
@@ -243,6 +248,8 @@ OSStatus initAudioUnits()
                                   &enableInput,
                                   sizeof(enableInput));
 
+    
+    
 
     UInt32 asbdSize = sizeof(AudioStreamBasicDescription);
     memset (&ioFormat, 0, sizeof (ioFormat));
@@ -356,21 +363,20 @@ static void initPresets()
     [ preset2 compression:kDynamicsProcessorParam_AttackTime     to:0.0002  ];
     [ preset2 compression:kDynamicsProcessorParam_HeadRoom       to:6       ];
 
-    [ preset2 distortion:kDistortionParam_FinalMix               to:50      ];
+//    [ preset2 distortion:kDistortionParam_FinalMix               to:50      ];
 
     [preset2 enableBandpass     ];
     [preset2 enableCompression  ];    
-    [preset2 enableDistortion   ];
 
     preset3 = createPreset(); // temp
     
-    [ preset3 reverb:kReverb2Param_DecayTimeAtNyquist            to:.66     ];
-    [ preset3 reverb:kReverb2Param_DecayTimeAt0Hz                to:1       ];
-    [ preset3 reverb:kReverb2Param_DryWetMix                     to:40      ];
-    [ preset3 reverb:kReverb2Param_RandomizeReflections          to:1000    ];
-    [ preset3 reverb:kReverb2Param_Gain                          to:2       ];
+    [ preset2 compression:kDynamicsProcessorParam_ExpansionRatio to:50      ];
+    [ preset2 compression:kDynamicsProcessorParam_Threshold      to:-20     ];
+    [ preset2 compression:kDynamicsProcessorParam_MasterGain     to:6       ];
+    [ preset2 compression:kDynamicsProcessorParam_AttackTime     to:0.0002  ];
+    [ preset2 compression:kDynamicsProcessorParam_HeadRoom       to:6       ];
     
-    [ preset3 enableReverb ];
+    [ preset3 enableCompression ];
 
     preset4 = createPreset(); // temp
     
@@ -384,13 +390,13 @@ static void initPresets()
 
     preset5 = createPreset(); // temp
     
-    [ preset5 reverb:kReverb2Param_DecayTimeAtNyquist            to:.66     ];
-    [ preset5 reverb:kReverb2Param_DecayTimeAt0Hz                to:1       ];
-    [ preset5 reverb:kReverb2Param_DryWetMix                     to:100     ];
-    [ preset5 reverb:kReverb2Param_RandomizeReflections          to:1000    ];
-    [ preset5 reverb:kReverb2Param_Gain                          to:2       ];
-    
-    [ preset5 enableReverb ];
+    [ preset5 bandpass:kBandpassParam_CenterFrequency            to:2000    ];
+    [ preset5 bandpass:kBandpassParam_Bandwidth                  to:100     ];
+    [ preset5 distortion:kDistortionParam_FinalMix               to:50      ];
+
+    // [ preset5 enableFile:@"vinyl" ofType:@"aif" withFormat:ioFormat];
+    [ preset5 enableBandpass ];
+    [ preset5 enableDistortion ];
 }
 
 void toggleEffect1()

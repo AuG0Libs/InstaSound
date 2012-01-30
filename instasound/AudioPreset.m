@@ -18,13 +18,94 @@
     AUGraphAddNode(graph, &compression_desc, &compressionNode);
     AUGraphAddNode(graph, &bandpass_desc, &bandpassNode);
     AUGraphAddNode(graph, &distortion_desc, &distortionNode);
-
+    AUGraphAddNode(graph, &fileplayer_desc, &fileplayerNode);
+    
     AUGraphNodeInfo(graph, distortionNode, NULL, &distortionUnit);
     AUGraphNodeInfo(graph, compressionNode, NULL, &compressionUnit);
     AUGraphNodeInfo(graph, reverbNode, NULL, &reverbUnit);
     AUGraphNodeInfo(graph, bandpassNode, NULL, &bandpassUnit);
+    AUGraphNodeInfo(graph, fileplayerNode, NULL, &fileplayerUnit);
 
     return self;
+}
+
+- (void) enableFile: (NSString *)file ofType:(NSString *)type withFormat:(AudioStreamBasicDescription)ioFormat
+{
+    nodes[nodeCount++] = fileplayerNode;
+    
+    OSStatus result;
+    AudioFileID filePlayerFile;
+    
+	NSString *filePath = [[NSBundle mainBundle] pathForResource:file ofType:type];
+	CFURLRef audioURL = (__bridge CFURLRef) [NSURL fileURLWithPath:filePath];
+	
+	AudioFileOpenURL(audioURL, kAudioFileReadPermission, 0, &filePlayerFile);
+    
+	// tell the file player unit to load the file we want to play
+	AudioUnitSetProperty(fileplayerUnit, kAudioUnitProperty_ScheduledFileIDs, 
+                         kAudioUnitScope_Global, 0, &filePlayerFile, sizeof(filePlayerFile));
+    
+	UInt64 nPackets;
+	UInt32 propsize = sizeof(nPackets);
+	AudioFileGetProperty(filePlayerFile, kAudioFilePropertyAudioDataPacketCount,
+                         &propsize, &nPackets);
+    
+	// get file's asbd
+	AudioStreamBasicDescription fileASBD;
+	UInt32 fileASBDPropSize = sizeof(fileASBD);
+	AudioFileGetProperty(filePlayerFile, 
+                         kAudioFilePropertyDataFormat,
+                         &fileASBDPropSize, 
+                         &fileASBD);
+    
+	// tell the file player AU to play the entire file
+	ScheduledAudioFileRegion rgn;
+    
+	memset (&rgn.mTimeStamp, 0, sizeof(rgn.mTimeStamp));
+	
+    rgn.mTimeStamp.mFlags = kAudioTimeStampSampleTimeValid;
+	rgn.mTimeStamp.mSampleTime = 0;
+	rgn.mCompletionProc = NULL;
+	rgn.mCompletionProcUserData = NULL;
+	rgn.mAudioFile = filePlayerFile;
+	rgn.mLoopCount = INT_MAX;
+	rgn.mStartFrame = 0;
+	rgn.mFramesToPlay = nPackets * fileASBD.mFramesPerPacket;
+	
+	result = AudioUnitSetProperty(fileplayerUnit, 
+                                  kAudioUnitProperty_ScheduledFileRegion, 
+                                  kAudioUnitScope_Global, 
+                                  0,
+                                  &rgn, 
+                                  sizeof(rgn));
+    
+	// prime the file player AU with default values
+	UInt32 defaultVal = 0;
+	result = AudioUnitSetProperty(fileplayerUnit, 
+                                  kAudioUnitProperty_ScheduledFilePrime, 
+                                  kAudioUnitScope_Global, 
+                                  0, 
+                                  &defaultVal, 
+                                  sizeof(defaultVal));
+    
+    AudioUnitSetProperty(fileplayerUnit, 
+                         kAudioUnitProperty_StreamFormat, 
+                         kAudioUnitScope_Output, 
+                         0, 
+                         &ioFormat,
+                         sizeof(ioFormat));
+	
+	// tell the file player AU when to start playing (-1 sample time means next render cycle)
+	AudioTimeStamp startTime;
+	memset (&startTime, 0, sizeof(startTime));
+    
+	startTime.mFlags = kAudioTimeStampSampleTimeValid;
+	startTime.mSampleTime = -1;
+	
+    result = AudioUnitSetProperty(fileplayerUnit, kAudioUnitProperty_ScheduleStartTimeStamp, 
+                                  kAudioUnitScope_Global, 0, &startTime, sizeof(startTime));
+    
+    NSLog(@"AUDIO FILE: %d", result);
 }
 
 - (void) enableDistortion
@@ -91,6 +172,10 @@
     bandpass_desc.componentFlags                = 0;
     bandpass_desc.componentFlagsMask            = 0;
     bandpass_desc.componentManufacturer         = kAudioUnitManufacturer_Apple;
+
+    fileplayer_desc.componentType = kAudioUnitType_Generator;
+    fileplayer_desc.componentSubType = kAudioUnitSubType_AudioFilePlayer;
+    fileplayer_desc.componentManufacturer = kAudioUnitManufacturer_Apple;
 }
 
 - (id) distortion: (AudioUnitParameterID)type to:(AudioUnitParameterValue) value
