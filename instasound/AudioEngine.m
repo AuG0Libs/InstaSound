@@ -271,13 +271,12 @@ OSStatus initAudioUnits()
     
     UInt32 busCount = 6;
     
-    result = AudioUnitSetProperty (mixer2Unit,
-                                   kAudioUnitProperty_ElementCount,
-                                   kAudioUnitScope_Input,
-                                   0,
-                                   &busCount,
-                                   sizeof (busCount)
-                                   );
+    result = AudioUnitSetProperty(mixer2Unit,
+                                  kAudioUnitProperty_ElementCount,
+                                  kAudioUnitScope_Input,
+                                  0,
+                                  &busCount,
+                                  sizeof (busCount));
 
     return result;
 }
@@ -329,21 +328,24 @@ static void togglePreset(AudioPreset *preset)
 static void initPresets()
 {   
     preset1 = createPreset();
-    
-    [preset1 bandpass:kBandpassParam_CenterFrequency to:2000];
-    [preset1 bandpass:kBandpassParam_Bandwidth to:100];
 
-    [preset1 compression:kDynamicsProcessorParam_ExpansionRatio to:50];
-    [preset1 compression:kDynamicsProcessorParam_Threshold to:-40];
-    [preset1 compression:kDynamicsProcessorParam_MasterGain to:15];
-    [preset1 compression:kDynamicsProcessorParam_AttackTime to:0.0002];
-    [preset1 compression:kDynamicsProcessorParam_HeadRoom to:6];
+    [ preset1 bandpass:kBandpassParam_CenterFrequency            to:2000    ];
+    [ preset1 bandpass:kBandpassParam_Bandwidth                  to:100     ];
+
+    [ preset1 compression:kDynamicsProcessorParam_ExpansionRatio to:50      ];
+    [ preset1 compression:kDynamicsProcessorParam_Threshold      to:-40     ];
+    [ preset1 compression:kDynamicsProcessorParam_MasterGain     to:15      ];
+    [ preset1 compression:kDynamicsProcessorParam_AttackTime     to:0.0002  ];
+    [ preset1 compression:kDynamicsProcessorParam_HeadRoom       to:6       ];
+    
+    [ preset1 distortion:kDistortionParam_FinalMix               to:50      ];
 
     preset2 = createPreset();
-    [preset2 reverb:kReverb2Param_DecayTimeAtNyquist to:1.5];
-    [preset2 reverb:kReverb2Param_DecayTimeAt0Hz to:2.5];
-    [preset2 reverb:kReverb2Param_DryWetMix to:20];
-    [preset2 reverb:kReverb2Param_RandomizeReflections to:100];
+
+    [ preset2 reverb:kReverb2Param_DecayTimeAtNyquist            to:1.5     ];
+    [ preset2 reverb:kReverb2Param_DecayTimeAt0Hz                to:2.5     ];
+    [ preset2 reverb:kReverb2Param_DryWetMix                     to:20      ];
+    [ preset2 reverb:kReverb2Param_RandomizeReflections          to:100     ];
 
     preset3 = createPreset();
 

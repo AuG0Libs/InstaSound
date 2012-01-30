@@ -62,11 +62,11 @@
     compression_desc.componentFlagsMask         = 0;
     compression_desc.componentManufacturer      = kAudioUnitManufacturer_Apple;
     
-    bandpass_desc.componentType                  = kAudioUnitType_Effect;
-    bandpass_desc.componentSubType               = kAudioUnitSubType_BandPassFilter;
-    bandpass_desc.componentFlags                 = 0;
-    bandpass_desc.componentFlagsMask             = 0;
-    bandpass_desc.componentManufacturer          = kAudioUnitManufacturer_Apple;
+    bandpass_desc.componentType                 = kAudioUnitType_Effect;
+    bandpass_desc.componentSubType              = kAudioUnitSubType_BandPassFilter;
+    bandpass_desc.componentFlags                = 0;
+    bandpass_desc.componentFlagsMask            = 0;
+    bandpass_desc.componentManufacturer         = kAudioUnitManufacturer_Apple;
 }
 
 - (id) distortion: (AudioUnitParameterID)type to:(AudioUnitParameterValue) value
