@@ -26,32 +26,19 @@
 }
 
 
-- (AudioPreset *) connect:(AUNode)input with:(AUNode)output;
+- (AudioPreset *) connect:(AUNode)input with:(AUNode)output on:(int)channel
 {
-    enabled = YES;
-    
     AUGraphConnectNodeInput(graph, input, 0, bandpassNode, 0);
     AUGraphConnectNodeInput(graph, bandpassNode, 0, compressionNode, 0);
     AUGraphConnectNodeInput(graph, compressionNode, 0, distortionNode, 0);
     AUGraphConnectNodeInput(graph, distortionNode, 0, reverbNode, 0);
-    AUGraphConnectNodeInput(graph, reverbNode, 0, output, 0);
-
-    Boolean isUpdated = NO;
-    AUGraphUpdate(graph, &isUpdated);
+    AUGraphConnectNodeInput(graph, reverbNode, 0, output, channel);
 
     return self;
 }
 
 - (AudioPreset *) disconnect:(AUNode)output;
 {
-    enabled = NO;
-    
-    // AUGraphDisconnectNodeInput(graph, bandpassNode, 0);
-    AUGraphDisconnectNodeInput(graph, output, 0);    
-    
-    Boolean isUpdated = NO;
-    AUGraphUpdate(graph, &isUpdated);
-    
     return self;
 }
 

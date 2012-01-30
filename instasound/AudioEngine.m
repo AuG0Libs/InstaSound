@@ -218,20 +218,11 @@ static OSStatus initAudioGraph()
     result = AUGraphAddNode(graph, &mixer_desc, &mixer3Node);
     result = AUGraphAddNode(graph, &distortion_desc, &distortionNode);
     
-    result = AUGraphConnectNodeInput(graph, ioNode, inputChannel, mixerNode, 0);
-    // result = AUGraphConnectNodeInput(graph, mixerNode, 0, mixer2Node, 0);
-    result = AUGraphConnectNodeInput(graph, mixer3Node, 0, ioNode, outputChannel);
-
     result = AUGraphOpen(graph);
     result = AUGraphNodeInfo(graph, ioNode, NULL, &ioUnit);
     result = AUGraphNodeInfo(graph, mixerNode, NULL, &mixerUnit);
     result = AUGraphNodeInfo(graph, mixer2Node, NULL, &mixer2Unit);
     result = AUGraphNodeInfo(graph, distortionNode, NULL, &distortionUnit);
-
-    AURenderCallbackStruct renderCallbackStruct;
-    renderCallbackStruct.inputProc = &renderCallback;
-    renderCallbackStruct.inputProcRefCon = &mixer2Unit;
-    result = AUGraphSetNodeInputCallback(graph, mixer3Node, 0, &renderCallbackStruct);
 
     return result;
 }
@@ -275,6 +266,16 @@ OSStatus initAudioUnits()
                                   0,
                                   &ioFormat,
                                   sizeof(ioFormat));
+    
+    UInt32 busCount = 6;
+    
+    result = AudioUnitSetProperty (mixer2Unit,
+                                   kAudioUnitProperty_ElementCount,
+                                   kAudioUnitScope_Input,
+                                   0,
+                                   &busCount,
+                                   sizeof (busCount)
+                                   );
 
     return result;
 }
@@ -284,17 +285,46 @@ static AudioPreset *createPreset()
     return [[AudioPreset alloc] create:graph];
 }
 
-static void togglePreset(AudioPreset *preset)
+static void resetGraph()
 {
-    if (preset.enabled == NO) {
-        [preset connect:mixerNode with:mixer2Node];    
-    }
-    else {
-        [preset disconnect:mixer2Node];                
+    AUGraphClearConnections(graph);
+    AUGraphConnectNodeInput(graph, ioNode, inputChannel, mixerNode, 0);
+    AUGraphConnectNodeInput(graph, mixer3Node, 0, ioNode, outputChannel);
+    
+    AURenderCallbackStruct renderCallbackStruct;
+    renderCallbackStruct.inputProc = &renderCallback;
+    renderCallbackStruct.inputProcRefCon = &mixer2Unit;
+    AUGraphSetNodeInputCallback(graph, mixer3Node, 0, &renderCallbackStruct);
+}
+
+static void connectPreset(AudioPreset *preset, int bus)
+{
+    if (preset.enabled == YES) {
+        [preset connect:mixerNode with:mixer2Node on:bus];    
     }
 }
 
-void initPresets()
+static void togglePreset(AudioPreset *preset)
+{
+    preset.enabled = preset.enabled == YES ? NO : YES;
+    
+    resetGraph();
+    
+    connectPreset(preset1, 1);
+    connectPreset(preset2, 2);
+    connectPreset(preset3, 3);
+    connectPreset(preset4, 4);
+    connectPreset(preset5, 5);
+
+    if (!preset1.enabled && !preset2.enabled && !preset3.enabled && !preset4.enabled && !preset5.enabled) {
+        AUGraphConnectNodeInput(graph, mixerNode, 0, mixer2Node, 0);
+    }
+
+    Boolean isUpdated = NO;
+    AUGraphUpdate(graph, &isUpdated);
+}
+
+static void initPresets()
 {   
     preset1 = createPreset();
     
@@ -312,6 +342,12 @@ void initPresets()
     [preset2 reverb:kReverb2Param_DecayTimeAt0Hz to:2.5];
     [preset2 reverb:kReverb2Param_DryWetMix to:20];
     [preset2 reverb:kReverb2Param_RandomizeReflections to:100];
+
+    preset3 = createPreset();
+
+    preset4 = createPreset();
+
+    preset5 = createPreset();
 }
 
 void toggleEffect1()
@@ -350,6 +386,9 @@ int initAudioEngine()
     result = initAudioUnits();
     
     initPresets();
+
+    resetGraph();
+    AUGraphConnectNodeInput(graph, mixerNode, 0, mixer2Node, 0);
     
     result = AUGraphInitialize(graph);
 

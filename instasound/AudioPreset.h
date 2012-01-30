@@ -28,7 +28,7 @@
 - (void) initDescriptions;
 
 - (AudioPreset *) create:(AUGraph) graph;
-- (AudioPreset *) connect:(AUNode)input with:(AUNode)output;
+- (AudioPreset *) connect:(AUNode)input with:(AUNode)output on:(int)channel;
 - (AudioPreset *) disconnect:(AUNode)output;
 
 - (id) distortion: (AudioUnitParameterID)type to:(AudioUnitParameterValue) value;
