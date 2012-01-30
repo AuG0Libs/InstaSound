@@ -28,7 +28,6 @@ int points = 1024;
 
 - (void)viewDidLoad
 {
-    NSLog(@"viewcontroller did load");
     [super viewDidLoad];
 	
     [self initializeNavigationView];
@@ -103,6 +102,8 @@ int points = 1024;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    self.eaglView.applicationResignedActive = NO;
+    [self.eaglView startAnimation];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -112,8 +113,9 @@ int points = 1024;
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-    NSLog(@"willDisappear");
 	[super viewWillDisappear:animated];
+    self.eaglView.applicationResignedActive = YES;
+    [self.eaglView stopAnimation];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -133,7 +135,6 @@ int points = 1024;
 
 - (void)record
 {
-    NSLog(@"Test");
     NSString *mp3_filepath = [[NSBundle mainBundle] pathForResource:@"short_old" ofType:@"mp3"];
     NSURL *trackURL = [NSURL fileURLWithPath: mp3_filepath];
     
@@ -212,18 +213,5 @@ int points = 1024;
 - (void)drawView:(id)sender forTime:(NSTimeInterval)time {
     [self drawOscilloscope];
 }
-
-- (void)activate
-{
-    self.eaglView.applicationResignedActive = YES;
-    [self.eaglView stopAnimation];
-}
-
-- (void)deactivate
-{
-    self.eaglView.applicationResignedActive = NO;
-    [self.eaglView startAnimation];
-}
-
 
 @end
