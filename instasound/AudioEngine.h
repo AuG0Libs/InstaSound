@@ -27,4 +27,3 @@ OSStatus disableEffect4();
 OSStatus disableEffect5();
 
 NSData *getAudioData(int offset, int length);
-
