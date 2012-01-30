@@ -60,7 +60,7 @@ int getAudioBufferLength()
     return audioBufferLen;
 }
 
-static void convertToSInt16(Float32 *input, SInt16 *output, int length)
+void convertToSInt16(Float32 *input, SInt16 *output, int length)
 {
     for (int i = 0; i < length; i++)
     {
@@ -76,7 +76,7 @@ static void convertToSInt16(Float32 *input, SInt16 *output, int length)
 #define WRITE_4CHARS(buffer, index, a, b, c, d) buffer[index] = a; buffer[index + 1] = b; buffer[index + 2] = c; buffer[index + 3] = d;
 
 
-static NSData *getAudioData(int offset, int length)
+NSData *getAudioData(int offset, int length)
 {
     UInt8 *buffer = malloc(WAV_HEADER_LEN + length * sizeof(SInt16));
 
@@ -102,7 +102,7 @@ static NSData *getAudioData(int offset, int length)
 }
 
 
-static OSStatus renderCallback (void *inRefCon,
+OSStatus renderCallback (void *inRefCon,
                                 AudioUnitRenderActionFlags 	*ioActionFlags,
                                 const AudioTimeStamp		*inTimeStamp,
                                 UInt32 						inBusNumber,
@@ -175,7 +175,7 @@ static void initDescriptions()
 
 }
 
-static OSStatus initAudioSession()
+OSStatus initAudioSession()
 {
     audioSession = [AVAudioSession sharedInstance];
 
@@ -239,7 +239,7 @@ static OSStatus initAudioSession()
     return noErr;
 }
 
-static OSStatus initAudioGraph()
+OSStatus initAudioGraph()
 {
     OSStatus result = noErr;
 
@@ -276,7 +276,7 @@ static OSStatus initAudioGraph()
     return result;
 }
 
-static OSStatus initAudioUnits()
+OSStatus initAudioUnits()
 {
     UInt32 enableInput = 1;
     OSStatus result = noErr;
@@ -510,22 +510,6 @@ int initAudioEngine()
 
     AUGraphStart(graph);
 
-    // shitty answering machine
-//    result = AUGraphConnectNodeInput(graph, ioNode, inputChannel, mixerNode, 0);
-//    result = AUGraphConnectNodeInput(graph, mixerNode, 0, distortionNode, 0);
-//    result = AUGraphConnectNodeInput(graph, distortionNode, 0, bandpassNode, 0);
-//    result = AUGraphConnectNodeInput(graph, bandpassNode, 0, compressionNode, 0);
-//    result = AUGraphConnectNodeInput(graph, compressionNode, 0, mixer2Node, 0);
-//    result = AUGraphConnectNodeInput(graph, mixer3Node, 0, ioNode, outputChannel);
-
-/*
-    OSStatus AUGraphDisconnectNodeInput (
-                                         AUGraph inGraph,
-                                         AUNode inDestNode,
-                                         UInt32 inDestInputNumber
-                                         );
-*/
-
     //    size_t bytesPerSample = sizeof (AudioUnitSampleType);
     //    ioFormat.mFormatID          = kAudioFormatLinearPCM;
     //    ioFormat.mFormatFlags       = kAudioFormatFlagIsFloat;
@@ -536,22 +520,10 @@ int initAudioEngine()
     //    ioFormat.mBitsPerChannel    = 8 * bytesPerSample;
     //    ioFormat.mSampleRate        = 44100;
 
-    /// <<- fx1 parameters (spacious)
-
-
-    /// fx3 parameters
-
-
-    /// fx4 parameters (distortion)
-
-
-    /// fx4 paramteters
-
-
     return result;
 }
 
-static OSStatus enableEffect1(){
+OSStatus enableEffect1(){
     OSStatus result = noErr;
 
     // cathedral
@@ -560,46 +532,56 @@ static OSStatus enableEffect1(){
     result = AUGraphConnectNodeInput(graph, reverbNode, 0, mixer2Node, 0);
     result = AUGraphConnectNodeInput(graph, mixer3Node, 0, ioNode, outputChannel);
 
-    effect1 = NO;
+    effect1 = YES;
+    NSLog(@"Effect1 enabled");
     return result;
 }
 
-static OSStatus enableEffect2(){
+OSStatus enableEffect2(){
+    OSStatus result = noErr;
+    
+    // shitty answering machine
+    result = AUGraphConnectNodeInput(graph, ioNode, inputChannel, mixerNode, 0);
+    result = AUGraphConnectNodeInput(graph, mixerNode, 0, distortionNode, 0);
+    result = AUGraphConnectNodeInput(graph, distortionNode, 0, bandpassNode, 0);
+    result = AUGraphConnectNodeInput(graph, bandpassNode, 0, compressionNode, 0);
+    result = AUGraphConnectNodeInput(graph, compressionNode, 0, mixer2Node, 0);
+    result = AUGraphConnectNodeInput(graph, mixer3Node, 0, ioNode, outputChannel);
+
+    effect2 = YES;
+    NSLog(@"Effect2 enabled");
+    return result;
+}
+
+OSStatus enableEffect3(){
     OSStatus result = noErr;
 
 
-    effect2 = NO;
+    effect3 = YES;
+    NSLog(@"Effect3 enabled");
     return result;
 }
 
-static OSStatus enableEffect3(){
+OSStatus enableEffect4(){
     OSStatus result = noErr;
 
 
-    effect3 = NO;
+    effect4 = YES;
+    NSLog(@"Effect4 enabled");
     return result;
 }
 
-static OSStatus enableEffect4(){
+OSStatus enableEffect5(){
     OSStatus result = noErr;
 
 
-    effect4 = NO;
-    return result;
-}
-
-static OSStatus enableEffect5(){
-    OSStatus result = noErr;
-
-
-    effect5 = NO;
+    effect5 = YES;
+    NSLog(@"Effect5 enabled");
     return result;
 }
 
 
-
-
-static OSStatus disableEffect1(){
+OSStatus disableEffect1(){
     OSStatus result = noErr;
 
     result = AUGraphDisconnectNodeInput(graph, reverbNode, 0); // first effect unit
@@ -610,43 +592,48 @@ static OSStatus disableEffect1(){
     BOOL isUpdated = NO;
     result = AUGraphUpdate(graph, &isUpdated);
     effect1 = NO;
+    NSLog(@"Effect1 disabled");
     return result;
 }
 
-static OSStatus disableEffect2(){
+OSStatus disableEffect2(){
     OSStatus result = noErr;
 
 
     effect2 = NO;
+    NSLog(@"Effect2 disabled");
     return result;
 }
 
-static OSStatus disableEffect3(){
+OSStatus disableEffect3(){
     OSStatus result = noErr;
 
 
     effect3 = NO;
+    NSLog(@"Effect3 disabled");
     return result;
 }
 
-static OSStatus disableEffect4(){
+OSStatus disableEffect4(){
     OSStatus result = noErr;
 
 
     effect4 = NO;
+    NSLog(@"Effect4 disabled");
     return result;
 }
 
-static OSStatus disableEffect5(){
+OSStatus disableEffect5(){
     OSStatus result = noErr;
 
 
     effect5 = NO;
+    NSLog(@"Effect5 disabled");
     return result;
 }
 
-static void toggleEffect1(){ NSLog(@"toggleEffect1() called!"); effect1==YES ? disableEffect1() : enableEffect1(); }
-static void toggleEffect2(){ effect2==YES ? disableEffect2() : enableEffect2(); }
-static void toggleEffect3(){ effect3==YES ? disableEffect3() : enableEffect3(); }
-static void toggleEffect4(){ effect4==YES ? disableEffect4() : enableEffect4(); }
-static void toggleEffect5(){ effect5==YES ? disableEffect5() : enableEffect5(); }
+void toggleEffect1(){ effect1==YES ? disableEffect1() : enableEffect1(); }
+void toggleEffect2(){ effect2==YES ? disableEffect2() : enableEffect2(); }
+void toggleEffect3(){ effect3==YES ? disableEffect3() : enableEffect3(); }
+void toggleEffect4(){ effect4==YES ? disableEffect4() : enableEffect4(); }
+void toggleEffect5(){ effect5==YES ? disableEffect5() : enableEffect5(); }

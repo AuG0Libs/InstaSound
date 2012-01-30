@@ -24,11 +24,11 @@
 - (void)initializeEAGL;
 - (void)initializeRecordButton;
 
-- (void)toggleEffect1;
-- (void)toggleEffect2;
-- (void)toggleEffect3;
-- (void)toggleEffect4;
-- (void)toggleEffect5;
+- (void)effect1;
+- (void)effect2;
+- (void)effect3;
+- (void)effect4;
+- (void)effect5;
 
 - (void)record;
 

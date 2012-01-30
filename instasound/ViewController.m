@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "SCUI.h"
+#import "AudioEngine.h"
 
 @implementation ViewController
 
@@ -87,7 +88,8 @@ int points = 1024;
     [self.recordButton setImage:[[UIImage alloc] initWithContentsOfFile:pathToImageFile] forState:UIControlStateNormal];
     [self.recordButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentCenter];
     [self.recordButton setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
-    [self.recordButton addTarget:self action:@selector(record) forControlEvents:UIControlEventTouchUpInside];
+//    [self.recordButton addTarget:self action:@selector(record) forControlEvents:UIControlEventTouchUpInside];
+    [self.recordButton addTarget:self action:@selector(effect1) forControlEvents:UIControlEventTouchUpInside];
     
     [self.view addSubview:self.recordButton];
 }
@@ -131,6 +133,12 @@ int points = 1024;
     } else {
         return YES;
     }
+}
+
+- (void)effect1{
+
+    toggleEffect1();
+
 }
 
 - (void)record
@@ -205,7 +213,7 @@ int points = 1024;
     glColor4f(0.5, 0.5, 0.5, 1.);
     glVertexPointer(2, GL_FLOAT, 0, oscilLine);
     glDrawArrays(GL_LINE_STRIP, 0, points);
-    
+
 	glPopMatrix();
 	glPopMatrix();
 }
