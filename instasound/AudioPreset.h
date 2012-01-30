@@ -21,6 +21,9 @@
     AudioUnit reverbUnit;
     AudioUnit compressionUnit;
     AudioUnit bandpassUnit;
+    
+    AUNode nodes[16];
+    int nodeCount;
 }
 
 @property (atomic) Boolean enabled;
@@ -29,7 +32,10 @@
 
 - (AudioPreset *) create:(AUGraph) graph;
 - (AudioPreset *) connect:(AUNode)input with:(AUNode)output on:(int)channel;
-- (AudioPreset *) disconnect:(AUNode)output;
+- (void) enableDistortion;
+- (void) enableReverb;
+- (void) enableBandpass;
+- (void) enableCompression;
 
 - (id) distortion: (AudioUnitParameterID)type to:(AudioUnitParameterValue) value;
 - (id) reverb: (AudioUnitParameterID)type to:(AudioUnitParameterValue) value;
