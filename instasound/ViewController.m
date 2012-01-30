@@ -41,7 +41,10 @@ int points = 1024;
 {
     self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, 1, 1)];
     [self.navigationBar setBarStyle:UIBarStyleBlackOpaque];
-
+    
+//    UIImage *image = [UIImage imageNamed:@"instasound_small.png"];
+//    UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
+//    [self.navigationBar addSubview:imageView];
     UINavigationItem *title = [[UINavigationItem alloc] initWithTitle:@"InstaSound"];
     [self.navigationBar pushNavigationItem:title animated:true];
     [self.navigationBar sizeToFit];
@@ -52,7 +55,8 @@ int points = 1024;
 - (void)initializeButtons
 {
     self.toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 411, 320, 49)];
-
+    [self.toolBar setBarStyle:UIBarStyleBlackOpaque];
+    
     NSString* pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Vinyl" ofType:@"png"];
     UIImage *image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
     UIBarButtonItem *effect1 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect1)];
