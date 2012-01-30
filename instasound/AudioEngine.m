@@ -362,11 +362,35 @@ static void initPresets()
 
     [ preset2 enableReverb ];
     
-    preset3 = createPreset();
+    preset3 = createPreset(); // temp
+    
+    [ preset3 reverb:kReverb2Param_DecayTimeAtNyquist            to:.66     ];
+    [ preset3 reverb:kReverb2Param_DecayTimeAt0Hz                to:1       ];
+    [ preset3 reverb:kReverb2Param_DryWetMix                     to:40      ];
+    [ preset3 reverb:kReverb2Param_RandomizeReflections          to:1000    ];
+    [ preset3 reverb:kReverb2Param_Gain                          to:2       ];
+    
+    [ preset3 enableReverb ];
 
-    preset4 = createPreset();
+    preset4 = createPreset(); // temp
+    
+    [ preset4 reverb:kReverb2Param_DecayTimeAtNyquist            to:.66     ];
+    [ preset4 reverb:kReverb2Param_DecayTimeAt0Hz                to:1       ];
+    [ preset4 reverb:kReverb2Param_DryWetMix                     to:60      ];
+    [ preset4 reverb:kReverb2Param_RandomizeReflections          to:1000    ];
+    [ preset4 reverb:kReverb2Param_Gain                          to:2       ];
 
-    preset5 = createPreset();
+    [ preset4 enableReverb ];
+
+    preset5 = createPreset(); // temp
+    
+    [ preset5 reverb:kReverb2Param_DecayTimeAtNyquist            to:.66     ];
+    [ preset5 reverb:kReverb2Param_DecayTimeAt0Hz                to:1       ];
+    [ preset5 reverb:kReverb2Param_DryWetMix                     to:100     ];
+    [ preset5 reverb:kReverb2Param_RandomizeReflections          to:1000    ];
+    [ preset5 reverb:kReverb2Param_Gain                          to:2       ];
+    
+    [ preset5 enableReverb ];
 }
 
 void toggleEffect1()
@@ -381,17 +405,17 @@ void toggleEffect2()
 
 void toggleEffect3()
 {
-    
+    togglePreset(preset3);    
 }
 
 void toggleEffect4()
 {
-    
+    togglePreset(preset4);
 }
 
 void toggleEffect5()
 {
-    
+    togglePreset(preset5);
 }
 
 int initAudioEngine()
