@@ -33,35 +33,50 @@
 
 - (void) enableFile: (NSString *)file ofType:(NSString *)type withFormat:(AudioStreamBasicDescription)ioFormat
 {
+
+    OSStatus result;
+    NSLog(@"enableFile: %@", file);    
+    NSLog(@"enableFile: %@", type);
+    
     nodes[nodeCount++] = fileplayerNode;
     
-    OSStatus result;
     AudioFileID filePlayerFile;
     
-	NSString *filePath = [[NSBundle mainBundle] pathForResource:file ofType:type];
-	CFURLRef audioURL = (__bridge CFURLRef) [NSURL fileURLWithPath:filePath];
+    NSString *filePath;
+    
+    filePath = [[NSBundle mainBundle] pathForResource: file ofType: type];
+    NSLog(@"enableFile, filePath: %@", filePath);
+    
+
+
+
 	
-	AudioFileOpenURL(audioURL, kAudioFileReadPermission, 0, &filePlayerFile);
     
+    
+    
+	CFURLRef audioURL = (__bridge CFURLRef) [NSURL fileURLWithPath:filePath];
+    NSLog(@"enableFile, filePath: %@", audioURL);	
+	result = AudioFileOpenURL(audioURL, kAudioFileReadPermission, 0, &filePlayerFile);
+    NSLog(@"AudioFileOpenURL: %ld", result);
 	// tell the file player unit to load the file we want to play
-	AudioUnitSetProperty(fileplayerUnit, kAudioUnitProperty_ScheduledFileIDs, 
+    result = AudioUnitSetProperty(fileplayerUnit, kAudioUnitProperty_ScheduledFileIDs, 
                          kAudioUnitScope_Global, 0, &filePlayerFile, sizeof(filePlayerFile));
-    
+    NSLog(@"AudioUnitSetProperty: %ld", result);    
 	UInt64 nPackets;
 	UInt32 propsize = sizeof(nPackets);
-	AudioFileGetProperty(filePlayerFile, kAudioFilePropertyAudioDataPacketCount,
+	result = AudioFileGetProperty(filePlayerFile, kAudioFilePropertyAudioDataPacketCount,
                          &propsize, &nPackets);
-    
+    NSLog(@"AudioFileGetProperty: %ld", result);
 	// get file's asbd
 	AudioStreamBasicDescription fileASBD;
 	UInt32 fileASBDPropSize = sizeof(fileASBD);
-	AudioFileGetProperty(filePlayerFile, 
+	result = AudioFileGetProperty(filePlayerFile, 
                          kAudioFilePropertyDataFormat,
-                         &fileASBDPropSize, 
+                         &fileASBDPropSize,
                          &fileASBD);
     
 	// tell the file player AU to play the entire file
-	ScheduledAudioFileRegion rgn;
+    ScheduledAudioFileRegion rgn;
     
 	memset (&rgn.mTimeStamp, 0, sizeof(rgn.mTimeStamp));
 	
@@ -78,9 +93,9 @@
                                   kAudioUnitProperty_ScheduledFileRegion, 
                                   kAudioUnitScope_Global, 
                                   0,
-                                  &rgn, 
+                                  &rgn,
                                   sizeof(rgn));
-    
+
 	// prime the file player AU with default values
 	UInt32 defaultVal = 0;
 	result = AudioUnitSetProperty(fileplayerUnit, 
@@ -90,7 +105,7 @@
                                   &defaultVal, 
                                   sizeof(defaultVal));
     
-    AudioUnitSetProperty(fileplayerUnit, 
+    result = AudioUnitSetProperty(fileplayerUnit, 
                          kAudioUnitProperty_StreamFormat, 
                          kAudioUnitScope_Output, 
                          0, 
@@ -107,7 +122,7 @@
     result = AudioUnitSetProperty(fileplayerUnit, kAudioUnitProperty_ScheduleStartTimeStamp, 
                                   kAudioUnitScope_Global, 0, &startTime, sizeof(startTime));
     
-    NSLog(@"AUDIO FILE: %d", result);
+    NSLog(@"AudioUnitSetProperty: %d", result);
 }
 
 - (void) enableDistortion
@@ -139,11 +154,11 @@
 - (AudioPreset *) connect:(AUNode)input with:(AUNode)output on:(int)channel
 {
     AUGraphConnectNodeInput(graph, input, 0, nodes[0], 0);
- 
+
     for (int i = 0; i < nodeCount - 1; i++) {
         AUGraphConnectNodeInput(graph, nodes[i], 0, nodes[i + 1], 0);
     }
-    
+
     AUGraphConnectNodeInput(graph, nodes[nodeCount-1], 0, output, channel);
 
     return self;
@@ -180,15 +195,17 @@
     bandpass_desc.componentFlagsMask            = 0;
     bandpass_desc.componentManufacturer         = kAudioUnitManufacturer_Apple;
 
-    highshelf_desc.componentType                 = kAudioUnitType_Effect;
-    highshelf_desc.componentSubType              = kAudioUnitSubType_HighShelfFilter;
-    highshelf_desc.componentFlags                = 0;
-    highshelf_desc.componentFlagsMask            = 0;
-    highshelf_desc.componentManufacturer         = kAudioUnitManufacturer_Apple;
+    highshelf_desc.componentType                = kAudioUnitType_Effect;
+    highshelf_desc.componentSubType             = kAudioUnitSubType_HighShelfFilter;
+    highshelf_desc.componentFlags               = 0;
+    highshelf_desc.componentFlagsMask           = 0;
+    highshelf_desc.componentManufacturer        = kAudioUnitManufacturer_Apple;
 
-    fileplayer_desc.componentType = kAudioUnitType_Generator;
-    fileplayer_desc.componentSubType = kAudioUnitSubType_AudioFilePlayer;
-    fileplayer_desc.componentManufacturer = kAudioUnitManufacturer_Apple;
+    fileplayer_desc.componentType               = kAudioUnitType_Generator;
+    fileplayer_desc.componentSubType            = kAudioUnitSubType_AudioFilePlayer;
+    fileplayer_desc.componentFlags              = 0;
+    fileplayer_desc.componentFlagsMask          = 0;
+    fileplayer_desc.componentManufacturer       = kAudioUnitManufacturer_Apple;
 }
 
 - (id) distortion: (AudioUnitParameterID)type to:(AudioUnitParameterValue) value

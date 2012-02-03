@@ -68,7 +68,7 @@ static OSStatus renderCallback (void *inRefCon,
     AudioEngine *engine = (__bridge AudioEngine *)inRefCon;
     Float32 *audioBuffer = engine->audioBuffer;
     int audioBufferLen = engine->audioBufferLen;
-    
+
 	OSStatus renderErr;
 
     renderErr = AudioUnitRender(engine->mixer2Unit, ioActionFlags,
@@ -181,8 +181,7 @@ static OSStatus renderCallback (void *inRefCon,
     result |= AUGraphAddNode(graph, &mixer_desc, &mixer2Node);
     result |= AUGraphAddNode(graph, &mixer_desc, &mixer3Node);
     result |= AUGraphAddNode(graph, &distortion_desc, &distortionNode);
-
-
+    
     result = AUGraphOpen(graph);
     result = AUGraphNodeInfo(graph, ioNode, NULL, &ioUnit);
     result = AUGraphNodeInfo(graph, mixerNode, NULL, &mixerUnit);
@@ -199,45 +198,45 @@ static OSStatus renderCallback (void *inRefCon,
 {
     UInt32 enableInput = 1;
     OSStatus result = noErr;
-    
+
     result |= AudioUnitSetProperty(ioUnit,
                                    kAudioOutputUnitProperty_EnableIO,
                                    kAudioUnitScope_Input,
                                    1,
                                    &enableInput,
                                    sizeof(enableInput));
-    
-    
-    
-    
+
+
+
+
     UInt32 asbdSize = sizeof(AudioStreamBasicDescription);
     memset (&ioFormat, 0, sizeof (ioFormat));
-    
+
     result |= AudioUnitGetProperty(distortionUnit,
                                    kAudioUnitProperty_StreamFormat,
                                    kAudioUnitScope_Input,
                                    0,
                                    &ioFormat,
                                    &asbdSize);
-    
+
     result |= AudioUnitSetProperty(mixerUnit,
                                    kAudioUnitProperty_StreamFormat,
                                    kAudioUnitScope_Output,
                                    0,
                                    &ioFormat,
                                    sizeof(ioFormat));
-    
+
     if (result != 0) {NSLog(@"FAIL: %ld", result);}
-    
+
     result |= AudioUnitSetProperty(mixer2Unit,
                                    kAudioUnitProperty_StreamFormat,
                                    kAudioUnitScope_Input,
                                    0,
                                    &ioFormat,
                                    sizeof(ioFormat));
-    
+
     UInt32 busCount = 6;
-    
+
     result |= AudioUnitSetProperty(mixer2Unit,
                                    kAudioUnitProperty_ElementCount,
                                    kAudioUnitScope_Input,
@@ -285,9 +284,9 @@ static OSStatus renderCallback (void *inRefCon,
     preset5.enabled = NO;
 
     preset.enabled = YES;
-    
+
     [self resetGraph];
-    
+
     [self connectPreset:preset1 toBus:1];
     [self connectPreset:preset2 toBus:2];
     [self connectPreset:preset3 toBus:3];
@@ -303,56 +302,57 @@ static OSStatus renderCallback (void *inRefCon,
 }
 
 - (void) initPresets
-{   
+{
     preset1 = [self createPreset];
 
-    [ preset1 reverb:kReverb2Param_DecayTimeAtNyquist            to:1.5     ];
-    [ preset1 reverb:kReverb2Param_DecayTimeAt0Hz                to:2.5     ];
-    [ preset1 reverb:kReverb2Param_DryWetMix                     to:20      ];
-    [ preset1 reverb:kReverb2Param_RandomizeReflections          to:100     ];
+    [preset1 reverb:kReverb2Param_DecayTimeAtNyquist            to:1.5      ];
+    [preset1 reverb:kReverb2Param_DecayTimeAt0Hz                to:2.5      ];
+    [preset1 reverb:kReverb2Param_DryWetMix                     to:33       ];
+    [preset1 reverb:kReverb2Param_RandomizeReflections          to:100      ];
 
-    [ preset1 enableReverb];
+    [preset1 enableReverb];
 
     preset2 = [self createPreset];
 
-    [ preset2 bandpass:kBandpassParam_CenterFrequency            to:1000    ];
-    [ preset2 bandpass:kBandpassParam_Bandwidth                  to:200     ];
-    [ preset2 compression:kDynamicsProcessorParam_Threshold      to:-40    ];
-    [ preset2 compression:kDynamicsProcessorParam_MasterGain     to:20    ];
+    [preset2 bandpass:kBandpassParam_CenterFrequency            to:1000     ];
+    [preset2 bandpass:kBandpassParam_Bandwidth                  to:200      ];
+    [preset2 compression:kDynamicsProcessorParam_Threshold      to:-40      ];
+    [preset2 compression:kDynamicsProcessorParam_MasterGain     to:20       ];
 
-    [ preset2 enableBandpass];
-    [ preset2 enableCompression];
-    
+    [preset2 enableBandpass];
+    [preset2 enableCompression];
+
     preset3 = [self createPreset];
-    
-    [ preset3 highshelf:kHighShelfParam_Gain                     to:6       ];
-     
-    [ preset3 compression:kDynamicsProcessorParam_Threshold      to:-40     ];
-    [ preset3 compression:kDynamicsProcessorParam_MasterGain     to:12       ];
-    [ preset3 compression:kDynamicsProcessorParam_AttackTime     to:0.0002  ];
-    
-    [ preset3 enableHighshelf ];
-    [ preset3 enableCompression ];
+
+    [preset3 highshelf:kHighShelfParam_Gain                     to:6        ];
+
+    [preset3 compression:kDynamicsProcessorParam_Threshold      to:-40      ];
+    [preset3 compression:kDynamicsProcessorParam_MasterGain     to:12       ];
+    [preset3 compression:kDynamicsProcessorParam_AttackTime     to:0.0002   ];
+
+    [preset3 enableHighshelf];
+    [preset3 enableCompression];
 
     preset4 = [self createPreset];
-    
-    [ preset4 reverb:kReverb2Param_DecayTimeAtNyquist            to:.66     ];
-    [ preset4 reverb:kReverb2Param_DecayTimeAt0Hz                to:1       ];
-    [ preset4 reverb:kReverb2Param_DryWetMix                     to:60      ];
-    [ preset4 reverb:kReverb2Param_RandomizeReflections          to:1000    ];
-    [ preset4 reverb:kReverb2Param_Gain                          to:2       ];
 
-    [ preset4 enableReverb ];
+    [preset4 reverb:kReverb2Param_DecayTimeAtNyquist            to:.66      ];
+    [preset4 reverb:kReverb2Param_DecayTimeAt0Hz                to:1        ];
+    [preset4 reverb:kReverb2Param_DryWetMix                     to:60       ];
+    [preset4 reverb:kReverb2Param_RandomizeReflections          to:1000     ];
+    [preset4 reverb:kReverb2Param_Gain                          to:2        ];
+
+    [preset4 enableReverb];
 
     preset5 = [self createPreset];
-    
-    [ preset5 bandpass:kBandpassParam_CenterFrequency            to:2000    ];
-    [ preset5 bandpass:kBandpassParam_Bandwidth                  to:100     ];
-    [ preset5 distortion:kDistortionParam_FinalMix               to:50      ];
 
-    // [ preset5 enableFile:@"vinyl" ofType:@"aif" withFormat:ioFormat];
-    [ preset5 enableBandpass ];
-    [ preset5 enableDistortion ];
+//    [preset5 bandpass:kBandpassParam_CenterFrequency            to:2000     ];
+//    [preset5 bandpass:kBandpassParam_Bandwidth                  to:100      ];
+//    [preset5 distortion:kDistortionParam_FinalMix               to:50       ];
+    
+    [preset5 enableFile:@"vinyl" ofType:@"aif" withFormat:ioFormat];
+    
+//    [preset5 enableBandpass];
+//    [preset5 enableDistortion];
 }
 
 - (void) toggleEffect:(int)index
@@ -370,32 +370,32 @@ static OSStatus renderCallback (void *inRefCon,
 {
     if (self = [super init]) {
         OSStatus result = noErr;
-        
+
         audioBufferLen = 0;
-        
+
         [self initDescriptions];
         [self initAudioSession];
         [self initAudioGraph];
         [self initAudioUnits];
-        
+
         [self initPresets];
-        
+
         [self resetGraph];
-        
+
         AUGraphConnectNodeInput(graph, mixerNode, 0, mixer2Node, 0);
-        
+
         result |= AUGraphInitialize(graph);
-        
+
         CAShow(graph);
 
         result |= AUGraphStart(graph);
-        
+
 
         if (result != noErr) {
             [NSException raise:@"AudioEngineError" format:@"Failed to init audio engine"];
         }
     }
-    
+
     return self;
 }
 
