@@ -74,7 +74,7 @@ NSData *getAudioData(int offset, int length)
 {
     int bytes = length * 2;
     UInt8 *buffer = malloc(WAV_HEADER_LEN + bytes);
-    
+
     WRITE_4CHARS(buffer, 0, 'R', 'I', 'F', 'F');
     WRITE_INT32(buffer, 4, WAV_HEADER_LEN + bytes - 8); // File length - 8
     WRITE_4CHARS(buffer, 8, 'W', 'A', 'V', 'E');
@@ -149,7 +149,7 @@ static void initDescriptions()
     distortion_desc.componentSubType            = kAudioUnitSubType_Distortion;
     distortion_desc.componentFlags              = 0;
     distortion_desc.componentFlagsMask          = 0;
-    distortion_desc.componentManufacturer       = kAudioUnitManufacturer_Apple;		
+    distortion_desc.componentManufacturer       = kAudioUnitManufacturer_Apple;
 }
 
 static OSStatus initAudioSession()
@@ -228,7 +228,7 @@ static OSStatus initAudioGraph()
     result = AUGraphAddNode(graph, &mixer_desc, &mixer3Node);
     result = AUGraphAddNode(graph, &distortion_desc, &distortionNode);
 
-    
+
     result = AUGraphOpen(graph);
     result = AUGraphNodeInfo(graph, ioNode, NULL, &ioUnit);
     result = AUGraphNodeInfo(graph, mixerNode, NULL, &mixerUnit);
@@ -240,7 +240,7 @@ static OSStatus initAudioGraph()
 
 OSStatus initAudioUnits()
 {
-    
+
     UInt32 enableInput = 1;
     OSStatus result = noErr;
 
@@ -251,19 +251,19 @@ OSStatus initAudioUnits()
                                   &enableInput,
                                   sizeof(enableInput));
 
-    
-    
+
+
 
     UInt32 asbdSize = sizeof(AudioStreamBasicDescription);
     memset (&ioFormat, 0, sizeof (ioFormat));
-    
+
     result = AudioUnitGetProperty(distortionUnit,
                                   kAudioUnitProperty_StreamFormat,
                                   kAudioUnitScope_Input,
                                   0,
                                   &ioFormat,
                                   &asbdSize);
-    
+
     result = AudioUnitSetProperty(mixerUnit,
                                   kAudioUnitProperty_StreamFormat,
                                   kAudioUnitScope_Output,
@@ -279,9 +279,9 @@ OSStatus initAudioUnits()
                                   0,
                                   &ioFormat,
                                   sizeof(ioFormat));
-    
+
     UInt32 busCount = 6;
-    
+
     result = AudioUnitSetProperty(mixer2Unit,
                                   kAudioUnitProperty_ElementCount,
                                   kAudioUnitScope_Input,
@@ -302,7 +302,7 @@ static void resetGraph()
     AUGraphClearConnections(graph);
     AUGraphConnectNodeInput(graph, ioNode, inputChannel, mixerNode, 0);
     AUGraphConnectNodeInput(graph, mixer3Node, 0, ioNode, outputChannel);
-    
+
     AURenderCallbackStruct renderCallbackStruct;
     renderCallbackStruct.inputProc = &renderCallback;
     renderCallbackStruct.inputProcRefCon = &mixer2Unit;
@@ -312,9 +312,9 @@ static void resetGraph()
 static Boolean connectPreset(AudioPreset *preset, int bus)
 {
     if (preset.enabled == YES) {
-        [preset connect:mixerNode with:mixer2Node on:bus];    
+        [preset connect:mixerNode with:mixer2Node on:bus];
     }
-    
+
     return preset.enabled;
 }
 
@@ -327,9 +327,9 @@ static void togglePreset(AudioPreset *preset)
     preset5.enabled = NO;
 
     preset.enabled = YES;
-    
+
     resetGraph();
-    
+
     connectPreset(preset1, 1);
     connectPreset(preset2, 2);
     connectPreset(preset3, 3);
@@ -345,7 +345,7 @@ static void togglePreset(AudioPreset *preset)
 }
 
 static void initPresets()
-{   
+{
     preset1 = createPreset();
 
     [ preset1 reverb:kReverb2Param_DecayTimeAtNyquist            to:1.5     ];
@@ -364,20 +364,20 @@ static void initPresets()
 
     [ preset2 enableBandpass     ];
     [ preset2 enableCompression   ];
-    
+
     preset3 = createPreset(); // temp
-    
+
     [ preset3 highshelf:kHighShelfParam_Gain                     to:6       ];
-     
+
     [ preset3 compression:kDynamicsProcessorParam_Threshold      to:-40     ];
     [ preset3 compression:kDynamicsProcessorParam_MasterGain     to:12       ];
     [ preset3 compression:kDynamicsProcessorParam_AttackTime     to:0.0002  ];
-    
+
     [ preset3 enableHighshelf ];
     [ preset3 enableCompression ];
 
     preset4 = createPreset(); // temp
-    
+
     [ preset4 reverb:kReverb2Param_DecayTimeAtNyquist            to:.66     ];
     [ preset4 reverb:kReverb2Param_DecayTimeAt0Hz                to:1       ];
     [ preset4 reverb:kReverb2Param_DryWetMix                     to:60      ];
@@ -387,7 +387,7 @@ static void initPresets()
     [ preset4 enableReverb ];
 
     preset5 = createPreset(); // temp
-    
+
     [ preset5 bandpass:kBandpassParam_CenterFrequency            to:2000    ];
     [ preset5 bandpass:kBandpassParam_Bandwidth                  to:100     ];
     [ preset5 distortion:kDistortionParam_FinalMix               to:50      ];
@@ -409,7 +409,7 @@ void toggleEffect2()
 
 void toggleEffect3()
 {
-    togglePreset(preset3);    
+    togglePreset(preset3);
 }
 
 void toggleEffect4()
@@ -431,12 +431,12 @@ int initAudioEngine()
     result = initAudioSession();
     result = initAudioGraph();
     result = initAudioUnits();
-    
+
     initPresets();
 
     resetGraph();
     AUGraphConnectNodeInput(graph, mixerNode, 0, mixer2Node, 0);
-    
+
     result = AUGraphInitialize(graph);
 
     CAShow(graph);
@@ -450,7 +450,7 @@ int initAudioEngine()
     }
 
     AUGraphStart(graph);
-    
+
     // enableTelephone();
 
     return result;

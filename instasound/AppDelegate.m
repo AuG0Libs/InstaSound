@@ -17,9 +17,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.viewController = [[ViewController alloc] init];
-
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Make it red to see size issues
     [self.window setBackgroundColor:[UIColor redColor]];
     [self.window makeKeyAndVisible];
     [self.window setRootViewController:self.viewController];
@@ -28,17 +26,19 @@
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-    // TODO: start eagl
+    // XXX
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
-    // TODO: stop eagl
+    // XXX
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
+    // XXX
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
+    // XXX
 }
 
 @end

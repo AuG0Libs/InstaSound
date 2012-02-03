@@ -43,7 +43,7 @@ int recordingLength = -1;
 {
     self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, 1, 1)];
     [self.navigationBar setBarStyle:UIBarStyleBlackOpaque];
-    
+
 //    UIImage *image = [UIImage imageNamed:@"instasound_small.png"];
 //    UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
 //    [self.navigationBar addSubview:imageView];
@@ -56,29 +56,25 @@ int recordingLength = -1;
 
 - (void)initializeButtons
 {
+    UIImage *image;
     self.toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 411, 320, 49)];
     [self.toolBar setBarStyle:UIBarStyleBlackOpaque];
-    
-    NSString* pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Church" ofType:@"png"];
-    UIImage *image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
+
+    image = [UIImage imageNamed:@"icon_Church"];
     UIBarButtonItem *effect1 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect1)];
 
-    pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Phone" ofType:@"png"];
-    image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
+    image = [UIImage imageNamed:@"icon_Phone"];
     UIBarButtonItem *effect2 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect2)];
-    
-    pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Enhancer" ofType:@"png"];
-    image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
+
+    image = [UIImage imageNamed:@"icon_Enhancer"];
     UIBarButtonItem *effect3 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect3)];
-    
-    pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Radio" ofType:@"png"];
-    image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
+
+    image = [UIImage imageNamed:@"icon_Radio"];
     UIBarButtonItem *effect4 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect2)];
 
-    pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Vinyl" ofType:@"png"];
-    image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
+    image = [UIImage imageNamed:@"icon_Vinyl"];
     UIBarButtonItem *effect5 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect5)];
-    
+
     [self.toolBar setItems:[NSArray arrayWithObjects: effect1, effect2, effect3, effect4, effect5, nil]];
 
     [self.view addSubview:self.toolBar];
@@ -182,14 +178,14 @@ int recordingLength = -1;
     NSString *appFile = [documentsDirectory stringByAppendingPathComponent:@"Recording.wav"];
     NSLog(@"Write to: %@", appFile);
     [data writeToFile:appFile atomically:YES];
-    
+
     [self reset];
 }
 
 - (void)upload
 {
     NSData *data = getAudioData(recordingStart, recordingLength);
-    
+
     SCShareViewController *shareViewController;
     shareViewController = [SCShareViewController shareViewControllerWithFileData:data
                                                               completionHandler:^(NSDictionary *trackInfo, NSError *error) {
