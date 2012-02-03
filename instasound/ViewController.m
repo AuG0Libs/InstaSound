@@ -70,6 +70,11 @@ int recordingLength = -1;
 
     [self.toolBar setItems:[NSArray arrayWithObjects: effect1, effect2, effect3, effect4, effect5, nil]];
     
+    CGFloat avgWidth = round(self.toolBar.bounds.size.width / (self.toolBar.items.count + 1));
+    for (UIBarButtonItem *item in self.toolBar.items) {
+        item.width = avgWidth;
+    }
+        
     [self.view addSubview:self.toolBar];
 }
 
