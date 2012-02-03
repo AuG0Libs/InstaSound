@@ -1,11 +1,3 @@
-//
-//  ViewController.m
-//  singleview
-//
-//  Created by matti on 29/01/2012.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
-//
-
 #import "ViewController.h"
 #import "SCUI.h"
 #import "AudioEngine.h"
@@ -24,7 +16,6 @@ int recordingLength = -1;
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Release any cached data, images, etc that aren't in use.
 }
 
 #pragma mark - View lifecycle
@@ -193,20 +184,12 @@ int recordingLength = -1;
                                                                       NSLog(@"Ooops, something went wrong: %@", [error localizedDescription]);
                                                                       [self reset];
                                                                   } else {
-                                                                      // If you want to do something with the uploaded
-                                                                      // track this is the right place for that.
                                                                       NSLog(@"Uploaded track: %@", trackInfo);
                                                                       [self reset];
                                                                   }
                                                               }];
-
-    // We can preset the title ...
     [shareViewController setTitle:@"My new InstaSound"];
-
-    // ... and other options like the private flag.
     [shareViewController setPrivate:YES];
-
-    // Now present the share view controller.
     [self presentModalViewController:shareViewController animated:YES];
 }
 
