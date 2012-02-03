@@ -34,7 +34,7 @@ static void convertToSInt16(Float32 *input, SInt16 *output, int length)
 {
     int bytes = length * 2;
     UInt8 *buffer = malloc(WAV_HEADER_LEN + bytes);
-    
+
     WRITE_4CHARS(buffer, 0, 'R', 'I', 'F', 'F');
     WRITE_INT32(buffer, 4, WAV_HEADER_LEN + bytes - 8); // File length - 8
     WRITE_4CHARS(buffer, 8, 'W', 'A', 'V', 'E');
@@ -84,7 +84,7 @@ static OSStatus renderCallback (void *inRefCon,
         audioBuffer[audioBufferLen + i] = (data[i] >> 9) / 32512.0;
     }
 
-    engine->audioBufferLen += inNumberFrames;
+    engine->audioBufferLen = (engine->audioBufferLen + inNumberFrames) % sizeof(engine->audioBuffer);
 
     return noErr;	// return with samples in iOdata
 }
@@ -107,7 +107,7 @@ static OSStatus renderCallback (void *inRefCon,
     distortion_desc.componentSubType            = kAudioUnitSubType_Distortion;
     distortion_desc.componentFlags              = 0;
     distortion_desc.componentFlagsMask          = 0;
-    distortion_desc.componentManufacturer       = kAudioUnitManufacturer_Apple;		
+    distortion_desc.componentManufacturer       = kAudioUnitManufacturer_Apple;
 }
 
 - (void) initAudioSession
@@ -182,12 +182,12 @@ static OSStatus renderCallback (void *inRefCon,
     result |= AUGraphAddNode(graph, &mixer_desc, &mixer3Node);
     result |= AUGraphAddNode(graph, &distortion_desc, &distortionNode);
 
-    
-    result |= AUGraphOpen(graph);
-    result |= AUGraphNodeInfo(graph, ioNode, NULL, &ioUnit);
-    result |= AUGraphNodeInfo(graph, mixerNode, NULL, &mixerUnit);
-    result |= AUGraphNodeInfo(graph, mixer2Node, NULL, &mixer2Unit);
-    result |= AUGraphNodeInfo(graph, distortionNode, NULL, &distortionUnit);
+
+    result = AUGraphOpen(graph);
+    result = AUGraphNodeInfo(graph, ioNode, NULL, &ioUnit);
+    result = AUGraphNodeInfo(graph, mixerNode, NULL, &mixerUnit);
+    result = AUGraphNodeInfo(graph, mixer2Node, NULL, &mixer2Unit);
+    result = AUGraphNodeInfo(graph, distortionNode, NULL, &distortionUnit);
 
     if (result != noErr) {
         [NSException raise:@"AudioEngineError" format:@"Failed to init audio graph"];
@@ -260,7 +260,7 @@ static OSStatus renderCallback (void *inRefCon,
     AUGraphClearConnections(graph);
     AUGraphConnectNodeInput(graph, ioNode, inputChannel, mixerNode, 0);
     AUGraphConnectNodeInput(graph, mixer3Node, 0, ioNode, outputChannel);
-    
+
     AURenderCallbackStruct renderCallbackStruct;
     renderCallbackStruct.inputProc = &renderCallback;
     renderCallbackStruct.inputProcRefCon = (__bridge void*) self;
@@ -270,9 +270,9 @@ static OSStatus renderCallback (void *inRefCon,
 - (Boolean) connectPreset:(AudioPreset*)preset toBus:(int)bus
 {
     if (preset.enabled == YES) {
-        [preset connect:mixerNode with:mixer2Node on:bus];    
+        [preset connect:mixerNode with:mixer2Node on:bus];
     }
-    
+
     return preset.enabled;
 }
 

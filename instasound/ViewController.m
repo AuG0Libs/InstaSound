@@ -1,11 +1,3 @@
-//
-//  ViewController.m
-//  singleview
-//
-//  Created by matti on 29/01/2012.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
-//
-
 #import "ViewController.h"
 #import "SCUI.h"
 #import "AudioEngine.h"
@@ -24,7 +16,6 @@ int recordingLength = -1;
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Release any cached data, images, etc that aren't in use.
 }
 
 #pragma mark - View lifecycle
@@ -58,29 +49,25 @@ int recordingLength = -1;
 
 - (void)initializeButtons
 {
+    UIImage *image;
     self.toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 411, 320, 49)];
     [self.toolBar setBarStyle:UIBarStyleBlackOpaque];
-    
-    NSString* pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Church" ofType:@"png"];
-    UIImage *image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
+
+    image = [UIImage imageNamed:@"icon_Church"];
     UIBarButtonItem *effect1 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect1)];
-    
-    pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Phone" ofType:@"png"];
-    image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
+
+    image = [UIImage imageNamed:@"icon_Phone"];
     UIBarButtonItem *effect2 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect2)];
-    
-    pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Enhancer" ofType:@"png"];
-    image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
+
+    image = [UIImage imageNamed:@"icon_Enhancer"];
     UIBarButtonItem *effect3 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect3)];
-    
-    pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Radio" ofType:@"png"];
-    image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
+
+    image = [UIImage imageNamed:@"icon_Radio"];
     UIBarButtonItem *effect4 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect2)];
-    
-    pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Vinyl" ofType:@"png"];
-    image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
+
+    image = [UIImage imageNamed:@"icon_Vinyl"];
     UIBarButtonItem *effect5 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect5)];
-    
+
     [self.toolBar setItems:[NSArray arrayWithObjects: effect1, effect2, effect3, effect4, effect5, nil]];
     
     [self.view addSubview:self.toolBar];
@@ -117,8 +104,6 @@ int recordingLength = -1;
 - (void)viewDidUnload
 {
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -147,7 +132,6 @@ int recordingLength = -1;
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    // Return YES for supported orientations
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
     } else {
@@ -182,7 +166,7 @@ int recordingLength = -1;
     NSString *appFile = [documentsDirectory stringByAppendingPathComponent:@"Recording.wav"];
     NSLog(@"Write to: %@", appFile);
     [data writeToFile:appFile atomically:YES];
-    
+
     [self reset];
 }
 
@@ -210,11 +194,7 @@ int recordingLength = -1;
     
     // We can preset the title ...
     [shareViewController setTitle:@"My new InstaSound"];
-    
-    // ... and other options like the private flag.
     [shareViewController setPrivate:YES];
-    
-    // Now present the share view controller.
     [self presentModalViewController:shareViewController animated:YES];
 }
 
