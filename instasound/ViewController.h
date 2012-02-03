@@ -5,6 +5,8 @@
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES1/gl.h>
 #import <OpenGLES/ES1/glext.h>
+#import "AudioEngine.h"
+
 #include <libkern/OSAtomic.h>
 #include <CoreFoundation/CFURL.h>
 
@@ -12,6 +14,7 @@
 {
     EAGLView* eaglView;
 	GLfloat*  oscilLine;
+    AudioEngine *audioEngine;
 }
 
 @property (retain, nonatomic) IBOutlet UINavigationBar *navigationBar;

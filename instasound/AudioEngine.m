@@ -1,65 +1,14 @@
-#import "AudioToolbox/AudioToolbox.h"
-#import "AVFoundation/AVFoundation.h"
-#import "AudioPreset.h"
+#import "AudioEngine.h"
 
 #define WAV_HEADER_LEN 44
 
 #define WRITE_4CHARS(buffer, index, a, b, c, d) buffer[index] = a; buffer[index + 1] = b; buffer[index + 2] = c; buffer[index + 3] = d;
 
-
 #define WRITE_INT16(buffer, index, value) OSWriteLittleInt16(buffer, index, value)
 #define WRITE_INT32(buffer, index, value) OSWriteLittleInt32(buffer, index, value)
 
-
 int outputChannel = 0; // because it looks most like the "O" in I/O
 int inputChannel = 1;  // because it looks most like the "I" in I/O
-
-int initAudioEngine();
-
-Float32 audioBuffer[32 * 1024 * 1024];
-
-int audioBufferLen = 0;
-
-AUGraph graph;
-
-AUNode ioNode;
-
-AudioUnit ioUnit;
-AudioUnit mixerUnit;
-AudioUnit mixer2Unit;
-AudioUnit mixer3Unit;
-AudioUnit distortionUnit;
-
-
-AUNode mixerNode;
-AUNode mixer2Node;
-AUNode mixer3Node;
-AUNode distortionNode;
-
-
-AudioComponentDescription io_desc;
-AudioComponentDescription mixer_desc;
-AudioComponentDescription distortion_desc;
-
-AVAudioSession *audioSession;
-AudioStreamBasicDescription	ioFormat;
-
-AudioPreset *preset1;
-AudioPreset *preset2;
-AudioPreset *preset3;
-AudioPreset *preset4;
-AudioPreset *preset5;
-
-
-Float32 *getAudioBuffer()
-{
-    return audioBuffer;
-}
-
-int getAudioBufferLength()
-{
-    return audioBufferLen;
-}
 
 static void convertToSInt16(Float32 *input, SInt16 *output, int length)
 {
@@ -69,7 +18,19 @@ static void convertToSInt16(Float32 *input, SInt16 *output, int length)
     }
 }
 
-NSData *getAudioData(int offset, int length)
+@implementation AudioEngine
+
+- (Float32*) getBuffer
+{
+    return audioBuffer;
+}
+
+- (int) getBufferLength
+{
+    return audioBufferLen;
+}
+
+- (NSData *) getAudioData: (int)offset withLength:(int)length
 {
     int bytes = length * 2;
     UInt8 *buffer = malloc(WAV_HEADER_LEN + bytes);
@@ -104,11 +65,13 @@ static OSStatus renderCallback (void *inRefCon,
                                 UInt32 						inNumberFrames,
                                 AudioBufferList				*ioData)
 {
-    AudioUnit *unit = (AudioUnit *)inRefCon;
-
+    AudioEngine *engine = (__bridge AudioEngine *)inRefCon;
+    Float32 *audioBuffer = engine->audioBuffer;
+    int audioBufferLen = engine->audioBufferLen;
+    
 	OSStatus renderErr;
 
-    renderErr = AudioUnitRender(*unit, ioActionFlags,
+    renderErr = AudioUnitRender(engine->mixer2Unit, ioActionFlags,
 								inTimeStamp, 0, inNumberFrames, ioData);
 	if (renderErr < 0) {
 		return renderErr;
@@ -121,14 +84,12 @@ static OSStatus renderCallback (void *inRefCon,
         audioBuffer[audioBufferLen + i] = (data[i] >> 9) / 32512.0;
     }
 
-    audioBufferLen += inNumberFrames;
+    engine->audioBufferLen += inNumberFrames;
 
     return noErr;	// return with samples in iOdata
 }
 
-
-
-static void initDescriptions()
+- (void) initDescriptions
 {
     io_desc.componentType                       = kAudioUnitType_Output;
     io_desc.componentSubType                    = kAudioUnitSubType_RemoteIO;
@@ -149,7 +110,7 @@ static void initDescriptions()
     distortion_desc.componentManufacturer       = kAudioUnitManufacturer_Apple;		
 }
 
-static OSStatus initAudioSession()
+- (void) initAudioSession
 {
     audioSession = [AVAudioSession sharedInstance];
 
@@ -164,13 +125,11 @@ static OSStatus initAudioSession()
                         error: &audioSessionError];
 
     if (audioSessionError != nil) {
-        NSLog (@"Error setting audio session category.");
-        return 1;
+        [NSException raise:@"AudioEngineError" format:@"Cannot set audio session "];
     }
 
     if (![audioSession inputIsAvailable]) {
-        NSLog(@"input device is not available");
-        return 1;
+        [NSException raise:@"AudioEngineError" format:@"Input device not available"];
     }
 
     [audioSession setPreferredHardwareSampleRate: 44100.0
@@ -209,92 +168,94 @@ static OSStatus initAudioSession()
 
     NSInteger numberOfChannels = [audioSession currentHardwareInputNumberOfChannels];
     NSLog(@"number of channels: %d", numberOfChannels );
-
-    return noErr;
 }
 
-static OSStatus initAudioGraph()
+- (void) initAudioGraph
 {
     OSStatus result = noErr;
 
-    result = NewAUGraph(&graph);
+    result |= NewAUGraph(&graph);
 
-    result = AUGraphAddNode(graph, &io_desc, &ioNode);
-    result = AUGraphAddNode(graph, &mixer_desc, &mixerNode);
-    result = AUGraphAddNode(graph, &mixer_desc, &mixer2Node);
-    result = AUGraphAddNode(graph, &mixer_desc, &mixer3Node);
-    result = AUGraphAddNode(graph, &distortion_desc, &distortionNode);
+    result |= AUGraphAddNode(graph, &io_desc, &ioNode);
+    result |= AUGraphAddNode(graph, &mixer_desc, &mixerNode);
+    result |= AUGraphAddNode(graph, &mixer_desc, &mixer2Node);
+    result |= AUGraphAddNode(graph, &mixer_desc, &mixer3Node);
+    result |= AUGraphAddNode(graph, &distortion_desc, &distortionNode);
 
     
-    result = AUGraphOpen(graph);
-    result = AUGraphNodeInfo(graph, ioNode, NULL, &ioUnit);
-    result = AUGraphNodeInfo(graph, mixerNode, NULL, &mixerUnit);
-    result = AUGraphNodeInfo(graph, mixer2Node, NULL, &mixer2Unit);
-    result = AUGraphNodeInfo(graph, distortionNode, NULL, &distortionUnit);
+    result |= AUGraphOpen(graph);
+    result |= AUGraphNodeInfo(graph, ioNode, NULL, &ioUnit);
+    result |= AUGraphNodeInfo(graph, mixerNode, NULL, &mixerUnit);
+    result |= AUGraphNodeInfo(graph, mixer2Node, NULL, &mixer2Unit);
+    result |= AUGraphNodeInfo(graph, distortionNode, NULL, &distortionUnit);
 
-    return result;
+    if (result != noErr) {
+        [NSException raise:@"AudioEngineError" format:@"Failed to init audio graph"];
+
+    }
 }
 
-OSStatus initAudioUnits()
+- (void) initAudioUnits
 {
-    
     UInt32 enableInput = 1;
     OSStatus result = noErr;
-
-    result = AudioUnitSetProperty(ioUnit,
-                                  kAudioOutputUnitProperty_EnableIO,
-                                  kAudioUnitScope_Input,
-                                  1,
-                                  &enableInput,
-                                  sizeof(enableInput));
-
+    
+    result |= AudioUnitSetProperty(ioUnit,
+                                   kAudioOutputUnitProperty_EnableIO,
+                                   kAudioUnitScope_Input,
+                                   1,
+                                   &enableInput,
+                                   sizeof(enableInput));
     
     
-
+    
+    
     UInt32 asbdSize = sizeof(AudioStreamBasicDescription);
     memset (&ioFormat, 0, sizeof (ioFormat));
     
-    result = AudioUnitGetProperty(distortionUnit,
-                                  kAudioUnitProperty_StreamFormat,
-                                  kAudioUnitScope_Input,
-                                  0,
-                                  &ioFormat,
-                                  &asbdSize);
+    result |= AudioUnitGetProperty(distortionUnit,
+                                   kAudioUnitProperty_StreamFormat,
+                                   kAudioUnitScope_Input,
+                                   0,
+                                   &ioFormat,
+                                   &asbdSize);
     
-    result = AudioUnitSetProperty(mixerUnit,
-                                  kAudioUnitProperty_StreamFormat,
-                                  kAudioUnitScope_Output,
-                                  0,
-                                  &ioFormat,
-                                  sizeof(ioFormat));
-
+    result |= AudioUnitSetProperty(mixerUnit,
+                                   kAudioUnitProperty_StreamFormat,
+                                   kAudioUnitScope_Output,
+                                   0,
+                                   &ioFormat,
+                                   sizeof(ioFormat));
+    
     if (result != 0) {NSLog(@"FAIL: %ld", result);}
-
-    result = AudioUnitSetProperty(mixer2Unit,
-                                  kAudioUnitProperty_StreamFormat,
-                                  kAudioUnitScope_Input,
-                                  0,
-                                  &ioFormat,
-                                  sizeof(ioFormat));
+    
+    result |= AudioUnitSetProperty(mixer2Unit,
+                                   kAudioUnitProperty_StreamFormat,
+                                   kAudioUnitScope_Input,
+                                   0,
+                                   &ioFormat,
+                                   sizeof(ioFormat));
     
     UInt32 busCount = 6;
     
-    result = AudioUnitSetProperty(mixer2Unit,
-                                  kAudioUnitProperty_ElementCount,
-                                  kAudioUnitScope_Input,
-                                  0,
-                                  &busCount,
-                                  sizeof (busCount));
+    result |= AudioUnitSetProperty(mixer2Unit,
+                                   kAudioUnitProperty_ElementCount,
+                                   kAudioUnitScope_Input,
+                                   0,
+                                   &busCount,
+                                   sizeof (busCount));
 
-    return result;
+    if (result != noErr) {
+        [NSException raise:@"AudioEngineError" format:@"Failed to init audio units"];
+    }
 }
 
-static AudioPreset *createPreset()
+- (AudioPreset *) createPreset
 {
     return [[AudioPreset alloc] create:graph];
 }
 
-static void resetGraph()
+- (void) resetGraph
 {
     AUGraphClearConnections(graph);
     AUGraphConnectNodeInput(graph, ioNode, inputChannel, mixerNode, 0);
@@ -302,11 +263,11 @@ static void resetGraph()
     
     AURenderCallbackStruct renderCallbackStruct;
     renderCallbackStruct.inputProc = &renderCallback;
-    renderCallbackStruct.inputProcRefCon = &mixer2Unit;
+    renderCallbackStruct.inputProcRefCon = (__bridge void*) self;
     AUGraphSetNodeInputCallback(graph, mixer3Node, 0, &renderCallbackStruct);
 }
 
-static Boolean connectPreset(AudioPreset *preset, int bus)
+- (Boolean) connectPreset:(AudioPreset*)preset toBus:(int)bus
 {
     if (preset.enabled == YES) {
         [preset connect:mixerNode with:mixer2Node on:bus];    
@@ -315,7 +276,7 @@ static Boolean connectPreset(AudioPreset *preset, int bus)
     return preset.enabled;
 }
 
-static void togglePreset(AudioPreset *preset)
+- (void) togglePreset:(AudioPreset*)preset
 {
     preset1.enabled = NO;
     preset2.enabled = NO;
@@ -325,13 +286,13 @@ static void togglePreset(AudioPreset *preset)
 
     preset.enabled = YES;
     
-    resetGraph();
+    [self resetGraph];
     
-    connectPreset(preset1, 1);
-    connectPreset(preset2, 2);
-    connectPreset(preset3, 3);
-    connectPreset(preset4, 4);
-    connectPreset(preset5, 5);
+    [self connectPreset:preset1 toBus:1];
+    [self connectPreset:preset2 toBus:2];
+    [self connectPreset:preset3 toBus:3];
+    [self connectPreset:preset4 toBus:4];
+    [self connectPreset:preset5 toBus:5];
 
     if (!preset1.enabled && !preset2.enabled && !preset3.enabled && !preset4.enabled && !preset5.enabled) {
         AUGraphConnectNodeInput(graph, mixerNode, 0, mixer2Node, 0);
@@ -341,28 +302,28 @@ static void togglePreset(AudioPreset *preset)
     AUGraphUpdate(graph, &isUpdated);
 }
 
-static void initPresets()
+- (void) initPresets
 {   
-    preset1 = createPreset();
+    preset1 = [self createPreset];
 
     [ preset1 reverb:kReverb2Param_DecayTimeAtNyquist            to:1.5     ];
     [ preset1 reverb:kReverb2Param_DecayTimeAt0Hz                to:2.5     ];
     [ preset1 reverb:kReverb2Param_DryWetMix                     to:20      ];
     [ preset1 reverb:kReverb2Param_RandomizeReflections          to:100     ];
 
-    [ preset1 enableReverb ];
+    [ preset1 enableReverb];
 
-    preset2 = createPreset();
+    preset2 = [self createPreset];
 
     [ preset2 bandpass:kBandpassParam_CenterFrequency            to:1000    ];
     [ preset2 bandpass:kBandpassParam_Bandwidth                  to:200     ];
     [ preset2 compression:kDynamicsProcessorParam_Threshold      to:-40    ];
     [ preset2 compression:kDynamicsProcessorParam_MasterGain     to:20    ];
 
-    [ preset2 enableBandpass     ];
-    [ preset2 enableCompression   ];
+    [ preset2 enableBandpass];
+    [ preset2 enableCompression];
     
-    preset3 = createPreset(); // temp
+    preset3 = [self createPreset];
     
     [ preset3 highshelf:kHighShelfParam_Gain                     to:6       ];
      
@@ -373,7 +334,7 @@ static void initPresets()
     [ preset3 enableHighshelf ];
     [ preset3 enableCompression ];
 
-    preset4 = createPreset(); // temp
+    preset4 = [self createPreset];
     
     [ preset4 reverb:kReverb2Param_DecayTimeAtNyquist            to:.66     ];
     [ preset4 reverb:kReverb2Param_DecayTimeAt0Hz                to:1       ];
@@ -383,7 +344,7 @@ static void initPresets()
 
     [ preset4 enableReverb ];
 
-    preset5 = createPreset(); // temp
+    preset5 = [self createPreset];
     
     [ preset5 bandpass:kBandpassParam_CenterFrequency            to:2000    ];
     [ preset5 bandpass:kBandpassParam_Bandwidth                  to:100     ];
@@ -394,62 +355,50 @@ static void initPresets()
     [ preset5 enableDistortion ];
 }
 
-void toggleEffect1()
+- (void) toggleEffect:(int)index
 {
-    togglePreset(preset1);
-}
-
-void toggleEffect2()
-{
-    togglePreset(preset2);
-}
-
-void toggleEffect3()
-{
-    togglePreset(preset3);    
-}
-
-void toggleEffect4()
-{
-    togglePreset(preset4);
-}
-
-void toggleEffect5()
-{
-    togglePreset(preset5);
-}
-
-int initAudioEngine()
-{
-    OSStatus result = noErr;
-
-    initDescriptions();
-
-    result = initAudioSession();
-    result = initAudioGraph();
-    result = initAudioUnits();
-    
-    initPresets();
-
-    resetGraph();
-    AUGraphConnectNodeInput(graph, mixerNode, 0, mixer2Node, 0);
-    
-    result = AUGraphInitialize(graph);
-
-    CAShow(graph);
-
-    if (result == 0) {
-        NSLog(@"AUDIO ENGINE INIT SUCCEEDED");
+    switch(index) {
+        case 1: [self togglePreset:preset1]; break;
+        case 2: [self togglePreset:preset2]; break;
+        case 3: [self togglePreset:preset3]; break;
+        case 4: [self togglePreset:preset4]; break;
+        case 5: [self togglePreset:preset5]; break;
     }
-    else {
-        NSLog(@"AUDIO ENGINE INIT FAILED: %ld", result);
-        return result;
-    }
-
-    AUGraphStart(graph);
-    
-    // enableTelephone();
-
-    return result;
 }
+
+- (AudioEngine*) init
+{
+    if (self = [super init]) {
+        OSStatus result = noErr;
+        
+        audioBufferLen = 0;
+        
+        [self initDescriptions];
+        [self initAudioSession];
+        [self initAudioGraph];
+        [self initAudioUnits];
+        
+        [self initPresets];
+        
+        [self resetGraph];
+        
+        AUGraphConnectNodeInput(graph, mixerNode, 0, mixer2Node, 0);
+        
+        result |= AUGraphInitialize(graph);
+        
+        CAShow(graph);
+
+        result |= AUGraphStart(graph);
+        
+
+        if (result != noErr) {
+            [NSException raise:@"AudioEngineError" format:@"Failed to init audio engine"];
+        }
+    }
+    
+    return self;
+}
+
+
+@end
 

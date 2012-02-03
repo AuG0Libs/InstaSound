@@ -1,17 +1,55 @@
-int initAudioEngine();
+#import "AudioToolbox/AudioToolbox.h"
+#import "AVFoundation/AVFoundation.h"
+#import "AudioPreset.h"
 
-OSStatus initAudioUnits();
+@interface AudioEngine : NSObject {
 
-OSStatus initAudioGraph();
+@private
+    Float32 audioBuffer[32 * 1024 * 1024];
+    int audioBufferLen;
+    
+    AUGraph graph;
+    
+    AUNode ioNode;
+    
+    AudioUnit ioUnit;
+    AudioUnit mixerUnit;
+    AudioUnit mixer2Unit;
+    AudioUnit mixer3Unit;
+    AudioUnit distortionUnit;
+    
+    AUNode mixerNode;
+    AUNode mixer2Node;
+    AUNode mixer3Node;
+    AUNode distortionNode;
+    
+    AudioComponentDescription io_desc;
+    AudioComponentDescription mixer_desc;
+    AudioComponentDescription distortion_desc;
+    
+    AVAudioSession *audioSession;
+    AudioStreamBasicDescription	ioFormat;
+    
+    AudioPreset *preset1;
+    AudioPreset *preset2;
+    AudioPreset *preset3;
+    AudioPreset *preset4;
+    AudioPreset *preset5;
+}
 
-Float32 *getAudioBuffer();
+- (Float32*) getBuffer;
 
-int getAudioBufferLength();
+- (int) getBufferLength;
 
-NSData *getAudioData(int offset, int length);
+- (AudioEngine*) init;
 
-void toggleEffect1();
-void toggleEffect2();
-void toggleEffect3();
-void toggleEffect4();
-void toggleEffect5();
+- (void) initAudioUnits;
+- (void) initAudioGraph;
+- (void) initDescriptions;
+
+- (NSData*) getAudioData: (int)offset withLength:(int)length;
+
+- (void) toggleEffect:(int)index;
+
+@end
+

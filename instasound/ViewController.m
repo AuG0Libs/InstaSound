@@ -32,7 +32,9 @@ int recordingLength = -1;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    
+    audioEngine = [[AudioEngine alloc] init];
+    
     [self initializeNavigationView];
     [self initializeButtons];
     [self initializeEAGL];
@@ -44,13 +46,13 @@ int recordingLength = -1;
     self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, 1, 1)];
     [self.navigationBar setBarStyle:UIBarStyleBlackOpaque];
     
-//    UIImage *image = [UIImage imageNamed:@"instasound_small.png"];
-//    UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
-//    [self.navigationBar addSubview:imageView];
+    //    UIImage *image = [UIImage imageNamed:@"instasound_small.png"];
+    //    UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
+    //    [self.navigationBar addSubview:imageView];
     UINavigationItem *title = [[UINavigationItem alloc] initWithTitle:@"InstaSound"];
     [self.navigationBar pushNavigationItem:title animated:true];
     [self.navigationBar sizeToFit];
-
+    
     [self.view addSubview:self.navigationBar];
 }
 
@@ -62,7 +64,7 @@ int recordingLength = -1;
     NSString* pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Church" ofType:@"png"];
     UIImage *image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
     UIBarButtonItem *effect1 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect1)];
-
+    
     pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Phone" ofType:@"png"];
     image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
     UIBarButtonItem *effect2 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect2)];
@@ -74,43 +76,41 @@ int recordingLength = -1;
     pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Radio" ofType:@"png"];
     image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
     UIBarButtonItem *effect4 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect2)];
-
+    
     pathToImageFile = [[NSBundle mainBundle] pathForResource:@"icon_Vinyl" ofType:@"png"];
     image = [[UIImage alloc] initWithContentsOfFile:pathToImageFile];
     UIBarButtonItem *effect5 = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(effect5)];
     
     [self.toolBar setItems:[NSArray arrayWithObjects: effect1, effect2, effect3, effect4, effect5, nil]];
-
+    
     [self.view addSubview:self.toolBar];
 }
 
 - (void)initializeEAGL
 {
-    initAudioEngine();
-
     oscilLine = (GLfloat*)malloc(points * 2 * sizeof(GLfloat));
-
+    
     // top: 44 (navigationBar)
     // height: 480 (whole screen) - 49 (bottombar) - 44 (topbar)
     self.eaglView = [[EAGLView alloc] initWithFrame: CGRectMake(0, 44, 320, 367)];
     self.eaglView.delegate = self;
-
+    
     [self.eaglView setAnimationInterval:1./20.];
     [self.eaglView startAnimation];
-
+    
     [self.view addSubview:self.eaglView];
 }
 
 - (void)initializeRecordButton
 {
     self.recordButton = [[UIButton alloc] initWithFrame:CGRectMake(99, 171, 123, 123)];
-
+    
     NSString* pathToImageFile = [[NSBundle mainBundle] pathForResource:@"Record" ofType:@"png"];
     [self.recordButton setImage:[[UIImage alloc] initWithContentsOfFile:pathToImageFile] forState:UIControlStateNormal];
     [self.recordButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentCenter];
     [self.recordButton setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
     [self.recordButton addTarget:self action:@selector(record) forControlEvents:UIControlEventTouchUpInside];
-
+    
     [self.view addSubview:self.recordButton];
 }
 
@@ -155,20 +155,20 @@ int recordingLength = -1;
     }
 }
 
-- (void)effect1{ toggleEffect1(); }
-- (void)effect2{ toggleEffect2(); }
-- (void)effect3{ toggleEffect3(); }
-- (void)effect4{ toggleEffect4(); }
-- (void)effect5{ toggleEffect5(); }
+- (void)effect1{ [audioEngine toggleEffect:1]; }
+- (void)effect2{ [audioEngine toggleEffect:2]; }
+- (void)effect3{ [audioEngine toggleEffect:3]; }
+- (void)effect4{ [audioEngine toggleEffect:4]; }
+- (void)effect5{ [audioEngine toggleEffect:5]; }
 
 - (void)record
 {
     if (recordingStart == -1) {
-        recordingStart = getAudioBufferLength();
+        recordingStart = [audioEngine getBufferLength];
         NSString* pathToImageFile = [[NSBundle mainBundle] pathForResource:@"Stop" ofType:@"png"];
         [self.recordButton setImage:[[UIImage alloc] initWithContentsOfFile:pathToImageFile] forState:UIControlStateNormal];
     } else {
-        recordingLength = getAudioBufferLength() - recordingStart;
+        recordingLength = [audioEngine getBufferLength] - recordingStart;
         [self upload];
     }
 }
@@ -176,7 +176,7 @@ int recordingLength = -1;
 
 - (void)saveFile
 {
-    NSData *data = getAudioData(recordingStart, recordingLength);
+    NSData *data = [audioEngine getAudioData:recordingStart withLength:recordingLength];
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *appFile = [documentsDirectory stringByAppendingPathComponent:@"Recording.wav"];
@@ -188,31 +188,32 @@ int recordingLength = -1;
 
 - (void)upload
 {
-    NSData *data = getAudioData(recordingStart, recordingLength);
+    NSData *data = [audioEngine getAudioData:recordingStart withLength:recordingLength];
     
     SCShareViewController *shareViewController;
-    shareViewController = [SCShareViewController shareViewControllerWithFileData:data
-                                                              completionHandler:^(NSDictionary *trackInfo, NSError *error) {
-                                                                  if (SC_CANCELED(error)) {
-                                                                      NSLog(@"Canceled!");
-                                                                      [self reset];
-                                                                  } else if (error) {
-                                                                      NSLog(@"Ooops, something went wrong: %@", [error localizedDescription]);
-                                                                      [self reset];
-                                                                  } else {
-                                                                      // If you want to do something with the uploaded
-                                                                      // track this is the right place for that.
-                                                                      NSLog(@"Uploaded track: %@", trackInfo);
-                                                                      [self reset];
-                                                                  }
-                                                              }];
-
+    shareViewController = [SCShareViewController 
+                           shareViewControllerWithFileData:data
+                           completionHandler:^(NSDictionary *trackInfo, NSError *error) {
+                               if (SC_CANCELED(error)) {
+                                   NSLog(@"Canceled!");
+                                   [self reset];
+                               } else if (error) {
+                                   NSLog(@"Ooops, something went wrong: %@", [error localizedDescription]);
+                                   [self reset];
+                               } else {
+                                   // If you want to do something with the uploaded
+                                   // track this is the right place for that.
+                                   NSLog(@"Uploaded track: %@", trackInfo);
+                                   [self reset];
+                               }
+                           }];
+    
     // We can preset the title ...
     [shareViewController setTitle:@"My new InstaSound"];
-
+    
     // ... and other options like the private flag.
     [shareViewController setPrivate:YES];
-
+    
     // Now present the share view controller.
     [self presentModalViewController:shareViewController animated:YES];
 }
@@ -230,45 +231,45 @@ int recordingLength = -1;
 }
 
 - (void)drawOscilloscope {
-
+    
 	glClear(GL_COLOR_BUFFER_BIT);
-
+    
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-
+    
 	glPushMatrix();
-
+    
 	glEnable(GL_TEXTURE_2D);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
+    
 	glPushMatrix();
-
+    
 	glTranslatef(0, 0, 0.);
 	glScalef(320., 300., 1.);
-
+    
 	glDisable(GL_TEXTURE_2D);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisable(GL_LINE_SMOOTH);
 	glLineWidth(2.);
-
-    int audioBufferLen = getAudioBufferLength();
-    Float32 *audioBuffer = getAudioBuffer();
-
+    
+    int audioBufferLen = [audioEngine getBufferLength];
+    Float32 *audioBuffer = [audioEngine getBuffer];
+    
     if (audioBufferLen > 0) {
         int offset = MAX(0, audioBufferLen - points * 256);
-
+        
         for (int i = 0; i < points; i++)
         {
             oscilLine[i * 2 + 0] = ((Float32) i) / points;
             oscilLine[i * 2 + 1] = audioBuffer[offset + i * 256];
         }
     }
-
+    
     glColor4f(0.5, 0.5, 0.5, 1.);
     glVertexPointer(2, GL_FLOAT, 0, oscilLine);
     glDrawArrays(GL_LINE_STRIP, 0, points);
-
+    
 	glPopMatrix();
 	glPopMatrix();
 }
