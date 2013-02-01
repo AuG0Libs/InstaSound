@@ -36,7 +36,7 @@
 		AE03347614D67E5F009E79D9 /* Record.png in Resources */ = {isa = PBXBuildFile; fileRef = AE03346D14D67E5F009E79D9 /* Record.png */; };
 		AE03347714D67E5F009E79D9 /* Stop.png in Resources */ = {isa = PBXBuildFile; fileRef = AE03346E14D67E5F009E79D9 /* Stop.png */; };
 		AE38E09014DC482500E2B58A /* vinyl.aif in Resources */ = {isa = PBXBuildFile; fileRef = AE38E08F14DC482500E2B58A /* vinyl.aif */; };
-		F7561FDC14D6354900CC57E0 /* AudioPreset.m in Sources */ = {isa = PBXBuildFile; fileRef = F7561FDB14D6354900CC57E0 /* AudioPreset.m */; };
+		F7561FDC14D6354900CC57E0 /* AudioChain.m in Sources */ = {isa = PBXBuildFile; fileRef = F7561FDB14D6354900CC57E0 /* AudioChain.m */; };
 		F7561FF114D68E7F00CC57E0 /* Stop@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F7561FF014D68E7F00CC57E0 /* Stop@2x.png */; };
 		F784290214D5701D00F55C51 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290114D5701D00F55C51 /* UIKit.framework */; };
 		F784290414D5701D00F55C51 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F784290314D5701D00F55C51 /* Foundation.framework */; };
@@ -52,6 +52,7 @@
 		F784295F14D574F600F55C51 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F784295E14D574F600F55C51 /* ViewController.m */; };
 		F7893AE814D60245002465AF /* AudioEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = F7893AE714D60245002465AF /* AudioEngine.m */; };
 		F7893B0314D60D1A002465AF /* SoundCloud.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F7893B0214D60D1A002465AF /* SoundCloud.bundle */; };
+		F7BBA45616BAC88800286874 /* IAudioUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = F7BBA45516BAC88800286874 /* IAudioUnit.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -84,8 +85,8 @@
 		AE03346D14D67E5F009E79D9 /* Record.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Record.png; sourceTree = "<group>"; };
 		AE03346E14D67E5F009E79D9 /* Stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Stop.png; sourceTree = "<group>"; };
 		AE38E08F14DC482500E2B58A /* vinyl.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = vinyl.aif; sourceTree = "<group>"; };
-		F7561FDA14D6354900CC57E0 /* AudioPreset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioPreset.h; sourceTree = "<group>"; };
-		F7561FDB14D6354900CC57E0 /* AudioPreset.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioPreset.m; sourceTree = "<group>"; };
+		F7561FDA14D6354900CC57E0 /* AudioChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioChain.h; sourceTree = "<group>"; };
+		F7561FDB14D6354900CC57E0 /* AudioChain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioChain.m; sourceTree = "<group>"; };
 		F7561FF014D68E7F00CC57E0 /* Stop@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Stop@2x.png"; sourceTree = "<group>"; };
 		F78428FD14D5701D00F55C51 /* instasound.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = instasound.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F784290114D5701D00F55C51 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -109,6 +110,9 @@
 		F7893AE614D60245002465AF /* AudioEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioEngine.h; sourceTree = "<group>"; };
 		F7893AE714D60245002465AF /* AudioEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioEngine.m; sourceTree = "<group>"; };
 		F7893B0214D60D1A002465AF /* SoundCloud.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = SoundCloud.bundle; path = ../CocoaSoundCloudUI/SoundCloud.bundle; sourceTree = "<group>"; };
+		F7BBA45416BAC88800286874 /* IAudioUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IAudioUnit.h; sourceTree = "<group>"; };
+		F7BBA45516BAC88800286874 /* IAudioUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IAudioUnit.m; sourceTree = "<group>"; };
+		F7BBA45816BB444D00286874 /* errors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = errors.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,6 +164,7 @@
 				F7893B0214D60D1A002465AF /* SoundCloud.bundle */,
 			);
 			name = Resources;
+			path = instasound;
 			sourceTree = "<group>";
 		};
 		F78428F214D5701D00F55C51 = {
@@ -169,6 +174,8 @@
 				51ABB21D14D5C17300D62235 /* Default@2x.png */,
 				51ABB21914D5C15B00D62235 /* app_icon_114.png */,
 				51ABB21614D5C15600D62235 /* app_icon_57.png */,
+				512A759614D5AEC600FB391E /* Resources */,
+				F784290814D5701D00F55C51 /* Supporting Files */,
 				F784290714D5701D00F55C51 /* instasound */,
 				F784290014D5701D00F55C51 /* Frameworks */,
 				F78428FE14D5701D00F55C51 /* Products */,
@@ -219,10 +226,11 @@
 				F784292214D5708600F55C51 /* EAGLView.m */,
 				F7893AE614D60245002465AF /* AudioEngine.h */,
 				F7893AE714D60245002465AF /* AudioEngine.m */,
-				512A759614D5AEC600FB391E /* Resources */,
-				F784290814D5701D00F55C51 /* Supporting Files */,
-				F7561FDA14D6354900CC57E0 /* AudioPreset.h */,
-				F7561FDB14D6354900CC57E0 /* AudioPreset.m */,
+				F7561FDA14D6354900CC57E0 /* AudioChain.h */,
+				F7561FDB14D6354900CC57E0 /* AudioChain.m */,
+				F7BBA45416BAC88800286874 /* IAudioUnit.h */,
+				F7BBA45516BAC88800286874 /* IAudioUnit.m */,
+				F7BBA45816BB444D00286874 /* errors.h */,
 			);
 			path = instasound;
 			sourceTree = "<group>";
@@ -236,6 +244,7 @@
 				F784290F14D5701D00F55C51 /* instasound-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			path = instasound;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -325,7 +334,8 @@
 				F784292314D5708600F55C51 /* EAGLView.m in Sources */,
 				F784295F14D574F600F55C51 /* ViewController.m in Sources */,
 				F7893AE814D60245002465AF /* AudioEngine.m in Sources */,
-				F7561FDC14D6354900CC57E0 /* AudioPreset.m in Sources */,
+				F7561FDC14D6354900CC57E0 /* AudioChain.m in Sources */,
+				F7BBA45616BAC88800286874 /* IAudioUnit.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
